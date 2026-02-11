@@ -312,8 +312,19 @@
   
   <form id="uploadForm">
     <div class="rsvp-group" style="max-width: 400px; margin: 0 auto 20px;">
-      <label>File (image/video)</label>
-      <input type="file" id="fileInput" accept="image/*,video/*" required>
+      <label>Choose Upload Method</label>
+
+      <select id="captureMode">
+        <option value="gallery">Upload Existing Photo</option>
+        <option value="camera">Use Camera</option>
+      </select>
+
+      <input 
+        type="file" 
+        id="fileInput" 
+        accept="image/*,video/*" 
+        required
+      >
     </div>
     <div class="rsvp-group">
       <label>Hashtags (space-separated, e.g. #PanosAndMarianna #KozaniWedding)</label>
@@ -329,9 +340,9 @@
     <button type="submit" class="rsvp-button">Upload Memory</button>
   </form>
 
-  <div style="margin: 30px 0;">
+  <!-- <div style="margin: 30px 0;">
     <input type="text" id="search" placeholder="Search by hashtag (e.g. #PanosAndMarianna)...">
-  </div>
+  </div> -->
 
   <div class="gallery" id="gallery"></div>
 
@@ -340,7 +351,10 @@
   </p>
 </section>
 
-
+<section class="wedding-memories">
+  <h2>Wedding Memories 🤍</h2>
+  <div class="memory-gallery" id="memoryGallery"></div>
+</section>
 
 
 <footer style="text-align:center; padding:50px 20px; background:#1f1f1f; color:#f5f5f5;">

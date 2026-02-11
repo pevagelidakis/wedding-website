@@ -255,17 +255,29 @@ const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const bucketName = "public-pics";
+const visibility = document.getElementById("visibility").value;
 
+const bucketName = visibility === "public"
+  ? "public-pics"
+  : "private-pics";
 document.addEventListener("DOMContentLoaded", () => {
   const uploadForm = document.getElementById("uploadForm");
   const gallery = document.getElementById("gallery");
-  const searchInput = document.getElementById("search");
+  // const searchInput = document.getElementById("search");
 
   // Upload
   uploadForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const fileInput = document.getElementById("fileInput");
+    const captureMode = document.getElementById("captureMode");
+
+    captureMode.addEventListener("change", () => {
+      if (captureMode.value === "camera") {
+        fileInput.setAttribute("capture", "environment");
+      } else {
+        fileInput.removeAttribute("capture");
+      }
+    });
     const hashtagsInput = document.getElementById("hashtags");
     const visibilitySelect = document.getElementById("visibility");
 
@@ -313,48 +325,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load gallery
   async function loadGallery(searchTerm = "") {
-    let query = supabase
-      .from("uploads")
-      .select("*")
-      .eq("visibility", "public-pics")
-      .order("created_at", { ascending: false });
+    const memoryGallery = document.getElementById("memoryGallery");
 
-    if (searchTerm) {
-      // Split search into tags and check overlaps (array contains any)
-      const searchTags = searchTerm.split(' ').filter(tag => tag.startsWith('#')).map(tag => tag.toLowerCase());
-      if (searchTags.length) {
-        query = query.overlaps("hashtags", searchTags);
-      }
-    }
+  const { data, error } = await supabase
+    .from("uploads")
+    .select("*")
+    .eq("visibility", "public")
+    .order("created_at", { ascending: false });
 
-    const { data, error } = await query;
-
-    if (error) {
-      console.error(error);
-      gallery.innerHTML = "<p>Error loading gallery.</p>";
-      return;
-    }
-
-    gallery.innerHTML = "";
-    data.forEach((item) => {
-      const div = document.createElement("div");
-      div.className = "gallery-item";
-      if (item.file_type.startsWith("image/")) {
-        div.innerHTML = `<img src="${item.file_url}" alt="Guest photo" loading="lazy">`;
-      } else if (item.file_type.startsWith("video/")) {
-        div.innerHTML = `
-          <video controls preload="metadata" poster="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400">
-            <source src="${item.file_url}" type="${item.file_type}">
-          </video>`;
-      }
-      gallery.appendChild(div);
-    });
+  if (error) {
+    console.error(error);
+    return;
   }
 
-  // Search
-  searchInput.addEventListener("input", (e) => {
-    loadGallery(e.target.value);
+  memoryGallery.innerHTML = "";
+
+  data.forEach((item) => {
+    const div = document.createElement("div");
+    div.className = "gallery-item";
+
+    if (item.file_type.startsWith("image")) {
+      div.innerHTML = `<img src="${item.file_url}" loading="lazy">`;
+    } else {
+      div.innerHTML = `
+        <video controls preload="metadata">
+          <source src="${item.file_url}" type="${item.file_type}">
+        </video>
+      `;
+    }
+
+    memoryGallery.appendChild(div);
   });
+  }
+
+  // // Search
+  // searchInput.addEventListener("input", (e) => {
+  //   loadGallery(e.target.value);
+  // });
 
   // Initial load
   loadGallery();
