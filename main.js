@@ -282,67 +282,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Upload
   uploadForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    // const fileInput = document.getElementById("fileInput");
-    // const cameraBtn = document.getElementById("cameraBtn");
-    // const galleryBtn = document.getElementById("galleryBtn");
+  e.preventDefault();
 
-    // // Open camera (mobile only)
-    // cameraBtn.addEventListener("click", () => {
-    //   fileInput.setAttribute("capture", "environment");
-    //   fileInput.click();
-    // });
+  const hashtagsInput = document.getElementById("hashtags");
+  const visibilitySelect = document.getElementById("visibility");
 
-    // // Open gallery
-    // galleryBtn.addEventListener("click", () => {
-    //   fileInput.removeAttribute("capture");
-    //   fileInput.click();
-    // });
+  const file = fileInput.files[0];
+  if (!file) return alert("Select a file.");
 
-    const hashtagsInput = document.getElementById("hashtags");
-    const visibilitySelect = document.getElementById("visibility");
+  // 🔥 Determine bucket dynamically HERE
+  const selectedVisibility = visibilitySelect.value;
 
-    const file = fileInput.files[0];
-    if (!file) return alert("Select a file.");
+  const bucketName = selectedVisibility === "public"
+    ? "public-pics"
+    : "private-pics";
 
-    const hashtagsStr = hashtagsInput.value.trim();
-    const hashtagsArray = hashtagsStr ? hashtagsStr.split(' ').filter(tag => tag.startsWith('#')) : [];
-    const filePath = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+  const hashtagsStr = hashtagsInput.value.trim();
+  const hashtagsArray = hashtagsStr
+    ? hashtagsStr.split(' ').filter(tag => tag.startsWith('#'))
+    : [];
 
-    // Upload file
-    const { error: uploadError } = await supabase.storage
-      .from(bucketName)
-      .upload(filePath, file, { upsert: true });
+  const filePath = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
 
-    if (uploadError) {
-      console.error(uploadError);
-      return alert("Upload failed: " + uploadError.message);
-    }
+  // Upload file to correct bucket
+  const { error: uploadError } = await supabase.storage
+    .from(bucketName)
+    .upload(filePath, file, { upsert: true });
 
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucketName)
-      .getPublicUrl(filePath);
+  if (uploadError) {
+    console.error(uploadError);
+    return alert("Upload failed: " + uploadError.message);
+  }
 
-    // Insert metadata
-    const { error: insertError } = await supabase
-      .from("uploads")
-      .insert([{
-        file_url: publicUrl,
-        file_type: file.type,
-        hashtags: hashtagsArray,
-        visibility: visibilitySelect.value
-      }]);
+  // Get public URL (works only if bucket is public)
+  const { data } = supabase.storage
+    .from(bucketName)
+    .getPublicUrl(filePath);
 
-    if (insertError) {
-      console.error(insertError);
-      return alert("DB insert failed: " + insertError.message);
-    }
+  const publicUrl = data.publicUrl;
 
-    alert("Uploaded successfully! 🎉");
-    uploadForm.reset();
-    loadGallery();
-  });
+  // Insert metadata
+  const { error: insertError } = await supabase
+    .from("uploads")
+    .insert([{
+      file_url: publicUrl,
+      file_type: file.type,
+      hashtags: hashtagsArray,
+      visibility: selectedVisibility
+    }]);
+
+  if (insertError) {
+    console.error(insertError);
+    return alert("DB insert failed: " + insertError.message);
+  }
+
+  alert("Uploaded successfully! 🎉");
+  uploadForm.reset();
+  loadGallery();
+});
 
   // Load gallery
   async function loadGallery() {
