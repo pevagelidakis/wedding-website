@@ -255,7 +255,11 @@ const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const visibility = document.getElementById("visibility").value;
 
+const bucketName = visibility === "public"
+  ? "public-pics"
+  : "private-pics";
 document.addEventListener("DOMContentLoaded", () => {
   const uploadForm = document.getElementById("uploadForm");
   const fileInput = document.getElementById("fileInput");
@@ -278,126 +282,138 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Upload
   uploadForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const hashtagsInput = document.getElementById("hashtags");
-    const visibilitySelect = document.getElementById("visibility");
+  const hashtagsInput = document.getElementById("hashtags");
+  const visibilitySelect = document.getElementById("visibility");
 
-    const file = fileInput.files[0];
-    if (!file) return alert("Select a file.");
+  const file = fileInput.files[0];
+  if (!file) return alert("Select a file.");
 
-    const selectedVisibility = visibilitySelect.value;
-    const bucketName = selectedVisibility === "public" ? "public-pics" : "private-pics";
+  // 🔥 Determine bucket dynamically HERE
+  const selectedVisibility = visibilitySelect.value;
 
-    const hashtagsStr = hashtagsInput.value.trim();
-    const hashtagsArray = hashtagsStr
-      ? hashtagsStr.split(" ").filter((tag) => tag.startsWith("#"))
-      : [];
+  const bucketName = selectedVisibility === "public"
+    ? "public-pics"
+    : "private-pics";
 
-    const filePath = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+  const hashtagsStr = hashtagsInput.value.trim();
+  const hashtagsArray = hashtagsStr
+    ? hashtagsStr.split(' ').filter(tag => tag.startsWith('#'))
+    : [];
 
-    // Upload file
-    const { error: uploadError } = await supabase.storage
-      .from(bucketName)
-      .upload(filePath, file, { upsert: true });
+  const filePath = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
 
-    if (uploadError) {
-      console.error(uploadError);
-      return alert("Upload failed: " + uploadError.message);
-    }
+  // Upload file to correct bucket
+  const { error: uploadError } = await supabase.storage
+    .from(bucketName)
+    .upload(filePath, file, { upsert: true });
 
-    // Get file URL
-    let fileUrl;
-    if (selectedVisibility === "public") {
-      // Public bucket
-      const { data } = supabase.storage.from(bucketName).getPublicUrl(filePath);
-      fileUrl = data.publicUrl;
-    } else {
-      // Private bucket: generate signed URL (valid 1 hour)
-      const { data, error } = await supabase.storage
-        .from(bucketName)
-        .createSignedUrl(filePath, 60 * 60);
-      if (error) {
-        console.error(error);
-        return alert("Failed to get signed URL: " + error.message);
-      }
-      fileUrl = data.signedUrl;
-    }
+  if (uploadError) {
+    console.error(uploadError);
+    return alert("Upload failed: " + uploadError.message);
+  }
 
-    // Insert metadata
-    const { error: insertError } = await supabase
-      .from("uploads")
-      .insert([
-        {
-          file_url: fileUrl,
-          file_type: file.type,
-          hashtags: hashtagsArray,
-          visibility: selectedVisibility,
-          file_path: filePath, // store for later signed URL refresh if needed
-        },
-      ]);
+  // Get public URL (works only if bucket is public)
+  const { data } = supabase.storage
+    .from(bucketName)
+    .getPublicUrl(filePath);
 
-    if (insertError) {
-      console.error(insertError);
-      return alert("DB insert failed: " + insertError.message);
-    }
+  const publicUrl = data.publicUrl;
 
-    alert("Uploaded successfully! 🎉");
-    uploadForm.reset();
-    loadGallery();
-  });
+  // Insert metadata
+  const { error: insertError } = await supabase
+    .from("uploads")
+    .insert([{
+      file_url: publicUrl,
+      file_type: file.type,
+      hashtags: hashtagsArray,
+      visibility: selectedVisibility
+    }]);
+
+  if (insertError) {
+    console.error(insertError);
+    return alert("DB insert failed: " + insertError.message);
+  }
+
+  alert("Uploaded successfully! 🎉");
+  uploadForm.reset();
+  loadGallery();
+});
 
   // Load gallery
   async function loadGallery() {
-    const memoryGallery = document.getElementById("memoryGallery");
-    if (!memoryGallery) return;
+  const memoryGallery = document.getElementById("memoryGallery");
 
-    memoryGallery.innerHTML = "";
+  if (!memoryGallery) return;
 
-    const { data, error } = await supabase
-      .from("uploads")
-      .select("*")
-      .eq("visibility", "public") // only show public here; private handled separately
-      .order("created_at", { ascending: false });
+  // Clear immediately to avoid stale tiles
+  memoryGallery.innerHTML = "";
 
-    if (error) {
-      console.error("Gallery load error:", error.message);
-      memoryGallery.innerHTML = "<p>Failed to load memories.</p>";
-      return;
-    }
+  const { data, error } = await supabase
+    .from("uploads")
+    .select("*")
+    .eq("visibility", "public")
+    .order("created_at", { ascending: false });
 
-    if (!data || data.length === 0) {
-      memoryGallery.innerHTML = "<p>No memories yet 🤍</p>";
-      return;
-    }
-
-    data.forEach((item) => {
-      if (!item.file_url) return;
-
-      const div = document.createElement("div");
-      div.className = "gallery-item";
-
-      if (item.file_type?.startsWith("image")) {
-        const img = document.createElement("img");
-        img.src = item.file_url;
-        img.loading = "lazy";
-        img.onerror = () => div.remove();
-        div.appendChild(img);
-      } else if (item.file_type?.startsWith("video")) {
-        const video = document.createElement("video");
-        video.controls = true;
-        video.preload = "metadata";
-        const source = document.createElement("source");
-        source.src = item.file_url;
-        source.type = item.file_type;
-        video.appendChild(source);
-        video.onerror = () => div.remove();
-        div.appendChild(video);
-      }
-
-      memoryGallery.appendChild(div);
-    });
+  if (error) {
+    console.error("Gallery load error:", error.message);
+    memoryGallery.innerHTML = "<p>Failed to load memories.</p>";
+    return;
   }
+
+  if (!data || data.length === 0) {
+    memoryGallery.innerHTML = "<p>No memories yet 🤍</p>";
+    return;
+  }
+
+  data.forEach((item) => {
+    if (!item.file_url) return;
+
+    const div = document.createElement("div");
+    div.className = "gallery-item";
+
+    // Handle images safely
+    if (item.file_type && item.file_type.startsWith("image")) {
+      const img = document.createElement("img");
+      img.src = item.file_url;
+      img.loading = "lazy";
+
+      // Remove broken tiles automatically
+      img.onerror = () => {
+        div.remove();
+      };
+
+      div.appendChild(img);
+    } 
+    
+    // Handle videos safely
+    else if (item.file_type && item.file_type.startsWith("video")) {
+      const video = document.createElement("video");
+      video.controls = true;
+      video.preload = "metadata";
+
+      const source = document.createElement("source");
+      source.src = item.file_url;
+      source.type = item.file_type;
+
+      video.appendChild(source);
+
+      video.onerror = () => {
+        div.remove();
+      };
+
+      div.appendChild(video);
+    }
+
+    memoryGallery.appendChild(div);
+  });
+}
+
+  // // Search
+  // searchInput.addEventListener("input", (e) => {
+  //   loadGallery(e.target.value);
+  // });
 
   // Initial load
   loadGallery();
