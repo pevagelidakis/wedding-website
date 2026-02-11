@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const { error: insertError } = await supabase
     .from("uploads")
     .insert([{
-      file_url: publicUrl,
+      file_path: filePath,   // ✅ store path instead,
       file_type: file.type,
       hashtags: hashtagsArray,
       visibility: selectedVisibility
