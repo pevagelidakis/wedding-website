@@ -262,27 +262,42 @@ const bucketName = visibility === "public"
   : "private-pics";
 document.addEventListener("DOMContentLoaded", () => {
   const uploadForm = document.getElementById("uploadForm");
-  const gallery = document.getElementById("gallery");
-  // const searchInput = document.getElementById("search");
+  const fileInput = document.getElementById("fileInput");
+  const cameraBtn = document.getElementById("cameraBtn");
+  const galleryBtn = document.getElementById("galleryBtn");
+
+  // CAMERA
+  cameraBtn.addEventListener("click", () => {
+    fileInput.setAttribute("capture", "environment");
+    fileInput.setAttribute("accept", "image/*");
+    fileInput.click();
+  });
+
+  // GALLERY
+  galleryBtn.addEventListener("click", () => {
+    fileInput.removeAttribute("capture");
+    fileInput.setAttribute("accept", "image/*");
+    fileInput.click();
+  });
 
   // Upload
   uploadForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const fileInput = document.getElementById("fileInput");
-    const cameraBtn = document.getElementById("cameraBtn");
-    const galleryBtn = document.getElementById("galleryBtn");
+    // const fileInput = document.getElementById("fileInput");
+    // const cameraBtn = document.getElementById("cameraBtn");
+    // const galleryBtn = document.getElementById("galleryBtn");
 
-    // Open camera (mobile only)
-    cameraBtn.addEventListener("click", () => {
-      fileInput.setAttribute("capture", "environment");
-      fileInput.click();
-    });
+    // // Open camera (mobile only)
+    // cameraBtn.addEventListener("click", () => {
+    //   fileInput.setAttribute("capture", "environment");
+    //   fileInput.click();
+    // });
 
-    // Open gallery
-    galleryBtn.addEventListener("click", () => {
-      fileInput.removeAttribute("capture");
-      fileInput.click();
-    });
+    // // Open gallery
+    // galleryBtn.addEventListener("click", () => {
+    //   fileInput.removeAttribute("capture");
+    //   fileInput.click();
+    // });
 
     const hashtagsInput = document.getElementById("hashtags");
     const visibilitySelect = document.getElementById("visibility");

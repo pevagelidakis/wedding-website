@@ -312,17 +312,26 @@
   
   <form id="uploadForm">
     <div class="rsvp-group" style="max-width: 400px; margin: 0 auto 20px;">
-      <label>Choose Upload Method</label>
+      <div class="upload-method">
+        <label class="upload-label">Choose Upload Method</label>
 
-      <button type="button" id="cameraBtn">Use Camera</button>
-      <button type="button" id="galleryBtn">Upload Existing Photo</button>
+        <div class="upload-buttons">
+          <button type="button" id="cameraBtn" class="upload-btn">
+            📸 Use Camera
+          </button>
 
-      <input 
-        type="file" 
-        id="fileInput" 
-        accept="image/*"
-        style="display: none;"
-      >
+          <button type="button" id="galleryBtn" class="upload-btn outline">
+            🖼 Upload Existing Photo
+          </button>
+        </div>
+
+        <input 
+          type="file" 
+          id="fileInput" 
+          accept="image/*"
+          style="display: none;"
+        >
+      </div>
     </div>
     <div class="rsvp-group">
       <label>Hashtags (space-separated, e.g. #PanosAndMarianna #KozaniWedding)</label>

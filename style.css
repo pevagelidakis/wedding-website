@@ -695,3 +695,53 @@ p {
   border-radius: 14px;
 }
 
+
+
+.upload-method {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.upload-label {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 18px;
+  color: #5f4b4b;
+  letter-spacing: 0.5px;
+}
+
+.upload-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.upload-btn {
+  padding: 12px 24px;
+  font-size: 15px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #d4a5a5, #b5838d);
+  color: white;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.upload-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+}
+
+.upload-btn.outline {
+  background: white;
+  color: #b5838d;
+  border: 2px solid #b5838d;
+}
+
+.upload-btn.outline:hover {
+  background: #f9f1f2;
+}
+
