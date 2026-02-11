@@ -368,50 +368,41 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   data.forEach((item) => {
-    if (!item.file_url) return;
+  if (!item.file_path) return;
 
-    const div = document.createElement("div");
-    div.className = "gallery-item";
+  const div = document.createElement("div");
+  div.className = "gallery-item";
 
-    // Handle images safely
-    if (item.file_type && item.file_type.startsWith("image")) {
-      const img = document.createElement("img");
-      const { data } = supabase.storage
-                            .from("public-pics")
-                            .getPublicUrl(item.file_path);
+  const bucket =
+    item.visibility === "public"
+      ? "public-pics"
+      : "private-pics";
 
-      img.src = data.publicUrl;
-      img.loading = "lazy";
+  const { data: urlData } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(item.file_path);
 
-      // Remove broken tiles automatically
-      img.onerror = () => {
-        div.remove();
-      };
+  if (!urlData?.publicUrl) return;
 
-      div.appendChild(img);
-    } 
-    
-    // Handle videos safely
-    else if (item.file_type && item.file_type.startsWith("video")) {
-      const video = document.createElement("video");
-      video.controls = true;
-      video.preload = "metadata";
+  if (item.file_type?.startsWith("image")) {
+    const img = document.createElement("img");
+    img.src = urlData.publicUrl;
+    img.loading = "lazy";
+    img.onerror = () => div.remove();
+    div.appendChild(img);
+  }
 
-      const source = document.createElement("source");
-      source.src = item.file_url;
-      source.type = item.file_type;
+  else if (item.file_type?.startsWith("video")) {
+    const video = document.createElement("video");
+    video.controls = true;
+    video.preload = "metadata";
+    video.src = urlData.publicUrl;
+    video.onerror = () => div.remove();
+    div.appendChild(video);
+  }
 
-      video.appendChild(source);
-
-      video.onerror = () => {
-        div.remove();
-      };
-
-      div.appendChild(video);
-    }
-
-    memoryGallery.appendChild(div);
-  });
+  memoryGallery.appendChild(div);
+});
 }
 
   // // Search
