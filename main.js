@@ -269,15 +269,21 @@ document.addEventListener("DOMContentLoaded", () => {
   uploadForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const fileInput = document.getElementById("fileInput");
-    const captureMode = document.getElementById("captureMode");
+    const cameraBtn = document.getElementById("cameraBtn");
+    const galleryBtn = document.getElementById("galleryBtn");
 
-    captureMode.addEventListener("change", () => {
-      if (captureMode.value === "camera") {
-        fileInput.setAttribute("capture", "environment");
-      } else {
-        fileInput.removeAttribute("capture");
-      }
+    // Open camera (mobile only)
+    cameraBtn.addEventListener("click", () => {
+      fileInput.setAttribute("capture", "environment");
+      fileInput.click();
     });
+
+    // Open gallery
+    galleryBtn.addEventListener("click", () => {
+      fileInput.removeAttribute("capture");
+      fileInput.click();
+    });
+
     const hashtagsInput = document.getElementById("hashtags");
     const visibilitySelect = document.getElementById("visibility");
 
@@ -324,8 +330,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Load gallery
-  async function loadGallery(searchTerm = "") {
-    const memoryGallery = document.getElementById("memoryGallery");
+  async function loadGallery() {
+  const memoryGallery = document.getElementById("memoryGallery");
+
+  if (!memoryGallery) return;
+
+  // Clear immediately to avoid stale tiles
+  memoryGallery.innerHTML = "";
 
   const { data, error } = await supabase
     .from("uploads")
@@ -334,29 +345,58 @@ document.addEventListener("DOMContentLoaded", () => {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error(error);
+    console.error("Gallery load error:", error.message);
+    memoryGallery.innerHTML = "<p>Failed to load memories.</p>";
     return;
   }
 
-  memoryGallery.innerHTML = "";
+  if (!data || data.length === 0) {
+    memoryGallery.innerHTML = "<p>No memories yet 🤍</p>";
+    return;
+  }
 
   data.forEach((item) => {
+    if (!item.file_url) return;
+
     const div = document.createElement("div");
     div.className = "gallery-item";
 
-    if (item.file_type.startsWith("image")) {
-      div.innerHTML = `<img src="${item.file_url}" loading="lazy">`;
-    } else {
-      div.innerHTML = `
-        <video controls preload="metadata">
-          <source src="${item.file_url}" type="${item.file_type}">
-        </video>
-      `;
+    // Handle images safely
+    if (item.file_type && item.file_type.startsWith("image")) {
+      const img = document.createElement("img");
+      img.src = item.file_url;
+      img.loading = "lazy";
+
+      // Remove broken tiles automatically
+      img.onerror = () => {
+        div.remove();
+      };
+
+      div.appendChild(img);
+    } 
+    
+    // Handle videos safely
+    else if (item.file_type && item.file_type.startsWith("video")) {
+      const video = document.createElement("video");
+      video.controls = true;
+      video.preload = "metadata";
+
+      const source = document.createElement("source");
+      source.src = item.file_url;
+      source.type = item.file_type;
+
+      video.appendChild(source);
+
+      video.onerror = () => {
+        div.remove();
+      };
+
+      div.appendChild(video);
     }
 
     memoryGallery.appendChild(div);
   });
-  }
+}
 
   // // Search
   // searchInput.addEventListener("input", (e) => {

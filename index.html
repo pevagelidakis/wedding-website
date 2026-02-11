@@ -314,16 +314,14 @@
     <div class="rsvp-group" style="max-width: 400px; margin: 0 auto 20px;">
       <label>Choose Upload Method</label>
 
-      <select id="captureMode">
-        <option value="gallery">Upload Existing Photo</option>
-        <option value="camera">Use Camera</option>
-      </select>
+      <button type="button" id="cameraBtn">Use Camera</button>
+      <button type="button" id="galleryBtn">Upload Existing Photo</button>
 
       <input 
         type="file" 
         id="fileInput" 
-        accept="image/*,video/*" 
-        required
+        accept="image/*"
+        style="display: none;"
       >
     </div>
     <div class="rsvp-group">
