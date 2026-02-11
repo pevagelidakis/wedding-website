@@ -376,7 +376,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Handle images safely
     if (item.file_type && item.file_type.startsWith("image")) {
       const img = document.createElement("img");
-      img.src = item.file_url;
+      const { data } = supabase.storage
+                            .from("public-pics")
+                            .getPublicUrl(item.file_path);
+
+      img.src = data.publicUrl;
       img.loading = "lazy";
 
       // Remove broken tiles automatically
