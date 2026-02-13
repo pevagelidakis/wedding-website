@@ -745,3 +745,12 @@ p {
   background: #f9f1f2;
 }
 
+
+.file-name {
+  margin-top: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: var(--accent);
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}

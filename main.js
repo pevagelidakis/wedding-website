@@ -105,150 +105,6 @@ attendance.addEventListener("change", () => {
 
 
 
-
-
-
-
-
-
-
-// create table uploads (
-//   id bigserial primary key,
-//   file_url text not null,
-//   file_type text not null,
-//   hashtags text[],
-//   visibility text not null,
-//   created_at timestamp with time zone default now()
-// );
-
-// import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-// const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
-// const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA";
-
-// const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-// const bucketName = "public";
-
-// // 🔹 Wait until DOM is ready
-// document.addEventListener("DOMContentLoaded", () => {
-//   const uploadForm = document.getElementById("uploadForm");
-//   const gallery = document.getElementById("gallery");
-//   const searchInput = document.getElementById("search");
-
-//   // =============================
-//   // 📤 UPLOAD
-//   // =============================
-//   uploadForm.addEventListener("submit", async (e) => {
-//     e.preventDefault();
-
-//     const fileInput = document.getElementById("fileInput");
-//     const hashtagsInput = document.getElementById("hashtags");
-//     const visibility = document.getElementById("visibility").value;
-
-//     if (!fileInput.files.length) {
-//       alert("Please select a file.");
-//       return;
-//     }
-
-//     const file = fileInput.files[0];
-//     const hashtags = hashtagsInput.value.trim(); // store as TEXT
-//     const filePath = `${Date.now()}_${file.name}`;
-
-//     // 🔹 Upload to storage
-//     const { error: uploadError } = await supabase.storage
-//       .from(bucketName)
-//       .upload(filePath, file);
-
-//     if (uploadError) {
-//       console.error(uploadError);
-//       alert("Upload failed.");
-//       return;
-//     }
-
-//     // 🔹 Get public URL
-//     const { data: publicUrlData } = supabase.storage
-//       .from(bucketName)
-//       .getPublicUrl(filePath);
-
-//     const publicURL = publicUrlData.publicUrl;
-
-//     // 🔹 Insert metadata into DB
-//     const { error: insertError } = await supabase
-//       .from("uploads")
-//       .insert([
-//         {
-//           file_url: publicURL,
-//           file_type: file.type,
-//           hashtags: hashtags,
-//           visibility: visibility
-//         }
-//       ]);
-
-//     if (insertError) {
-//       console.error(insertError);
-//       alert("Database insert failed.");
-//       return;
-//     }
-
-//     alert("Uploaded successfully 🤍");
-//     uploadForm.reset();
-//     loadGallery();
-//   });
-
-//   // =============================
-//   // 🖼 LOAD GALLERY
-//   // =============================
-//   async function loadGallery(searchTerm = "") {
-//     let query = supabase
-//       .from("uploads")
-//       .select("*")
-//       .eq("visibility", "public")
-//       .order("created_at", { ascending: false });
-
-//     if (searchTerm) {
-//       query = query.ilike("hashtags", `%${searchTerm}%`);
-//     }
-
-//     const { data, error } = await query;
-
-//     if (error) {
-//       console.error(error);
-//       return;
-//     }
-
-//     gallery.innerHTML = "";
-
-//     data.forEach((item) => {
-//       const div = document.createElement("div");
-//       div.className = "gallery-item";
-
-//       if (item.file_type.startsWith("image")) {
-//         div.innerHTML = `<img src="${item.file_url}" loading="lazy">`;
-//       } else {
-//         div.innerHTML = `
-//           <video controls preload="metadata">
-//             <source src="${item.file_url}" type="${item.file_type}">
-//           </video>
-//         `;
-//       }
-
-//       gallery.appendChild(div);
-//     });
-//   }
-
-//   // =============================
-//   // 🔍 SEARCH
-//   // =============================
-//   searchInput.addEventListener("input", (e) => {
-//     const term = e.target.value.toLowerCase();
-//     loadGallery(term);
-//   });
-
-//   // Initial load
-//   loadGallery();
-// });
-
-
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
@@ -261,6 +117,22 @@ const bucketName = visibility === "public"
   ? "public-pics"
   : "private-pics";
 document.addEventListener("DOMContentLoaded", () => {
+  const fileNameDisplay = document.getElementById("fileNameDisplay");
+
+  fileInput.addEventListener("change", () => {
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const maxLength = 40;
+      let fileName = file.name;
+      if (fileName.length > maxLength) {
+        fileName = fileName.substring(0, maxLength) + "...";
+      }
+      fileNameDisplay.textContent = "Selected: " + fileName;
+    } else {
+      fileNameDisplay.textContent = "";
+    }
+  });
+
   const uploadForm = document.getElementById("uploadForm");
   const fileInput = document.getElementById("fileInput");
   const cameraBtn = document.getElementById("cameraBtn");
@@ -268,17 +140,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // CAMERA
   cameraBtn.addEventListener("click", () => {
-    fileInput.setAttribute("capture", "environment");
-    fileInput.setAttribute("accept", "image/*");
-    fileInput.click();
-  });
-
+  fileInput.setAttribute("capture", "environment");
+  fileInput.setAttribute("accept", "image/*,video/*");
+  fileInput.click();
+});
   // GALLERY
   galleryBtn.addEventListener("click", () => {
-    fileInput.removeAttribute("capture");
-    fileInput.setAttribute("accept", "image/*");
-    fileInput.click();
-  });
+  fileInput.removeAttribute("capture");
+  fileInput.setAttribute("accept", "image/*,video/*");
+  fileInput.click();
+});
 
   // Upload
   uploadForm.addEventListener("submit", async (e) => {
