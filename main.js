@@ -111,45 +111,38 @@ const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const visibility = document.getElementById("visibility").value;
-
-const bucketName = visibility === "public"
-  ? "public-pics"
-  : "private-pics";
 document.addEventListener("DOMContentLoaded", () => {
   const fileNameDisplay = document.getElementById("fileNameDisplay");
-
-  fileInput.addEventListener("change", () => {
-    if (fileInput.files.length > 0) {
-      const file = fileInput.files[0];
-      const maxLength = 40;
-      let fileName = file.name;
-      if (fileName.length > maxLength) {
-        fileName = fileName.substring(0, maxLength) + "...";
-      }
-      fileNameDisplay.textContent = "Selected: " + fileName;
-    } else {
-      fileNameDisplay.textContent = "";
-    }
-  });
 
   const uploadForm = document.getElementById("uploadForm");
   const fileInput = document.getElementById("fileInput");
   const cameraBtn = document.getElementById("cameraBtn");
   const galleryBtn = document.getElementById("galleryBtn");
-
+  fileInput.addEventListener("change", () => {
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const maxLength = 40;
+        let fileName = file.name;
+        if (fileName.length > maxLength) {
+          fileName = fileName.substring(0, maxLength) + "...";
+        }
+        fileNameDisplay.textContent = "Selected: " + fileName;
+      } else {
+        fileNameDisplay.textContent = "";
+      }
+    });
   // CAMERA
   cameraBtn.addEventListener("click", () => {
-  fileInput.setAttribute("capture", "environment");
-  fileInput.setAttribute("accept", "image/*,video/*");
-  fileInput.click();
-});
+    fileInput.setAttribute("capture", "environment");
+   fileInput.setAttribute("accept", "image/*,video/*");
+   fileInput.click();
+  });
   // GALLERY
   galleryBtn.addEventListener("click", () => {
-  fileInput.removeAttribute("capture");
-  fileInput.setAttribute("accept", "image/*,video/*");
-  fileInput.click();
-});
+    fileInput.removeAttribute("capture");
+    fileInput.setAttribute("accept", "image/*,video/*");
+    fileInput.click();
+  });
 
   // Upload
   uploadForm.addEventListener("submit", async (e) => {
@@ -214,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load gallery
   async function loadGallery() {
-  const memoryGallery = document.getElementById("memoryGallery");
+  const memoryGallery = document.getElementById("gallery");
 
   if (!memoryGallery) return;
 
