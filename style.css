@@ -754,3 +754,27 @@ p {
   opacity: 0.85;
   transition: opacity 0.3s ease;
 }
+
+
+/* Hide album by default (desktop first) */
+.mobile-only {
+  display: none;
+}
+
+/* Show only on mobile devices */
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+}
+
+.desktop-message {
+  display: block;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .desktop-message {
+    display: none;
+  }
+}
