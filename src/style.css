@@ -183,7 +183,7 @@ p {
 .bride-section {
   background:
     linear-gradient(rgba(255,255,255,0.685), rgba(255,255,255,0.35)),
-    url("media/bride prep2.jpg") center / cover no-repeat;
+    url("../media/bride prep2.jpg") center / cover no-repeat;
   border: 0 1px solid rgba(198,165,106,0.25);
   
 }
@@ -191,21 +191,21 @@ p {
 .groom-section {
   background:
     linear-gradient(rgba(255,255,255,0.685), rgba(255,255,255,0.35)),
-    url("media/groom prep2.jpg") center / cover no-repeat;
+    url("../media/groom prep2.jpg") center / cover no-repeat;
   border: 1px solid rgba(198,165,106,0.25);
 }
 
 .church-section {
   background:
     linear-gradient(rgba(255,255,255,0.35), rgba(0,0,0,0.65)),
-    url("media/wedding image.jpg") top / cover no-repeat;
+    url("../media/wedding image.jpg") top / cover no-repeat;
   border: 1px solid rgba(198,165,106,0.25);
 }
 
 .venue-section {
   background:
     linear-gradient(rgba(0,0,0,0.65), rgba(255,255,255,0.35)),
-    url("media/venue.jpg") bottom / cover no-repeat;
+    url("../media/venue.jpg") bottom / cover no-repeat;
   border: 1px solid rgba(198,165,106,0.25);
 }
 
@@ -306,7 +306,7 @@ p {
   padding: 70px 30px 90px;
   background:
     linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),
-    url("media/papyrus-bg.jpg") top / cover no-repeat;
+    url("../media/papyrus-bg.jpg") top / cover no-repeat;
   border-radius: 16px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
@@ -320,12 +320,12 @@ p {
   padding: 70px 30px 90px;
   background:
     linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
-        url("media/travel.jpg") center / cover no-repeat;
+        url("../media/travel.jpg") center / cover no-repeat;
   border-radius: 16px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
 /* ---------- MOBILE ---------- */
-@media (max-width: 768px) {
+@media(max-width: 768px) {
   .split-section {
     padding: 60px 20px;
   }
@@ -590,9 +590,9 @@ p {
 }
 
 /* Petal variants */
-.petal.variant-1 { background-image: url("media/petal1.png"); }
-.petal.variant-2 { background-image: url("media/petal2.png"); }
-.petal.variant-3 { background-image: url("media/petal3.png"); }
+.petal.variant-1 { background-image: url("../media/petal1.png"); }
+.petal.variant-2 { background-image: url("../media/petal2.png"); }
+.petal.variant-3 { background-image: url("../media/petal3.png"); }
 
 
 
