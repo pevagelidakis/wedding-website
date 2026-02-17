@@ -42,14 +42,16 @@
 <video id="video" autoplay playsinline></video>
 <canvas id="canvas" style="display:none;"></canvas>
 
-<div>
-  <button id="startBtn" class="secondary">Start Camera</button>
-  <button id="captureBtn" class="primary" style="display:none;">Take Photo</button>
-  <button id="uploadBtn" class="secondary" style="display:none;">Upload</button>
+<div class="controls">
+  <button id="startBtn">Start Camera</button>
+  <button id="switchBtn" style="display:none;">Switch Camera</button>
+  <button id="photoBtn" style="display:none;">Take Photo</button>
+  <button id="recordBtn" style="display:none;">Record Video</button>
+  <button id="stopBtn" style="display:none;">Stop</button>
+  <button id="uploadBtn" style="display:none;">Upload</button>
 </div>
 
 <p id="status"></p>
-
 <script type="module" src="upload.js"></script>
 
 </body>
