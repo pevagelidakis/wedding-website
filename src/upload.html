@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
+  <title>Wedding Upload 📸</title>
+<style>
+    body {
+      text-align:center;
+      font-family:sans-serif;
+      background:#111;
+      color:white;
+      padding:20px;
+    }
+
+    video, canvas {
+      width:100%;
+      max-width:400px;
+      border-radius:20px;
+      margin-bottom:20px;
+    }
+
+    button {
+      padding:12px 25px;
+      font-size:18px;
+      margin:5px;
+      border-radius:30px;
+      border:none;
+      cursor:pointer;
+    }
+
+    .primary { background:gold; }
+    .secondary { background:#444; color:white; }
+
+  </style>
+</head>
+<body>
+
+<h2>Capture the Moment 🤍</h2>
+
+<video id="video" autoplay playsinline></video>
+<canvas id="canvas" style="display:none;"></canvas>
+
+<div>
+  <button id="startBtn" class="secondary">Start Camera</button>
+  <button id="captureBtn" class="primary" style="display:none;">Take Photo</button>
+  <button id="uploadBtn" class="secondary" style="display:none;">Upload</button>
+</div>
+
+<p id="status"></p>
+
+<script type="module" src="upload.js"></script>
+
+</body>
+</html>
