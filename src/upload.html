@@ -14,7 +14,66 @@
       padding:20px;
     }
 
-    video, canvas {
+    .camera-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+}
+
+video, canvas {
+  width: 100%;
+  border-radius: 20px;
+}
+
+.controls {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Instagram record button */
+.record-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 6px solid white;
+  background-color: red;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.record-btn.recording {
+  background-color: darkred;
+  transform: scale(1.1);
+}
+
+/* Switch button */
+.switch-btn {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Retake */
+.retake-btn {
+  padding: 10px 15px;
+  border-radius: 10px;
+}
+
+/* Upload */
+.upload-btn {
+  padding: 10px 15px;
+  background: black;
+  color: white;
+  border-radius: 10px;
+}
+
+
+    /* video, canvas {
       width:100%;
       max-width:400px;
       border-radius:20px;
@@ -31,7 +90,7 @@
     }
 
     .primary { background:gold; }
-    .secondary { background:#444; color:white; }
+    .secondary { background:#444; color:white; } */
 
   </style>
 </head>
@@ -39,7 +98,7 @@
 
 <h2>Capture the Moment 🤍</h2>
 
-<video id="video" autoplay playsinline></video>
+<!-- <video id="video" autoplay playsinline></video>
 <canvas id="canvas" style="display:none;"></canvas>
 
 <div class="controls">
@@ -49,6 +108,26 @@
   <button id="recordBtn" style="display:none;">Record Video</button>
   <button id="stopBtn" style="display:none;">Stop</button>
   <button id="uploadBtn" style="display:none;">Upload</button>
+</div>
+
+<p id="status"></p> -->
+<div class="camera-wrapper">
+  <video id="video" autoplay playsinline></video>
+  <canvas id="canvas" style="display:none;"></canvas>
+</div>
+
+<div class="controls">
+  <button id="switchBtn" class="switch-btn">🔄</button>
+
+  <div id="recordBtn" class="record-btn"></div>
+
+  <button id="retakeBtn" class="retake-btn" style="display:none;">
+    Retake
+  </button>
+
+  <button id="uploadBtn" class="upload-btn" style="display:none;">
+    Upload
+  </button>
 </div>
 
 <p id="status"></p>
