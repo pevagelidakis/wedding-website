@@ -158,24 +158,46 @@ retakeBtn.addEventListener("click", async () => {
 shareBtn.addEventListener("click", async () => {
   if (!capturedBlob) return;
 
-  const file = new File([capturedBlob], "memory", {
-    type: capturedType
-  });
+  try {
+    const extension =
+      capturedType === "image/jpeg" ? "jpg" : "webm";
 
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    await navigator.share({
-      files: [file],
-      title: "Wedding Memory 🤍",
-      text: "Captured this beautiful moment!"
-    });
-  } else {
-    const url = URL.createObjectURL(capturedBlob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "memory";
-    a.click();
+    const fileName = `Panos_Marianna_Wedding_${Date.now()}.${extension}`;
+
+    const file = new File(
+      [capturedBlob],
+      fileName,
+      { type: capturedType }
+    );
+
+    // ✅ Mobile native share (Instagram, Gmail, Messenger etc)
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+
+      await navigator.share({
+        title: "Wedding Memory 🤍",
+        text: "Captured at Panos & Marianna’s Wedding ✨",
+        files: [file]
+      });
+
+      status.innerText = "Shared successfully 🤍";
+
+    } else {
+      // 🖥 Desktop fallback
+      const url = URL.createObjectURL(capturedBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+
+      status.innerText = "Downloaded (Sharing not supported on this device)";
+    }
+
+  } catch (err) {
+    console.error(err);
+    status.innerText = "Sharing cancelled or not supported.";
   }
 });
+
 
 /* ================= UPLOAD ================= */
 
