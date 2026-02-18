@@ -4,8 +4,6 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA";
-
-
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ================= ELEMENTS ================= */
@@ -35,6 +33,11 @@ let currentFacingMode = "environment";
 let capturedBlob = null;
 let capturedType = null;
 
+let mediaRecorder = null;
+let recordedChunks = [];
+let holdTimeout = null;
+let isRecording = false;
+
 /* =========================================================
    MODE SELECTION
 ========================================================= */
@@ -51,7 +54,7 @@ galleryModeBtn.addEventListener("click", () => {
 });
 
 /* =========================================================
-   EXISTING FILE UPLOAD (FIXED)
+   GALLERY UPLOAD
 ========================================================= */
 
 fileInput.addEventListener("change", (e) => {
@@ -70,45 +73,68 @@ fileInput.addEventListener("change", (e) => {
   switchBtn.style.display = "none";
 
   if (file.type.startsWith("image")) {
-
     const img = new Image();
-
     img.onload = () => {
       canvas.width = img.width;
       canvas.height = img.height;
       canvas.getContext("2d").drawImage(img, 0, 0);
-
       video.style.display = "none";
       canvas.style.display = "block";
     };
-
     img.src = URL.createObjectURL(file);
-
   } else {
-
     video.src = URL.createObjectURL(file);
     video.controls = true;
     video.style.display = "block";
     canvas.style.display = "none";
-
   }
 
-  /* =========================================================
-   PHOTO (TAP) + VIDEO (HOLD) CAPTURE
+  showPreviewButtons();
+});
+
+/* =========================================================
+   CAMERA
 ========================================================= */
 
-let mediaRecorder = null;
-let recordedChunks = [];
-let holdTimeout = null;
-let isRecording = false;
+async function startCamera() {
 
-/* ----------- TAP = PHOTO ----------- */
+  stopCameraStream();
+
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: currentFacingMode },
+      audio: true
+    });
+
+    video.srcObject = stream;
+    video.play();
+    video.style.display = "block";
+    canvas.style.display = "none";
+
+  } catch (err) {
+    status.innerText = "Camera permission denied.";
+  }
+}
+
+function stopCameraStream() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+}
+
+switchBtn.addEventListener("click", async () => {
+  currentFacingMode =
+    currentFacingMode === "environment" ? "user" : "environment";
+  await startCamera();
+});
+
+/* =========================================================
+   TAP = PHOTO
+========================================================= */
 
 recordBtn.addEventListener("click", () => {
-
-  // If it was a hold recording, ignore click
   if (isRecording) return;
-
   capturePhoto();
 });
 
@@ -116,17 +142,15 @@ function capturePhoto() {
 
   if (!stream) return;
 
-  const ctx = canvas.getContext("2d");
-
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
 
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  canvas.getContext("2d").drawImage(video, 0, 0);
 
   canvas.toBlob((blob) => {
     capturedBlob = blob;
     capturedType = "image/jpeg";
-  }, "image/jpeg", 0.9);
+  }, "image/jpeg", 0.95);
 
   stopCameraStream();
 
@@ -136,21 +160,21 @@ function capturePhoto() {
   showPreviewButtons();
 }
 
-/* ----------- HOLD = VIDEO ----------- */
+/* =========================================================
+   HOLD = VIDEO
+========================================================= */
 
-recordBtn.addEventListener("mousedown", startHold);
-recordBtn.addEventListener("touchstart", startHold);
-
-recordBtn.addEventListener("mouseup", stopHold);
-recordBtn.addEventListener("mouseleave", stopHold);
-recordBtn.addEventListener("touchend", stopHold);
-
-function startHold() {
+recordBtn.addEventListener("pointerdown", () => {
 
   holdTimeout = setTimeout(() => {
     startRecording();
-  }, 300); // 300ms hold threshold
-}
+  }, 250);
+
+});
+
+recordBtn.addEventListener("pointerup", stopHold);
+recordBtn.addEventListener("pointercancel", stopHold);
+recordBtn.addEventListener("pointerleave", stopHold);
 
 function stopHold() {
 
@@ -168,7 +192,7 @@ function startRecording() {
   recordedChunks = [];
   mediaRecorder = new MediaRecorder(stream);
 
-  mediaRecorder.ondataavailable = (e) => {
+  mediaRecorder.ondataavailable = e => {
     if (e.data.size > 0) recordedChunks.push(e.data);
   };
 
@@ -194,57 +218,19 @@ function startRecording() {
 }
 
 function stopRecording() {
-
   mediaRecorder.stop();
   isRecording = false;
   recordBtn.classList.remove("recording");
 }
-
-/* ----------- STOP CAMERA ----------- */
-
-function stopCameraStream() {
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
-    stream = null;
-  }
-}
-  showPreviewButtons();
-});
-
-/* =========================================================
-   CAMERA
-========================================================= */
-
-async function startCamera() {
-
-  if (stream) stream.getTracks().forEach(t => t.stop());
-
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: currentFacingMode },
-      audio: true
-    });
-
-    video.srcObject = stream;
-    video.style.display = "block";
-    canvas.style.display = "none";
-
-  } catch (err) {
-    status.innerText = "Camera permission denied.";
-  }
-}
-
-switchBtn.addEventListener("click", async () => {
-  currentFacingMode =
-    currentFacingMode === "environment" ? "user" : "environment";
-  await startCamera();
-});
 
 /* =========================================================
    PREVIEW STATE
 ========================================================= */
 
 function showPreviewButtons() {
+
+  recordBtn.style.display = "none";
+  switchBtn.style.display = "none";
 
   retakeBtn.style.display = "inline-block";
   shareBtn.style.display = "inline-block";
@@ -274,51 +260,11 @@ retakeBtn.addEventListener("click", () => {
   controls.style.display = "none";
   modeSelection.style.display = "flex";
 
-  fileInput.value = ""; // IMPORTANT RESET
+  fileInput.value = "";
 });
 
 /* =========================================================
-   SHARE (Native Mobile Share)
-========================================================= */
-
-shareBtn.addEventListener("click", async () => {
-
-  if (!capturedBlob) return;
-
-  const ext = capturedType.startsWith("image") ? "jpg" : "webm";
-  const file = new File(
-    [capturedBlob],
-    `wedding_memory_${Date.now()}.${ext}`,
-    { type: capturedType }
-  );
-
-  try {
-
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
-
-      await navigator.share({
-        title: "Wedding Memory 🤍",
-        text: "Captured at the Wedding ✨",
-        files: [file]
-      });
-
-    } else {
-
-      const url = URL.createObjectURL(capturedBlob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = file.name;
-      a.click();
-
-    }
-
-  } catch (err) {
-    console.log("Share cancelled");
-  }
-});
-
-/* =========================================================
-   UPLOAD TO SUPABASE
+   UPLOAD
 ========================================================= */
 
 uploadBtn.addEventListener("click", async () => {
@@ -346,6 +292,5 @@ uploadBtn.addEventListener("click", async () => {
   }]);
 
   status.innerText = "Uploaded successfully 🤍";
-
   retakeBtn.click();
 });
