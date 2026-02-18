@@ -93,6 +93,121 @@ fileInput.addEventListener("change", (e) => {
 
   }
 
+  /* =========================================================
+   PHOTO (TAP) + VIDEO (HOLD) CAPTURE
+========================================================= */
+
+let mediaRecorder = null;
+let recordedChunks = [];
+let holdTimeout = null;
+let isRecording = false;
+
+/* ----------- TAP = PHOTO ----------- */
+
+recordBtn.addEventListener("click", () => {
+
+  // If it was a hold recording, ignore click
+  if (isRecording) return;
+
+  capturePhoto();
+});
+
+function capturePhoto() {
+
+  if (!stream) return;
+
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  canvas.toBlob((blob) => {
+    capturedBlob = blob;
+    capturedType = "image/jpeg";
+  }, "image/jpeg", 0.9);
+
+  stopCameraStream();
+
+  video.style.display = "none";
+  canvas.style.display = "block";
+
+  showPreviewButtons();
+}
+
+/* ----------- HOLD = VIDEO ----------- */
+
+recordBtn.addEventListener("mousedown", startHold);
+recordBtn.addEventListener("touchstart", startHold);
+
+recordBtn.addEventListener("mouseup", stopHold);
+recordBtn.addEventListener("mouseleave", stopHold);
+recordBtn.addEventListener("touchend", stopHold);
+
+function startHold() {
+
+  holdTimeout = setTimeout(() => {
+    startRecording();
+  }, 300); // 300ms hold threshold
+}
+
+function stopHold() {
+
+  clearTimeout(holdTimeout);
+
+  if (isRecording) {
+    stopRecording();
+  }
+}
+
+function startRecording() {
+
+  if (!stream) return;
+
+  recordedChunks = [];
+  mediaRecorder = new MediaRecorder(stream);
+
+  mediaRecorder.ondataavailable = (e) => {
+    if (e.data.size > 0) recordedChunks.push(e.data);
+  };
+
+  mediaRecorder.onstop = () => {
+
+    const blob = new Blob(recordedChunks, { type: "video/webm" });
+
+    capturedBlob = blob;
+    capturedType = "video/webm";
+
+    video.srcObject = null;
+    video.src = URL.createObjectURL(blob);
+    video.controls = true;
+
+    stopCameraStream();
+
+    showPreviewButtons();
+  };
+
+  mediaRecorder.start();
+  isRecording = true;
+  recordBtn.classList.add("recording");
+}
+
+function stopRecording() {
+
+  mediaRecorder.stop();
+  isRecording = false;
+  recordBtn.classList.remove("recording");
+}
+
+/* ----------- STOP CAMERA ----------- */
+
+function stopCameraStream() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+}
   showPreviewButtons();
 });
 
