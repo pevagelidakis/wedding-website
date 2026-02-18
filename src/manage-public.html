@@ -30,24 +30,39 @@ async function loadFiles() {
     .list("", { limit: 1000 });
 
   if (error) {
-    status.innerText = "Failed to load files";
+    console.error(error);
+    status.innerText = "Failed to load files.";
     return;
   }
 
   gallery.innerHTML = "";
 
+  if (!data || data.length === 0) {
+    status.innerText = "No photos found.";
+    return;
+  }
+
   for (const file of data) {
 
-    const { data: publicUrlData } = supabase
-      .storage
-      .from("public-pics")
-      .getPublicUrl(file.name);
+    if (!file.name) continue;
+
+    // Create signed URL (valid for 60 seconds)
+    const { data: signedData, error: signedError } =
+      await supabase
+        .storage
+        .from("public-pics")
+        .createSignedUrl(file.name, 60);
+
+    if (signedError) {
+      console.error("Signed URL error:", signedError);
+      continue;
+    }
 
     const container = document.createElement("div");
     container.className = "photo-item";
 
     const img = document.createElement("img");
-    img.src = publicUrlData.publicUrl;
+    img.src = signedData.signedUrl;
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -62,7 +77,6 @@ async function loadFiles() {
     gallery.appendChild(container);
   }
 }
-
 /* ================= MOVE FILES ================= */
 
 moveBtn.addEventListener("click", async () => {
