@@ -96,32 +96,22 @@ fileInput.addEventListener("change", (e) => {
    CAMERA
 ========================================================= */
 
+/* ================= CAMERA ================= */
+
 async function startCamera() {
+  if (stream) stream.getTracks().forEach(t => t.stop());
 
-  stopCameraStream();
+  stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: currentFacingMode },
+    audio: true
+  });
 
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: currentFacingMode },
-      audio: true
-    });
-
-    video.srcObject = stream;
-    video.play();
-    video.style.display = "block";
-    canvas.style.display = "none";
-
-  } catch (err) {
-    status.innerText = "Camera permission denied.";
-  }
+  video.srcObject = stream;
 }
 
-function stopCameraStream() {
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
-    stream = null;
-  }
-}
+startCamera();
+
+/* ================= SWITCH ================= */
 
 switchBtn.addEventListener("click", async () => {
   currentFacingMode =
@@ -129,30 +119,42 @@ switchBtn.addEventListener("click", async () => {
   await startCamera();
 });
 
-/* =========================================================
-   TAP = PHOTO
-========================================================= */
+/* ================= TAP / HOLD ================= */
 
-recordBtn.addEventListener("click", () => {
-  if (isRecording) return;
-  capturePhoto();
-});
+let holdTimer;
 
-function capturePhoto() {
+recordBtn.addEventListener("mousedown", startHold);
+recordBtn.addEventListener("touchstart", startHold);
 
-  if (!stream) return;
+recordBtn.addEventListener("mouseup", endHold);
+recordBtn.addEventListener("mouseleave", endHold);
+recordBtn.addEventListener("touchend", endHold);
 
+function startHold(e) {
+  e.preventDefault();
+  holdTimer = setTimeout(() => startRecording(), 600);
+}
+
+function endHold(e) {
+  e.preventDefault();
+  clearTimeout(holdTimer);
+
+  if (isRecording) stopRecording();
+  else takePhoto();
+}
+
+/* ================= PHOTO ================= */
+
+function takePhoto() {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
 
   canvas.getContext("2d").drawImage(video, 0, 0);
 
-  canvas.toBlob((blob) => {
+  canvas.toBlob(blob => {
     capturedBlob = blob;
     capturedType = "image/jpeg";
-  }, "image/jpeg", 0.95);
-
-  stopCameraStream();
+  }, "image/jpeg", 0.9);
 
   video.style.display = "none";
   canvas.style.display = "block";
@@ -160,34 +162,11 @@ function capturePhoto() {
   showPreviewButtons();
 }
 
-/* =========================================================
-   HOLD = VIDEO
-========================================================= */
-
-recordBtn.addEventListener("pointerdown", () => {
-
-  holdTimeout = setTimeout(() => {
-    startRecording();
-  }, 250);
-
-});
-
-recordBtn.addEventListener("pointerup", stopHold);
-recordBtn.addEventListener("pointercancel", stopHold);
-recordBtn.addEventListener("pointerleave", stopHold);
-
-function stopHold() {
-
-  clearTimeout(holdTimeout);
-
-  if (isRecording) {
-    stopRecording();
-  }
-}
+/* ================= VIDEO ================= */
 
 function startRecording() {
-
-  if (!stream) return;
+  isRecording = true;
+  recordBtn.classList.add("recording");
 
   recordedChunks = [];
   mediaRecorder = new MediaRecorder(stream);
@@ -197,84 +176,113 @@ function startRecording() {
   };
 
   mediaRecorder.onstop = () => {
-
-    const blob = new Blob(recordedChunks, { type: "video/webm" });
-
-    capturedBlob = blob;
+    capturedBlob = new Blob(recordedChunks, { type: "video/webm" });
     capturedType = "video/webm";
 
     video.srcObject = null;
-    video.src = URL.createObjectURL(blob);
+    video.src = URL.createObjectURL(capturedBlob);
     video.controls = true;
-
-    stopCameraStream();
 
     showPreviewButtons();
   };
 
   mediaRecorder.start();
-  isRecording = true;
-  recordBtn.classList.add("recording");
 }
 
 function stopRecording() {
-  mediaRecorder.stop();
   isRecording = false;
   recordBtn.classList.remove("recording");
+  mediaRecorder.stop();
 }
 
-/* =========================================================
-   PREVIEW STATE
-========================================================= */
+/* ================= PREVIEW MODE ================= */
 
 function showPreviewButtons() {
-
   recordBtn.style.display = "none";
   switchBtn.style.display = "none";
 
   retakeBtn.style.display = "inline-block";
-  shareBtn.style.display = "inline-block";
   uploadBtn.style.display = "inline-block";
+  shareBtn.style.display = "inline-block";
 }
 
-/* =========================================================
-   RETAKE
-========================================================= */
+/* ================= RETAKE ================= */
 
-retakeBtn.addEventListener("click", () => {
-
+retakeBtn.addEventListener("click", async () => {
   capturedBlob = null;
   capturedType = null;
 
-  video.src = "";
-  video.srcObject = null;
   video.controls = false;
-
+  video.style.display = "block";
   canvas.style.display = "none";
 
   retakeBtn.style.display = "none";
-  shareBtn.style.display = "none";
   uploadBtn.style.display = "none";
+  shareBtn.style.display = "none";
 
-  cameraWrapper.style.display = "none";
-  controls.style.display = "none";
-  modeSelection.style.display = "flex";
+  recordBtn.style.display = "block";
+  switchBtn.style.display = "inline-block";
 
-  fileInput.value = "";
+  await startCamera();
 });
 
-/* =========================================================
-   UPLOAD
-========================================================= */
+/* ================= SHARE ================= */
+
+shareBtn.addEventListener("click", async () => {
+  if (!capturedBlob) return;
+
+  try {
+    const extension =
+      capturedType === "image/jpeg" ? "jpg" : "webm";
+
+    const fileName = `Panos_Marianna_Wedding_${Date.now()}.${extension}`;
+
+    const file = new File(
+      [capturedBlob],
+      fileName,
+      { type: capturedType }
+    );
+
+    // ✅ Mobile native share (Instagram, Gmail, Messenger etc)
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+
+      await navigator.share({
+        title: "Wedding Memory 🤍",
+        text: "Captured at Panos & Marianna’s Wedding ✨",
+        files: [file]
+      });
+
+      status.innerText = "Shared successfully 🤍";
+
+    } else {
+      // 🖥 Desktop fallback
+      const url = URL.createObjectURL(capturedBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+
+      status.innerText = "Downloaded (Sharing not supported on this device)";
+    }
+
+  } catch (err) {
+    console.error(err);
+    status.innerText = "Sharing cancelled or not supported.";
+  }
+});
+
+
+/* ================= UPLOAD ================= */
 
 uploadBtn.addEventListener("click", async () => {
-
   if (!capturedBlob) return;
 
   status.innerText = "Uploading...";
 
-  const ext = capturedType.startsWith("image") ? "jpg" : "webm";
-  const filePath = `memory_${Date.now()}.${ext}`;
+  const extension =
+    capturedType === "image/jpeg" ? "jpg" : "webm";
+
+  const filePath = `memory_${Date.now()}.${extension}`;
 
   const { error } = await supabase.storage
     .from("public-pics")
@@ -292,5 +300,6 @@ uploadBtn.addEventListener("click", async () => {
   }]);
 
   status.innerText = "Uploaded successfully 🤍";
+
   retakeBtn.click();
 });
