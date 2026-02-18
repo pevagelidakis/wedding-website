@@ -1,7 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// document.addEventListener("DOMContentLoaded", () => {
-
 const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -301,5 +299,8 @@ uploadBtn.addEventListener("click", async () => {
 
   status.innerText = "Uploaded successfully 🤍";
 
-  retakeBtn.click();
+  // retakeBtn.click();
+  setTimeout(() => {
+  window.location.reload();
+}, 1000);
 });
