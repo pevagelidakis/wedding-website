@@ -36,7 +36,14 @@ async function loadFiles() {
   }
 
   gallery.innerHTML = "";
+  selectedFiles.clear();
 
+  // 🔥 FILTER REAL FILES ONLY
+  const files = data.filter(file =>
+    file.name &&
+    !file.name.startsWith('.') &&
+    file.metadata !== null
+  );
   if (!data || data.length === 0) {
     status.innerText = "No photos found.";
     return;
@@ -78,7 +85,6 @@ async function loadFiles() {
   }
 }
 /* ================= MOVE FILES ================= */
-
 moveBtn.addEventListener("click", async () => {
 
   if (selectedFiles.size === 0) {
@@ -90,34 +96,86 @@ moveBtn.addEventListener("click", async () => {
 
   for (const fileName of selectedFiles) {
 
-    // 1️⃣ Download file from public bucket
-    const { data: fileData } = await supabase
-      .storage
-      .from("public-pics")
-      .download(fileName);
+    try {
 
-    // 2️⃣ Upload to private bucket
-    await supabase.storage
-      .from("private-pics")
-      .upload(fileName, fileData, { upsert: true });
+      // 1️⃣ Download
+      const { data: fileData, error: downloadError } =
+        await supabase.storage
+          .from("public-pics")
+          .download(fileName);
 
-    // 3️⃣ Delete from public bucket
-    await supabase.storage
-      .from("public-pics")
-      .remove([fileName]);
+      if (downloadError) throw downloadError;
 
-    // 4️⃣ Update DB visibility
-    await supabase
-      .from("uploads")
-      .update({ visibility: "private" })
-      .eq("file_path", fileName);
+      // 2️⃣ Upload to private
+      const { error: uploadError } =
+        await supabase.storage
+          .from("private-pics")
+          .upload(fileName, fileData, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // 3️⃣ Delete from public
+      const { error: deleteError } =
+        await supabase.storage
+          .from("public-pics")
+          .remove([fileName]);
+
+      if (deleteError) throw deleteError;
+
+      // 4️⃣ Update DB
+      await supabase
+        .from("uploads")
+        .update({ visibility: "private" })
+        .eq("file_path", fileName);
+
+    } catch (err) {
+      console.error("Move failed for:", fileName, err);
+    }
   }
 
   status.innerText = "Selected photos moved to private.";
 
-  selectedFiles.clear();
   loadFiles();
 });
+// moveBtn.addEventListener("click", async () => {
+
+//   if (selectedFiles.size === 0) {
+//     status.innerText = "No photos selected.";
+//     return;
+//   }
+
+//   status.innerText = "Moving files...";
+
+//   for (const fileName of selectedFiles) {
+
+//     // 1️⃣ Download file from public bucket
+//     const { data: fileData } = await supabase
+//       .storage
+//       .from("public-pics")
+//       .download(fileName);
+
+//     // 2️⃣ Upload to private bucket
+//     await supabase.storage
+//       .from("private-pics")
+//       .upload(fileName, fileData, { upsert: true });
+
+//     // 3️⃣ Delete from public bucket
+//     await supabase.storage
+//       .from("public-pics")
+//       .remove([fileName]);
+
+//     // 4️⃣ Update DB visibility
+//     await supabase
+//       .from("uploads")
+//       .update({ visibility: "private" })
+//       .eq("file_path", fileName);
+//   }
+
+//   status.innerText = "Selected photos moved to private.";
+
+//   selectedFiles.clear();
+//   loadFiles();
+// });
 
 /* ================= INIT ================= */
 
