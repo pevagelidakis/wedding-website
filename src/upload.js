@@ -38,7 +38,12 @@ cameraModeBtn.onclick = async () => {
   await startCamera();
 };
 
-galleryModeBtn.onclick = () => fileInput.click();
+galleryModeBtn.addEventListener("click", () => {
+    fileInput.removeAttribute("capture");
+    fileInput.setAttribute("accept", "image/*,video/*");
+    fileInput.click();
+  });
+// galleryModeBtn.onclick = () => fileInput.click();
 
 /* ========== FILE UPLOAD ========== */
 
