@@ -109,7 +109,7 @@ const status = document.getElementById("status");
 let currentFiles = new Set();
 
 /* ================= LOAD PHOTOS ================= */
-async function loadPhotos() {
+async function loadPhotos_() {
 
   const { data, error } =
     await supabase.storage
@@ -132,7 +132,7 @@ async function loadPhotos() {
   status.innerText = "Files found: " + data.length;
 }
 
-async function loadPhotos2() {
+async function loadPhotos() {
 
   gallery.innerHTML = "";
   status.innerText = "Loading...";
