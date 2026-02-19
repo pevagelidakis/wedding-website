@@ -133,47 +133,76 @@ async function loadFiles() {
 
   const allFiles = [];
 
-  const { data: rootData, error: rootError } =
+  const { data, error } =
     await supabase.storage
       .from("public-pics")
       .list("", { limit: 1000 });
 
-  if (rootError) {
-    console.error(rootError);
-    status.innerText = "Error: " + rootError.message;
+  if (error) {
+    console.error(error);
+    status.innerText = "Error: " + error.message;
     return;
   }
 
-  for (const item of rootData) {
+  gallery.innerHTML = "";
+  selectedFiles.clear();
 
-    // Folder
-    if (!item.metadata) {
-
-      const { data: folderFiles } =
-        await supabase.storage
-          .from("public-pics")
-          .list(item.name, { limit: 1000 });
-
-      if (folderFiles) {
-        folderFiles.forEach(file => {
-          if (file.metadata && file.metadata.size > 0) {
-            allFiles.push(`${item.name}/${file.name}`);
-          }
-        });
-      }
-
-    } else {
-      // Root file
-      if (item.metadata.size > 0) {
-        allFiles.push(item.name);
-      }
-    }
-  }
-
-  if (allFiles.length === 0) {
-    status.innerText = "No photos found in bucket.";
+  if (!data || data.length === 0) {
+    status.innerText = "No photos found.";
     return;
   }
+
+  // 🔥 Strict filtering
+  const validFiles = data.filter(file =>
+    file.name &&
+    file.id &&                     // must have id
+    file.metadata &&               // must have metadata
+    file.metadata.size > 0         // must not be empty
+  );
+
+  for (const file of validFiles) {
+
+    const { data: signedData, error: signedError } =
+      await supabase
+        .storage
+        .from("public-pics")
+        .createSignedUrl(file.name, 60);
+
+    if (signedError) continue;
+
+    createImageCard(file.name, signedData.signedUrl);
+  }
+
+  // for (const item of data) {
+
+  //   // Folder
+  //   if (!item.metadata) {
+
+  //     const { data: folderFiles } =
+  //       await supabase.storage
+  //         .from("public-pics")
+  //         .list(item.name, { limit: 1000 });
+
+  //     if (folderFiles) {
+  //       folderFiles.forEach(file => {
+  //         if (file.metadata && file.metadata.size > 0) {
+  //           allFiles.push(`${item.name}/${file.name}`);
+  //         }
+  //       });
+  //     }
+
+  //   } else {
+  //     // Root file
+  //     if (item.metadata.size > 0) {
+  //       allFiles.push(item.name);
+  //     }
+  //   }
+  // }
+
+  // if (allFiles.length === 0) {
+  //   status.innerText = "No photos found in bucket.";
+  //   return;
+  // }
 
   // Sort newest first (important UX improvement)
   allFiles.sort().reverse();
