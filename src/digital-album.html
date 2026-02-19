@@ -118,14 +118,16 @@ async function loadPhotos() {
     .list("", { limit: 1000 });
 
   if (error) {
-    console.error(error);
-    status.innerText = "Failed to load images.";
+    console.error("List error:", error);
+    status.innerText = "Error loading bucket: " + error.message;
     return;
   }
 
-  if (!data) return;
+  if (!data) {
+    status.innerText = "No data returned.";
+    return;
+  }
 
-  // Strict filtering (no empty folder entries)
   const validFiles = data.filter(file =>
     file.name &&
     file.id &&
@@ -133,28 +135,23 @@ async function loadPhotos() {
     file.metadata.size > 0
   );
 
-  const newFileNames = new Set(validFiles.map(f => f.name));
-
-  // Only update DOM if something changed
-  if (setsAreEqual(currentFiles, newFileNames)) {
-    return;
-  }
-
-  currentFiles = newFileNames;
   gallery.innerHTML = "";
 
   for (const file of validFiles) {
 
-    const { data: signedData } =
+    const { data: signedData, error: signedError } =
       await supabase
         .storage
         .from("public-pics")
         .createSignedUrl(file.name, 60);
 
-    if (!signedData) continue;
+    if (signedError) {
+      console.error("Signed URL error:", signedError);
+      continue;
+    }
 
     const card = document.createElement("div");
-    card.className = "photo-card fade-in";
+    card.className = "photo-card";
 
     const img = document.createElement("img");
     img.src = signedData.signedUrl;
@@ -162,6 +159,10 @@ async function loadPhotos() {
 
     card.appendChild(img);
     gallery.appendChild(card);
+  }
+
+  if (validFiles.length === 0) {
+    status.innerText = "No photos yet.";
   }
 }
 
