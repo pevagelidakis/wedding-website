@@ -352,6 +352,25 @@ function createImageCard(fileName, imageUrl) {
 
 
 loadFiles();
+supabase
+  .channel("storage-changes")
+  .on(
+    "postgres_changes",
+    {
+      event: "INSERT",
+      schema: "public",
+      table: "uploads", // your uploads table
+      filter: "visibility=eq.public"
+    },
+    (payload) => {
+      const filePath = payload.new.file_path;
+
+      if (!loadedFiles.has(filePath)) {
+        appendPhoto(filePath);
+      }
+    }
+  )
+  .subscribe();
 
 </script>
 
