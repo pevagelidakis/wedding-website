@@ -6,6 +6,7 @@
 <title>Capture the Moment</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
 :root{
@@ -17,7 +18,11 @@
 body{
   margin:0;
   font-family:'Inter',sans-serif;
-  background:radial-gradient(circle at top,#1c1c1c,#0d0d0d);
+  background:
+      linear-gradient(rgba(0,0,0,.80), rgba(0,0,0,.90)),
+      url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2000&auto=format&fit=crop') 
+      no-repeat center center fixed;
+    background-size:cover;
   color:var(--ivory);
   display:flex;
   flex-direction:column;
@@ -162,8 +167,8 @@ video,canvas{
 <div class="subtitle">Tap for photo • Hold for video</div>
 
 <div id="modeSelection" class="mode-selection">
-  <button id="cameraModeBtn" class="mode-btn">📷 Use Camera</button>
-  <button id="galleryModeBtn" class="mode-btn">🖼 Upload</button>
+  <button id="cameraModeBtn" class="mode-btn">📸 Use Camera</button>
+  <button id="galleryModeBtn" class="mode-btn"><i class="fa-solid fa-file-import"></i> From Files</button>
 </div>
 
 <input type="file" id="fileInput" accept="image/*,video/*" style="display:none;" />
@@ -174,17 +179,14 @@ video,canvas{
 </div>
 
 <div class="controls">
-  <button id="switchBtn" class="switch-btn">🔄</button>
+  <button id="switchBtn" class="switch-btn"><i class="fa-solid fa-repeat"></i></button>
   <div id="recordBtn" class="record-btn"></div>
 
   <button id="retakeBtn" class="retake-btn">⟳ Retake</button>
 
 
-  <button id="shareBtn" class="share-btn" aria-label="Share"> 
-    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
-  <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/>
-</svg> Share</button>
-  <button id="uploadBtn" class="upload-btn">☁ Upload</button>
+  <button id="shareBtn" class="share-btn" aria-label="Share"> <i class="fa-solid fa-share-nodes"></i> Share</button>
+  <button id="uploadBtn" class="upload-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</button>
 </div>
 <p id="status"></p>
 
