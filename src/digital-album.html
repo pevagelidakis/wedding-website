@@ -82,6 +82,62 @@ h1{
   font-size:14px;
   opacity:.6;
 }
+
+
+/* ================= MODAL ================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  padding:20px;
+}
+
+.modal-content{
+  max-width:90%;
+  max-height:80%;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 20px 80px rgba(0,0,0,.8);
+}
+
+.modal-content img{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+.modal-actions{
+  position:absolute;
+  bottom:40px;
+  display:flex;
+  gap:20px;
+}
+
+.modal-btn{
+  padding:12px 20px;
+  border-radius:30px;
+  border:none;
+  cursor:pointer;
+  font-size:14px;
+  background:var(--gold);
+  color:#000;
+  font-weight:600;
+}
+
+.close-btn{
+  position:absolute;
+  top:30px;
+  right:30px;
+  font-size:28px;
+  cursor:pointer;
+  color:white;
+}
+
 </style>
 </head>
 
@@ -132,7 +188,7 @@ async function loadPhotos_() {
   status.innerText = "Files found: " + data.length;
 }
 
-async function loadPhotos() {
+async function loadPhotos2() {
 
   gallery.innerHTML = "";
   status.innerText = "Loading...";
@@ -209,6 +265,101 @@ async function loadPhotos() {
 
   status.innerText = "";
 }
+let loadedFiles = new Set();
+
+async function loadPhotos() {
+
+  status.innerText = "Loading...";
+
+  const allFiles = [];
+
+  const { data: rootData, error: rootError } =
+    await supabase.storage
+      .from("public-pics")
+      .list("", { limit: 1000 });
+
+  if (rootError) {
+    console.error(rootError);
+    status.innerText = "Error: " + rootError.message;
+    return;
+  }
+
+  for (const item of rootData) {
+
+    // Folder
+    if (!item.metadata) {
+
+      const { data: folderFiles } =
+        await supabase.storage
+          .from("public-pics")
+          .list(item.name, { limit: 1000 });
+
+      if (folderFiles) {
+        folderFiles.forEach(file => {
+          if (file.metadata && file.metadata.size > 0) {
+            allFiles.push(`${item.name}/${file.name}`);
+          }
+        });
+      }
+
+    } else {
+      // Root file
+      if (item.metadata.size > 0) {
+        allFiles.push(item.name);
+      }
+    }
+  }
+
+  if (allFiles.length === 0) {
+    status.innerText = "No photos found in bucket.";
+    return;
+  }
+
+  // Sort newest first (important UX improvement)
+  allFiles.sort().reverse();
+
+  for (const filePath of allFiles) {
+
+    // 🚫 Prevent duplicates
+    if (loadedFiles.has(filePath)) continue;
+
+    await appendPhoto(filePath);
+  }
+
+  status.innerText = "";
+}
+
+async function appendPhoto(filePath) {
+
+  const { data: signedData } =
+    await supabase.storage
+      .from("public-pics")
+      .createSignedUrl(filePath, 60);
+
+  if (!signedData) return;
+
+  const imageUrl = signedData.signedUrl;
+
+  const card = document.createElement("div");
+  card.className = "photo-card fade-in";
+
+  const img = document.createElement("img");
+  img.src = imageUrl;
+  img.loading = "lazy";
+
+  img.addEventListener("click", () => {
+    openModal(imageUrl, filePath);
+  });
+
+  card.appendChild(img);
+
+  // New uploads appear on top
+  gallery.prepend(card);
+
+  // Mark as loaded
+  loadedFiles.add(filePath);
+}
+
 
 /* ================= HELPER ================= */
 
@@ -219,11 +370,103 @@ function setsAreEqual(a, b) {
 }
 
 /* ================= AUTO REFRESH ================= */
+const modal = document.getElementById("imageModal");
+const modalImage = document.getElementById("modalImage");
+const closeModal = document.getElementById("closeModal");
+const downloadBtn = document.getElementById("downloadBtn");
+const shareBtn = document.getElementById("shareBtn");
 
+let currentImageUrl = null;
+let currentFileName = null;
+
+function openModal(url, fileName){
+  currentImageUrl = url;
+  currentFileName = fileName;
+
+  modalImage.src = url;
+  modal.style.display = "flex";
+}
+
+closeModal.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+/* ================= DOWNLOAD ================= */
+
+downloadBtn.addEventListener("click", async () => {
+
+  const response = await fetch(currentImageUrl);
+  const blob = await response.blob();
+
+  const file = new File([blob], currentFileName, { type: blob.type });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(file);
+  link.download = currentFileName;
+  link.click();
+});
+
+/* ================= SHARE ================= */
+
+shareBtn.addEventListener("click", async () => {
+
+  try {
+
+    const response = await fetch(currentImageUrl);
+    const blob = await response.blob();
+
+    const file = new File([blob], currentFileName, { type: blob.type });
+
+    if (navigator.share && navigator.canShare?.({ files:[file] })) {
+
+      await navigator.share({
+        title: "Wedding Memory 🤍",
+        text: "Beautiful moment from the wedding ✨",
+        files:[file]
+      });
+
+    } else {
+
+      alert("Sharing not supported on this device.");
+
+    }
+
+  } catch(err){
+    console.log("Share cancelled");
+  }
+});
 loadPhotos();
-setInterval(loadPhotos, 5000);
+supabase
+  .channel("storage-changes")
+  .on(
+    "postgres_changes",
+    {
+      event: "INSERT",
+      schema: "public",
+      table: "uploads", // your uploads table
+      filter: "visibility=eq.public"
+    },
+    (payload) => {
+      const filePath = payload.new.file_path;
+
+      if (!loadedFiles.has(filePath)) {
+        appendPhoto(filePath);
+      }
+    }
+  )
+  .subscribe();
+// setInterval(loadPhotos, 5000);
 
 </script>
-
+<div id="imageModal" class="modal">
+  <span id="closeModal" class="close-btn">✕</span>
+  <div class="modal-content">
+    <img id="modalImage" src="" />
+  </div>
+  <div class="modal-actions">
+    <button id="downloadBtn" class="modal-btn">⬇ Download</button>
+    <button id="shareBtn" class="modal-btn">✨ Share</button>
+  </div>
+</div>
 </body>
 </html>
