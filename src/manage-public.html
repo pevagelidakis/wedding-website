@@ -84,7 +84,7 @@ let selectedFiles = new Set();
 //     gallery.appendChild(container);
 //   }
 // }
-async function loadFiles() {
+async function loadFiles_() {
 
   const { data, error } = await supabase
     .storage
@@ -126,6 +126,100 @@ async function loadFiles() {
     createImageCard(file.name, signedData.signedUrl);
   }
 }
+
+async function loadPhotos() {
+
+  status.innerText = "Loading...";
+
+  const allFiles = [];
+
+  const { data: rootData, error: rootError } =
+    await supabase.storage
+      .from("public-pics")
+      .list("", { limit: 1000 });
+
+  if (rootError) {
+    console.error(rootError);
+    status.innerText = "Error: " + rootError.message;
+    return;
+  }
+
+  for (const item of rootData) {
+
+    // Folder
+    if (!item.metadata) {
+
+      const { data: folderFiles } =
+        await supabase.storage
+          .from("public-pics")
+          .list(item.name, { limit: 1000 });
+
+      if (folderFiles) {
+        folderFiles.forEach(file => {
+          if (file.metadata && file.metadata.size > 0) {
+            allFiles.push(`${item.name}/${file.name}`);
+          }
+        });
+      }
+
+    } else {
+      // Root file
+      if (item.metadata.size > 0) {
+        allFiles.push(item.name);
+      }
+    }
+  }
+
+  if (allFiles.length === 0) {
+    status.innerText = "No photos found in bucket.";
+    return;
+  }
+
+  // Sort newest first (important UX improvement)
+  allFiles.sort().reverse();
+
+  for (const filePath of allFiles) {
+
+    // 🚫 Prevent duplicates
+    if (loadedFiles.has(filePath)) continue;
+
+    await appendPhoto(filePath);
+  }
+
+  status.innerText = "";
+}
+
+async function appendPhoto(filePath) {
+
+  const { data: signedData } =
+    await supabase.storage
+      .from("public-pics")
+      .createSignedUrl(filePath, 60);
+
+  if (!signedData) return;
+
+  const imageUrl = signedData.signedUrl;
+
+  const card = document.createElement("div");
+  card.className = "photo-card fade-in";
+
+  const img = document.createElement("img");
+  img.src = imageUrl;
+  img.loading = "lazy";
+
+  img.addEventListener("click", () => {
+    openModal(imageUrl, filePath);
+  });
+
+  card.appendChild(img);
+
+  // New uploads appear on top
+  gallery.prepend(card);
+
+  // Mark as loaded
+  loadedFiles.add(filePath);
+}
+
 /* ================= MOVE FILES ================= */
 // moveBtn.addEventListener("click", async () => {
 
@@ -262,60 +356,6 @@ loadFiles();
 </script>
 
 <style>
-/* body{
-  margin:0;
-  font-family:sans-serif;
-  background:#111;
-  color:white;
-  padding:20px;
-}
-
-h2{
-  text-align:center;
-}
-
-.gallery{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-  gap:15px;
-  margin-top:20px;
-}
-
-.photo-item{
-  position:relative;
-}
-
-.photo-item img{
-  width:100%;
-  border-radius:10px;
-}
-
-.photo-item input{
-  position:absolute;
-  top:8px;
-  right:8px;
-  width:20px;
-  height:20px;
-}
-
-button{
-  margin-top:20px;
-  padding:12px 20px;
-  border:none;
-  border-radius:30px;
-  background:#d4af37;
-  cursor:pointer;
-  display:block;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-#status{
-  text-align:center;
-  margin-top:20px;
-  opacity:.8;
-} */
-
  body{
   margin:0;
   font-family:'Inter',sans-serif;
