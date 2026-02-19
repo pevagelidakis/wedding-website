@@ -366,6 +366,17 @@ function createImageCard(fileName, imageUrl) {
 
   card.addEventListener("click", () => {
 
+  card.classList.toggle("selected");
+  if (selectedFiles.has(fileName)) {
+    selectedFiles.delete(fileName);
+  } else {
+    selectedFiles.add(fileName);
+  }
+
+});
+
+  card.addEventListener("click", () => {
+
     if (selectedFiles.has(fileName)) {
       selectedFiles.delete(fileName);
       card.classList.remove("selected");
@@ -429,25 +440,88 @@ h2{
   border-radius:20px;
   overflow:hidden;
   cursor:pointer;
-  transition:all .3s ease;
+  transition:all .35s cubic-bezier(.22,1,.36,1);
   box-shadow:0 10px 40px rgba(0,0,0,.5);
+  transform:scale(1);
 }
 
+/* ================= HOVER EFFECT ================= */
+.photo-card:hover{
+  transform:translateY(-8px) scale(1.02);
+  box-shadow:
+    0 0 0 2px rgba(212,175,55,.4),
+    0 25px 60px rgba(212,175,55,.35);
+}
+
+/* ================= SELECTED STATE ================= */
+.photo-card.selected{
+  transform:scale(1.03);
+  box-shadow:
+    0 0 0 4px #d4af37,
+    0 0 40px rgba(212,175,55,.6),
+    0 0 80px rgba(212,175,55,.3);
+  animation:selectPulse 1.8s ease-in-out infinite;
+}
+
+/* ================= IMAGE ================= */
 .photo-card img{
   width:100%;
   height:260px;
   object-fit:cover;
   display:block;
+  transition:transform .4s ease;
 }
 
-.photo-card:hover{
-  transform:translateY(-6px);
+.photo-card:hover img{
+  transform:scale(1.05);
 }
 
-.photo-card.selected{
-  box-shadow:0 0 0 4px gold,
-             0 0 30px gold;
+/* ================= PULSE ANIMATION ================= */
+@keyframes selectPulse{
+  0%{
+    box-shadow:
+      0 0 0 4px #d4af37,
+      0 0 40px rgba(212,175,55,.6),
+      0 0 80px rgba(212,175,55,.3);
+  }
+  50%{
+    box-shadow:
+      0 0 0 4px #d4af37,
+      0 0 60px rgba(212,175,55,.8),
+      0 0 120px rgba(212,175,55,.5);
+  }
+  100%{
+    box-shadow:
+      0 0 0 4px #d4af37,
+      0 0 40px rgba(212,175,55,.6),
+      0 0 80px rgba(212,175,55,.3);
+  }
 }
+.photo-card::after{
+  content:"✔";
+  position:absolute;
+  top:12px;
+  right:15px;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:#d4af37;
+  color:black;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  font-size:16px;
+  opacity:0;
+  transform:scale(.5);
+  transition:all .3s ease;
+}
+
+.photo-card.selected::after{
+  opacity:1;
+  transform:scale(1);
+}
+
 
 button{
   margin-top:40px;
