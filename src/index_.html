@@ -22,14 +22,9 @@
     <h1>Panagiotis & Marianna</h1>
     <p>June 27, 2026 • Kozani, Greece</p>
   </div>
-  <div class="language-switch">
-  <button onclick="setLanguage('en')" id="btn-en">EN</button>
-  <button onclick="setLanguage('gr')" id="btn-gr">GR</button>
-</div>
-
 </header>
 
-  <h2 id="withGreatJoy"></h2>
+  <h2>With Great Joy</h2>
   <section class="invitation">
     <a href="media/Wedding Invitation.pdf"  class = "quote-link">
       <blockquote class="wedding-quote">
@@ -204,7 +199,7 @@
 </section>
 
 <section class="rsvp-section" id="rsvp">
-  <h2 class="rsvp-title" id="rsvpTitle"></h2>
+  <h2 class="rsvp-title">Kindly Respond</h2>
 
   <p class="rsvp-intro">
     We would be honored to celebrate this special day with you.
@@ -258,8 +253,9 @@
       ></textarea>
     </div>
 
-    <button type="submit" class="rsvp-button" id="sendBtn"></button>
-
+    <button type="submit" class="rsvp-button">
+      Send with Love
+    </button>
   </form>
 
   <div id="rsvp-thankyou" class="rsvp-thankyou" style="display:none;">
@@ -382,46 +378,6 @@
   <p style="color:var(--accent);">Panagiotis & Marianna</p>
 </footer>
 
-<script>
-const translations = {
-  en: {
-    withGreatJoy: "With Great Joy",
-    rsvpTitle: "Kindly Respond",
-    sendBtn: "Send with Love"
-  },
-  gr: {
-    withGreatJoy: "Με Μεγάλη Χαρά",
-    rsvpTitle: "Παρακαλούμε Απαντήστε",
-    sendBtn: "Στείλτε με Αγάπη"
-  }
-};
-
-function setLanguage(lang) {
-  localStorage.setItem("language", lang);
-  applyLanguage(lang);
-}
-
-function applyLanguage(lang) {
-  document.documentElement.lang = lang;
-
-  Object.keys(translations[lang]).forEach(id => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.innerHTML = translations[lang][id];
-    }
-  });
-
-  // Highlight active button
-  document.getElementById("btn-en").style.opacity = lang === "en" ? "1" : "0.5";
-  document.getElementById("btn-gr").style.opacity = lang === "gr" ? "1" : "0.5";
-}
-
-// On page load
-document.addEventListener("DOMContentLoaded", () => {
-  const savedLang = localStorage.getItem("language") || "en";
-  applyLanguage(savedLang);
-});
-</script>
 
 <script type="module" src="main.js"></script>
 </body>
