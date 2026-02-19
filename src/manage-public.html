@@ -19,7 +19,6 @@ const moveBtn = document.getElementById("moveBtn");
 const status = document.getElementById("status");
 
 let selectedFiles = new Set();
-let loadedFiles = new Set();
 
 /* ================= LOAD FILES ================= */
 
@@ -182,7 +181,7 @@ async function loadFiles() {
   for (const filePath of allFiles) {
 
     // 🚫 Prevent duplicates
-    if (loadedFiles.has(filePath)) continue;
+    if (selectedFiles.has(filePath)) continue;
 
     await appendPhoto(filePath);
   }
@@ -218,7 +217,7 @@ async function appendPhoto(filePath) {
   gallery.prepend(card);
 
   // Mark as loaded
-  loadedFiles.add(filePath);
+  selectedFiles.add(filePath);
 }
 
 /* ================= MOVE FILES ================= */
@@ -366,7 +365,7 @@ supabase
     (payload) => {
       const filePath = payload.new.file_path;
 
-      if (!loadedFiles.has(filePath)) {
+      if (!selectedFiles.has(filePath)) {
         appendPhoto(filePath);
       }
     }
