@@ -109,8 +109,30 @@ const status = document.getElementById("status");
 let currentFiles = new Set();
 
 /* ================= LOAD PHOTOS ================= */
-
 async function loadPhotos() {
+
+  const { data, error } =
+    await supabase.storage
+      .from("public-pics")
+      .list("", { limit: 1000 });
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+
+  if (error) {
+    status.innerText = "Error: " + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    status.innerText = "Bucket returned empty array.";
+    return;
+  }
+
+  status.innerText = "Files found: " + data.length;
+}
+
+async function loadPhotos2() {
 
   gallery.innerHTML = "";
   status.innerText = "Loading...";
