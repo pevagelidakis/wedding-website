@@ -112,43 +112,67 @@ let currentFiles = new Set();
 
 async function loadPhotos() {
 
-  const { data, error } = await supabase
-    .storage
-    .from("public-pics")
-    .list("", { limit: 1000 });
-
-  if (error) {
-    console.error("List error:", error);
-    status.innerText = "Error loading bucket: " + error.message;
-    return;
-  }
-
-  if (!data) {
-    status.innerText = "No data returned.";
-    return;
-  }
-
-  const validFiles = data.filter(file =>
-    file.name &&
-    file.id &&
-    file.metadata &&
-    file.metadata.size > 0
-  );
-
   gallery.innerHTML = "";
+  status.innerText = "Loading...";
 
-  for (const file of validFiles) {
+  const allFiles = [];
 
-    const { data: signedData, error: signedError } =
-      await supabase
-        .storage
+  // 1️⃣ List root
+  const { data: rootData, error: rootError } =
+    await supabase.storage
+      .from("public-pics")
+      .list("", { limit: 1000 });
+
+  if (rootError) {
+    console.error(rootError);
+    status.innerText = "Error: " + rootError.message;
+    return;
+  }
+
+  for (const item of rootData) {
+
+    // If item is a folder
+    if (!item.metadata) {
+
+      const { data: folderFiles } =
+        await supabase.storage
+          .from("public-pics")
+          .list(item.name, { limit: 1000 });
+
+      if (folderFiles) {
+        folderFiles.forEach(file => {
+          if (file.metadata && file.metadata.size > 0) {
+            allFiles.push({
+              name: `${item.name}/${file.name}`
+            });
+          }
+        });
+      }
+
+    } else {
+      // Root-level file
+      if (item.metadata.size > 0) {
+        allFiles.push({
+          name: item.name
+        });
+      }
+    }
+  }
+
+  if (allFiles.length === 0) {
+    status.innerText = "No photos found in bucket.";
+    return;
+  }
+
+  // 2️⃣ Display all files
+  for (const file of allFiles) {
+
+    const { data: signedData } =
+      await supabase.storage
         .from("public-pics")
         .createSignedUrl(file.name, 60);
 
-    if (signedError) {
-      console.error("Signed URL error:", signedError);
-      continue;
-    }
+    if (!signedData) continue;
 
     const card = document.createElement("div");
     card.className = "photo-card";
@@ -161,9 +185,7 @@ async function loadPhotos() {
     gallery.appendChild(card);
   }
 
-  if (validFiles.length === 0) {
-    status.innerText = "No photos yet.";
-  }
+  status.innerText = "";
 }
 
 /* ================= HELPER ================= */
