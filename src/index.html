@@ -570,6 +570,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("language") || "en";
   applyLanguage(savedLang);
 });
+
+const card = document.getElementById("weddingCard");
+
+card.addEventListener("click", () => {
+  card.classList.toggle("flipped");
+});
 </script>
 
 <script type="module" src="main.js"></script>
