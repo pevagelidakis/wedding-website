@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Save The Date</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Alex+Brush&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&family=Alex+Brush&display=swap&family=GFS+Didot&display=swap" rel="stylesheet">
 
 <style>
   * {
@@ -138,25 +138,21 @@
 </style>
 </head>
 <body>
-
+<div class="language-switch">
+  <button onclick="setLanguage('en')" id="btn-en">EN</button>
+  <button onclick="setLanguage('gr')" id="btn-gr">GR</button>
+</div>
 <div class="card">
   <img src="./media/SaveTheDate_pre.jpg" alt="Save The Date Background">
 
   <div class="left-content">
-    <h1>Save The Date</h1>
-    <h2>June 2026</h2>
-    <div class="names">
-      Marianna <br>
-      & <br>
-      Panagiotis
-    </div>
+    <h1 id="save">Save The Date</h1>
+    <h2 id="date">June 2026</h2>
+    <div class="names" id="names"></div>
   </div>
 
   <div class="calendar">
-    <div class="calendar-header">
-      <div>Sun</div><div>Mon</div><div>Tue</div>
-      <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-    </div>
+    <div class="calendar-header" id="cal_header"></div>
 
     <div class="calendar-grid">
       <div></div>
@@ -173,7 +169,7 @@
 
       <div class="day">21</div><div class="day">22</div><div class="day">23</div>
       <div class="day">24</div><div class="day">25</div><div class="day">26</div>
-      <div class="day heart-day">
+      <div class="day heart-day highlight">
         <svg viewBox="0 0 100 90" class="heart-svg">
             <path d="M50 80
                     L15 45
@@ -193,5 +189,62 @@
 
 </div>
 
+
+<script>
+const translations = {
+  en: {
+    save:"Save The Date",
+    date:"<b>June 2026</b>",
+    names:`
+    Marianna <br>
+      & <br>
+    Panagiotis
+    `,
+    cal_header:`
+      <strong><div>Sun</div><div>Mon</div><div>Tue</div>
+      <div>Wed</div><div>Thu</div><div>Fri</div><div>Sut</div></strong>
+    `
+  },
+  gr: {
+    save:"Η Ομορφότερη Ημερομηνία",
+    date:"<b>Ιούνιος 2026</b>",
+    names:`
+      Μαριάννα <br>
+      & <br>
+      Παναγιώτης
+    `,
+    cal_header:`
+      <strong><div>Κ</div><div>Δ</div><div>Τ</div>
+      <div>Τ</div><div>Π</div><div>Π</div><div>Σ</div></strong>
+    `
+  }
+};
+
+function setLanguage(lang) {
+  localStorage.setItem("language", lang);
+  applyLanguage(lang);
+}
+
+function applyLanguage(lang) {
+  document.documentElement.lang = lang;
+
+  Object.keys(translations[lang]).forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.innerHTML = translations[lang][id];
+    }
+  });
+
+  // Highlight active button
+  document.getElementById("btn-en").style.opacity = lang === "en" ? "1" : "0.5";
+  document.getElementById("btn-gr").style.opacity = lang === "gr" ? "1" : "0.5";
+}
+
+// On page load
+document.addEventListener("DOMContentLoaded", () => {
+  const savedLang = localStorage.getItem("language") || "en";
+  applyLanguage(savedLang);
+});
+</script>
 </body>
 </html>
