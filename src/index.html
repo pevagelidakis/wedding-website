@@ -141,14 +141,14 @@
       <input type="text" name="name" required>
     </div>
 
-    <div class="rsvp-group">
+    <!-- <div class="rsvp-group">
       <label id="email_"></label>
       <input type="email" name="email" id="email">
-    </div>
+    </div> -->
 
     <div class="rsvp-group">
       <label id="mobile"></label>
-      <input type="tel" name="phone" id="phone" pattern="[0-9+\s]{7,15}">
+      <input type="tel" name="phone" id="phone" pattern="[0-9+\s]{7,15}" required>
     </div>
     <p id="contact_error" style="color: crimson; display:none; font-size: 0.9rem;"></p>
     <div class="rsvp-row">
@@ -169,7 +169,7 @@
           min="1"
           max="50"
           placeholder="1"
-        >
+        required>
       </div>
     </div>
     <div class="rsvp-group" id="msg_2_couple"></div>
@@ -240,10 +240,10 @@
   </p> -->
 <!-- </section> -->
 
-<section class="wedding-memories mobile-only">
+<!-- <section class="wedding-memories mobile-only">
   <h2 id="wedding_memories"></h2>
   <div class="memory-gallery" id="memoryGallery"></div>
-</section>
+</section> -->
 
 
 
@@ -346,9 +346,8 @@ const translations = {
     rsvpTitle: "Kindly Respond",
     rsvp_intro:"We would be honored to celebrate this special day with you.",
     name_:"Your name",
-    email_: "Your email",
     mobile: "Mobile Number",
-    contact_error: "Please provide either an Email Address or a Mobile Number.",
+    contact_error: "Please, provide us your a mobile Number.",
     attend:"Will you honor us with your presence?",
     rsvp_reply:"What's your decision?",
     yes:"Joyfully accept! 🤍🤩",
@@ -371,7 +370,6 @@ const translations = {
     </p>
     `,
     digital_album: "Check our current digital album (LIVE🔴)!",
-    wedding_memories:"Wedding Memories 🤍",
     desktop_message:`
     <h2>Share Your Memories</h2>
     <p>
@@ -420,8 +418,8 @@ const translations = {
       `,
     team_groom:`<span style="color:gold;font-family: 'GFS Didot', serif;">Γαμπρο</span><span style="color:white;font-family: 'GFS Didot', serif;">παρέα</span>`,
     groom_invitation:`<p>
-        Κυριοι, στεφανώνομαι!🤵💍<br><br>
-        Εξοπληστείτε μα την καλύτερη των διαθέσεων, καλλωπιστείτε κι ελάτε να κάνουμε μία πρόποση 
+        Κύριοι, στεφανώνομαι!🤵💍<br><br>
+        Εξοπληστείτε με την καλύτερη των διαθέσεων, καλλωπιστείτε κι ελάτε να κάνουμε μία πρόποση 
         πριν το χορό του Ησαΐα στην <b>Ιωάννη Κακριδή 7, Κοζάνη</b>.
         (<a href="https://maps.app.goo.gl/9W14iwWg3qVqhAnBA" class="elegant-link"><b>δείτε στο χάρτη</b></a>).<br><br>
         <b>Σάββατο 27 Ιουνίου, 2026 · 13:00</b>
@@ -496,9 +494,8 @@ const translations = {
     rsvpTitle: `<span style="font-family: 'GFS Didot', serif;">Παρακαλούμε Απαντήστε</span>`,
     rsvp_intro:"Θα ήταν τιμή μας να γιορτάσουμε την ξεχωριστή αυτή ημέρα μαζί σας!",
     name_:"To όνομά σας",
-    email_: "Η διεύθυνση ηλεκτρονικού ταχυδρομείου σας",
     mobile: "Ο αριθμός σας",
-    contact_error: "Παρακαλώ, χορηγήστε μας με κάποιο στοιχείο επικοινωνίας: Αριθμό τηλεφώνου σας ή διεύθυνση ηλεκτρονικού ταχυδρομείου σας.",
+    contact_error: "Παρακαλώ, χορηγήστε μας με τον αριθμό του κινητού τηλεφώνου σας.",
     seats:"Κράτημένες θέσεις",
     attend:"Θα μας τιμήσετε με την παρουσία σας?",
     rsvp_reply:"Τι αποφασίσατε?",
