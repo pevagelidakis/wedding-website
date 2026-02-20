@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Save The Date</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #f4f4f4;
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* Maintain exact 1536x2048 ratio */
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 768px; /* scale as needed */
+    aspect-ratio: 1536 / 2048;
+    margin: auto;
+  }
+
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* =============================
+     LEFT TEXT BLOCK (calibrated)
+     ============================= */
+
+  .left-content {
+    position: absolute;
+    top: 5.859375%;
+    left: 7.8125%;
+    color: #111;
+  }
+
+  .left-content h1 {
+    font-size: clamp(28px, 3vw, 42px);
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+
+  .left-content h2 {
+    font-size: clamp(22px, 2.5vw, 32px);
+    font-weight: 400;
+    margin-bottom: 40px;
+  }
+
+  .names {
+    font-size: clamp(24px, 2.8vw, 36px);
+    line-height: 1.6;
+  }
+
+  /* =============================
+     CALENDAR BLOCK (calibrated)
+     ============================= */
+
+  .calendar {
+    position: absolute;
+    top: 5.859375%;
+    right: 7.8125%;
+    text-align: center;
+    color: #111;
+  }
+
+  .calendar-header,
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .calendar-header {
+    font-size: clamp(12px, 1.2vw, 18px);
+    margin-bottom: 10px;
+  }
+
+  .calendar-grid {
+    gap: clamp(6px, 0.8vw, 12px);
+    font-size: clamp(12px, 1.2vw, 18px);
+  }
+
+  .day {
+    width: clamp(20px, 2vw, 30px);
+    height: clamp(20px, 2vw, 30px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .highlight {
+    border: 2px solid red;
+    border-radius: 50%;
+    position: relative;
+  }
+
+  .highlight::after {
+    content: "❤";
+    position: absolute;
+    color: red;
+    font-size: 0.9em;
+    top: -40%;
+    right: -40%;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="card">
+  <img src="SaveTheDate_pre.jpg" alt="Save The Date Background">
+
+  <div class="left-content">
+    <h1>Save The Date</h1>
+    <h2>June 2026</h2>
+    <div class="names">
+      Marianna <br>
+      & <br>
+      Panagiotis
+    </div>
+  </div>
+
+  <div class="calendar">
+    <div class="calendar-header">
+      <div>Sun</div><div>Mon</div><div>Tue</div>
+      <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+    </div>
+
+    <div class="calendar-grid">
+      <div></div>
+      <div class="day">1</div><div class="day">2</div><div class="day">3</div>
+      <div class="day">4</div><div class="day">5</div><div class="day">6</div>
+
+      <div class="day">7</div><div class="day">8</div><div class="day">9</div>
+      <div class="day">10</div><div class="day">11</div><div class="day">12</div>
+      <div class="day">13</div>
+
+      <div class="day">14</div><div class="day">15</div><div class="day">16</div>
+      <div class="day">17</div><div class="day">18</div><div class="day">19</div>
+      <div class="day">20</div>
+
+      <div class="day">21</div><div class="day">22</div><div class="day">23</div>
+      <div class="day">24</div><div class="day">25</div><div class="day">26</div>
+      <div class="day highlight">27</div>
+
+      <div class="day">28</div><div class="day">29</div><div class="day">30</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
