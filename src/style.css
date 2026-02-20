@@ -388,6 +388,10 @@ p {
   margin-bottom: 50px;
 }
 
+form {
+  transition: opacity .4s ease;
+}
+
 .rsvp-form {
   display: grid;
   gap: 26px;
@@ -459,6 +463,22 @@ p {
   font-size: 1.05rem;
   line-height: 1.7;
   color: #555;
+}
+
+#rsvp_thankyou {
+  display: none;
+  text-align: center;
+  margin-top: 40px;
+  animation: fadeIn 0.6s ease forwards;
+}
+
+#rsvp_thankyou.show {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 600px) {
@@ -807,4 +827,15 @@ p {
 
 .fade-message.show {
   opacity: 1;
+}
+
+.error-message {
+  display: none;
+  color: #d9534f;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.error-message.show {
+  display: block;
 }

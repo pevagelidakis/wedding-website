@@ -140,13 +140,13 @@
       <label id="name_"></label>
       <input type="text" name="name" required>
     </div>
-    <p id="contact_error_name" style="color: crimson; display:none; font-size: 0.9rem;"></p>
+    <p class="error-message" id="contact_error_name"></p>
 
     <div class="rsvp-group">
       <label id="mobile"></label>
       <input type="tel" name="phone" id="phone" pattern="[0-9+\s]{7,15}">
     </div>
-    <p id="contact_error" style="color: crimson; display:none; font-size: 0.9rem;"></p>
+    <p id="contact_error" class="error-message"></p>
     <div class="rsvp-row">
       <div class="rsvp-group">
         <label id="attend"></label>
@@ -165,10 +165,9 @@
           min="1"
           max="50"
           placeholder="1"
-        required>
-    <p id="contact_error_attend" style="color: crimson; display:none; font-size: 0.9rem;"></p>
-
+        required>  
       </div>
+      <p id="contact_error_attend" class="error-message"></p>
     </div>
     <div class="rsvp-group" id="msg_2_couple"></div>
 

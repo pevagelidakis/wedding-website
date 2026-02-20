@@ -83,7 +83,14 @@ form.addEventListener("submit", async (e) => {
 
     if (!response.ok) throw new Error();
 
-    form.style.display = "none";
+    form.style.opacity = "0";
+    form.style.pointerEvents = "none";
+
+    setTimeout(() => {
+      form.style.display = "none";
+      thankYou.classList.add("show");
+    }, 400);
+    
     thankYou.style.display = "block";
 
     if (typeof floatingPetals === "function") {
