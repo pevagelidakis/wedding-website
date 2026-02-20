@@ -855,10 +855,14 @@ form {
    ========================= */
 
 .fancy-card-section {
-  padding: 100px 20px;
-  background: linear-gradient(to bottom, #f9f9f9, #ffffff);
+  min-height: 100vh; /* Full viewport height */
   display: flex;
-  justify-content: center;
+  align-items: center;       /* vertical center */
+  justify-content: center;   /* horizontal center */
+  background: 
+    linear-gradient(to bottom, #f9f9f9, #ffffff)
+    url("media/papyrus-bg.jpg")     center / cover no-repeat;
+  padding: 40px 20px;
 }
 
 .fancy-card {
