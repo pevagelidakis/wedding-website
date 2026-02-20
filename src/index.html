@@ -184,15 +184,16 @@
 
 <!-- <section class="fancy-card-section"> -->
   <h2 id="SaveTheDate">Save The Date</h2>
-    <div class="flip-card" id="weddingCard">
+    <div class="flip-card" id="weddingCard" style="justify-content: center;">
       <div class="flip-card-inner">
         <div class="flip-card-front">
           <div class="fancy-card">
             <img src="media/SaveTheDate.jpg" alt="Wedding Details Card">
           </div>
-          <div class="flip-card-back">
-            <img src="media/wedding-bg.png" alt="Wedding Card Back">
-          </div>
+        </div>
+        <div class="flip-card-back">
+          <img src="media/wedding-bg.png" alt="Wedding Card Back">
+        </div>
         </div>
       </div>
     </div>
@@ -579,9 +580,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const card = document.getElementById("weddingCard");
-
-card.addEventListener("click", () => {
-  card.classList.toggle("flipped");
+card.addEventListener("click", function () {
+  this.classList.toggle("flipped");
 });
 </script>
 
