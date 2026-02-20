@@ -392,6 +392,15 @@ form {
   transition: opacity .4s ease;
 }
 
+#guests-group {
+  display: none;
+  transition: all .3s ease;
+}
+
+#guests-group.visible {
+  display: block;
+}
+
 .rsvp-form {
   display: grid;
   gap: 26px;

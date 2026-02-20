@@ -12,14 +12,22 @@ const errorPhone = document.getElementById("contact_error");
 const errorAttend = document.getElementById("contact_error_attend");
 
 attendance.addEventListener("change", () => {
-  const input = guestsGroup.querySelector("input");
-  if (attendance.value === "Yes") {
-    guestsGroup.style.display = "block";
-    input.required = true;
+  const seatsInput = guestsGroup.querySelector("input");
+  const contactError = document.getElementById("contact_error");
+
+  // Always normalize value
+  const value = attendance.value.toLowerCase();
+
+  if (value === "yes") {
+    guestsGroup.classList.add("visible");
+    seatsInput.required = true;
   } else {
-    guestsGroup.style.display = "none";
-    input.required = false;
-    input.value = "";
+    guestsGroup.classList.remove("visible");
+    seatsInput.required = false;
+    seatsInput.value = "";
+
+    // 🔥 IMPORTANT: Hide error if switching to "No"
+    contactError.classList.remove("show");
   }
 });
 
@@ -90,7 +98,7 @@ form.addEventListener("submit", async (e) => {
       form.style.display = "none";
       thankYou.classList.add("show");
     }, 400);
-    
+
     thankYou.style.display = "block";
 
     if (typeof floatingPetals === "function") {
