@@ -857,7 +857,6 @@ form {
 .fancy-card-section {
   min-height: 100vh; /* Full viewport height */
   display: flex;
-  align-items: center;       /* vertical center */
   justify-content: center;   /* horizontal center */
   background: 
     linear-gradient(to bottom, #f9f9f9, #ffffff)
