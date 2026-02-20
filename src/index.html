@@ -6,7 +6,8 @@
 <title>Panos & Marianna | Wedding</title>
 
 <!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&family=Alex+Brush&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&family=Alex+Brush&display=swap&family=GFS+Didot&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
 <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
@@ -234,10 +235,10 @@
 
   <div class="gallery" id="gallery"></div>
 
-  <p class="hashtags" style="margin-top: 30px;">
+  <!-- <p class="hashtags" style="margin-top: 30px;">
     Suggested hashtags: <b>#PanosAndMarianna</b> <b>#KozaniWedding2026</b> <b>#TogetherAlways</b>
-  </p>
-</section>
+  </p> -->
+<!-- </section> -->
 
 <section class="wedding-memories mobile-only">
   <h2 id="wedding_memories"></h2>
@@ -274,7 +275,7 @@ const translations = {
   <footer style ="text-align: center;">You still have questions? See below for more clarifications!</footer>
   
       `,
-    bride_team:`Team <span style="color:gold;">Bride</span>`,
+    bride_team:`Team <span style="color:gold; ">Bride</span>`,
     bride_invitation:`
      <p>
         To my beautiful bride team 🤍<br><br>
@@ -389,7 +390,7 @@ const translations = {
     prewedd:"Γαμήλιες Προετοιμασίες",
     invitation:`
     <a href="media/Wedding Invitation.pdf"  class = "quote-link">
-      <blockquote class="wedding-quote">
+      <blockquote class="wedding-quote" style="font-family: 'GFS Didot', serif;">
         Με τις καρδιές μας γεμάτες αγάπη, εμείς και οι οικογένειές μας,
         <b style="color:var(--accent);">γένος Ευαγγελιδάκη και Παπαδοπούλου</b>,
         τιμώμενοι με την αγάπη και στήριξη των κουμπάρων <b style="color:var(--accent);">σμήνη Σημαντηράκη</b>, 
@@ -406,7 +407,7 @@ const translations = {
     </a>
   <footer style ="text-align: center;">Υπάρχουν ακόμα αναπάντητα ερωτήματα; Δείτε παρακάτω για περισσότερες λεπτομέρειες!</footer>
       `,
-    bride_team:`<span style="color:gold;">Νυφο</span>παρέα`,
+    bride_team:`<span style="color:gold; font-family: 'GFS Didot', serif;">Νυφο</span><span style="font-family: 'GFS Didot', serif;">παρέα</span>`,
     bride_invitation:`
      <p>
         Υπέροχη νυφο-ομάδα μου 🤍<br><br>
@@ -417,7 +418,7 @@ const translations = {
         <b>Σάββατο 27 Ιουνίου, 2026 · 13:00</b>
       </p>
       `,
-    team_groom:`<span style="color:gold;">Γαμπρο</span>Παρέα`,
+    team_groom:`<span style="color:gold;font-family: 'GFS Didot', serif;">Γαμπρο</span><span style="font-family: 'GFS Didot', serif;">Παρέα</span>`,
     groom_invitation:`<p>
         Κυριοι, στεφανώνομαι!🤵💍<br><br>
         Εξοπληστείτε μα την καλύτερη των διαθέσεων, καλλωπιστείτε κι ελάτε να κάνουμε μία πρόποση 
@@ -426,7 +427,7 @@ const translations = {
         <b>Σάββατο 27 Ιουνίου, 2026 · 13:00</b>
       </p>`,
     ceremony_afterparty:" Στέψη & Δεξίωση",
-    ceremony:`<b>Γαμήλια <span>Τελετή</span></b>`,
+    ceremony:`<b style="font-family: 'GFS Didot', serif;">Γαμήλια <span>Τελετή</span></b>`,
     ceremony_text:`
       Ελάτε να ενώσουμε τις καρδιές με αγάπη.
       Μια ημέρα γεμάτη χαρά, γέλια και πολύτιμες στιγμές σας περιμένει,
@@ -438,7 +439,7 @@ const translations = {
 
       <b>Σάββατο, 27 Ιουνίου 2026 · 18:30</b>
     `,
-    venue:`<b><span style="color:white;">Γαμήλιο </span><span style="color:gold;">δεξίωση</span><span style="color:white;">! </span></b>`,
+    venue:`<b style="font-family: 'GFS Didot', serif;"><span style="color:white;">Γαμήλιο </span><span style="color:gold;">δεξίωση</span><span style="color:white;">! </span></b>`,
     venue_text:`
         Μετά τους όρκους μας, σας προσκαλούμε να γιορτάσουμε μαζί μια βραδιά γεμάτη χαρά και εορτασμό.  
         Ας μοιραστούμε γέλια, εκλεκτό φαγητό και χορό, υψώνοντας τα ποτήρια μας στην αγάπη,  
@@ -492,7 +493,7 @@ const translations = {
       Κοζάνη θα είναι εξίσου όμορφο και αξέχαστο με τον ίδιο τον προορισμό.
   </p> 
   `,
-    rsvpTitle: "Παρακαλούμε Απαντήστε",
+    rsvpTitle: `<span style="font-family: 'GFS Didot', serif;">Παρακαλούμε Απαντήστε</span>`,
     rsvp_intro:"Θα ήταν τιμή μας να γιορτάσουμε την ξεχωριστή αυτή ημέρα μαζί σας!",
     name_:"To όνομά σας",
     email_: "Η διεύθυνση ηλεκτρονικού ταχυδρομείου σας",
