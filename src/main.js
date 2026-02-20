@@ -2,27 +2,59 @@ const form = document.getElementById("rsvp-form");
 const thankYou = document.getElementById("rsvp-thankyou");
 const attendance = document.getElementById("attendance");
 const guestsGroup = document.getElementById("guests-group");
-const emailInput = document.getElementById("email");
+
+const nameInput = form.querySelector("input[name='name']");
+const phoneInput = document.getElementById("phone");
+const guestsInput = guestsGroup.querySelector("input");
+
+const errorName = document.getElementById("contact_error_name");
+const errorPhone = document.getElementById("contact_error");
+const errorAttend = document.getElementById("contact_error_attend");
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  e.stopPropagation(); // 🔥 extra safety
+  e.stopPropagation();
 
-  const attendanceValue = attendanceSelect.value.toLowerCase();
-  const email = emailInput.value.trim();
-  const phone = phoneInput.value.trim();
-
-  errorBox.style.display = "none";
+  // Reset all errors
+  errorName.style.display = "none";
+  errorPhone.style.display = "none";
+  errorAttend.style.display = "none";
   thankYou.style.display = "none";
 
-  // 🚨 STRICT VALIDATION
-  const isAttending = attendanceValue === "yes";
-  const hasContact = email.length > 0 || phone.length > 0;
+  const nameValue = nameInput.value.trim();
+  const phoneValue = phoneInput.value.trim();
+  const attendanceValue = attendance.value;
+  const guestsValue = guestsInput.value.trim();
 
-  if (isAttending && !hasContact) {
-    errorBox.style.display = "block";
-    return; // ❌ HARD STOP
+  let hasError = false;
+
+  // 1️⃣ Name required
+  if (!nameValue) {
+    errorName.style.display = "block";
+    hasError = true;
   }
+
+  // 2️⃣ Attendance required
+  if (!attendanceValue) {
+    errorAttend.style.display = "block";
+    hasError = true;
+  }
+
+  // 3️⃣ If attending YES → require phone AND guests
+  if (attendanceValue === "Yes") {
+
+    if (!phoneValue) {
+      errorPhone.style.display = "block";
+      hasError = true;
+    }
+
+    if (!guestsValue || parseInt(guestsValue) < 1) {
+      errorAttend.style.display = "block";
+      hasError = true;
+    }
+  }
+
+  if (hasError) return; // ❌ STOP submission completely
 
   try {
     const response = await fetch(form.action, {
@@ -40,8 +72,8 @@ form.addEventListener("submit", async (e) => {
       floatingPetals();
     }
 
-  } catch (err) {
-    alert("Something went wrong. Please try again.");
+  } catch {
+    alert("Oops, something feels off. Please try again.");
   }
 });
 
@@ -62,11 +94,11 @@ attendance.addEventListener("change", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    if (emailInput.value) {
+    if (phoneValue.value) {
       const reply = document.createElement("input");
       reply.type = "hidden";
       reply.name = "_replyto";
-      reply.value = emailInput.value;
+      reply.value = phoneValue.value;
       form.appendChild(reply);
     }
 
@@ -133,18 +165,18 @@ attendance.addEventListener("change", () => {
     setTimeout(() => petal.remove(), (duration + 2) * 1000);
   }
 }
-attendance.addEventListener("change", () => {
-  const input = guestsGroup.querySelector("input");
+// attendance.addEventListener("change", () => {
+//   const input = guestsGroup.querySelector("input");
 
-  if (attendance.value === "Yes") {
-    guestsGroup.classList.add("visible");
-    input.required = true;
-  } else {
-    guestsGroup.classList.remove("visible");
-    input.required = false;
-    input.value = "";
-  }
-});
+//   if (attendance.value === "Yes") {
+//     guestsGroup.classList.add("visible");
+//     input.required = true;
+//   } else {
+//     guestsGroup.classList.remove("visible");
+//     input.required = false;
+//     input.value = "";
+//   }
+// });
 
 
 
