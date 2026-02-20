@@ -1,56 +1,27 @@
 const form = document.getElementById("rsvp-form");
-const thankYou = document.getElementById("rsvp_thankyou");
-const attendanceSelect = document.getElementById("attendance");
+const thankYou = document.getElementById("rsvp-thankyou");
+const attendance = document.getElementById("attendance");
 const guestsGroup = document.getElementById("guests-group");
 const emailInput = document.getElementById("email");
-const phoneInput = document.getElementById("phone");
-const errorBox = document.getElementById("contact_error");
-
-
-/* ================= ATTENDANCE CHANGE ================= */
-
-attendanceSelect.addEventListener("change", () => {
-  const input = guestsGroup.querySelector("input");
-
-  if (attendanceSelect.value.toLowerCase() === "yes") {
-    guestsGroup.classList.add("visible");
-    input.required = true;
-  } else {
-    guestsGroup.classList.remove("visible");
-    input.required = false;
-    input.value = "";
-  }
-});
-
-
-/* ================= FORM SUBMIT ================= */
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  e.stopPropagation(); // 🔥 extra safety
 
   const attendanceValue = attendanceSelect.value.toLowerCase();
   const email = emailInput.value.trim();
   const phone = phoneInput.value.trim();
 
-  // Reset UI states
   errorBox.style.display = "none";
   thankYou.style.display = "none";
 
-  /* ===== VALIDATION RULE =====
-     If attending YES → require email OR phone
-  */
-  if (attendanceValue === "yes" && !email && !phone) {
-    errorBox.style.display = "block";
-    return;
-  }
+  // 🚨 STRICT VALIDATION
+  const isAttending = attendanceValue === "yes";
+  const hasContact = email.length > 0 || phone.length > 0;
 
-  // Add reply-to dynamically if email exists
-  if (email) {
-    const reply = document.createElement("input");
-    reply.type = "hidden";
-    reply.name = "_replyto";
-    reply.value = email;
-    form.appendChild(reply);
+  if (isAttending && !hasContact) {
+    errorBox.style.display = "block";
+    return; // ❌ HARD STOP
   }
 
   try {
@@ -62,7 +33,6 @@ form.addEventListener("submit", async (e) => {
 
     if (!response.ok) throw new Error();
 
-    // Success UI
     form.style.display = "none";
     thankYou.style.display = "block";
 
@@ -76,9 +46,52 @@ form.addEventListener("submit", async (e) => {
 });
 
 
-/* ================= PETALS ANIMATION ================= */
 
-function floatingPetals() {
+attendance.addEventListener("change", () => {
+  const input = guestsGroup.querySelector("input");
+  if (attendance.value === "Yes") {
+    guestsGroup.style.display = "block";
+    input.required = true;
+  } else {
+    guestsGroup.style.display = "none";
+    input.required = false;
+    input.value = "";
+  }
+});
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (emailInput.value) {
+      const reply = document.createElement("input");
+      reply.type = "hidden";
+      reply.name = "_replyto";
+      reply.value = emailInput.value;
+      form.appendChild(reply);
+    }
+
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" }
+      });
+
+      if (!response.ok) throw new Error();
+
+      form.style.display = "none";
+      thankYou.style.display = "block";
+
+      if (typeof floatingPetals === "function") {
+        floatingPetals();
+      }
+
+    } catch {
+      alert("Something went wrong. Please try again.");
+    }
+  });
+
+  function floatingPetals() {
   const container = document.getElementById("petal-container");
   if (!container) return;
 
@@ -86,9 +99,11 @@ function floatingPetals() {
     const petal = document.createElement("div");
     petal.classList.add("petal");
 
+    // Image variety
     const variant = Math.floor(Math.random() * 3) + 1;
     petal.classList.add(`variant-${variant}`);
 
+    // Depth selection
     const depthRand = Math.random();
     let depthClass, size, duration;
 
@@ -118,142 +133,18 @@ function floatingPetals() {
     setTimeout(() => petal.remove(), (duration + 2) * 1000);
   }
 }
+attendance.addEventListener("change", () => {
+  const input = guestsGroup.querySelector("input");
 
-// const form = document.getElementById("rsvp-form");
-// const thankYou = document.getElementById("rsvp-thankyou");
-// const attendance = document.getElementById("attendance");
-// const guestsGroup = document.getElementById("guests-group");
-// const emailInput = document.getElementById("email");
-
-// document.getElementById("rsvp-form").addEventListener("submit", function (e) {
-
-//   e.preventDefault(); // Prevent default submission for controlled handling
-
-//   const attendance = document.getElementById("attendance").value;
-//   const email = document.getElementById("email").value.trim();
-//   const phone = document.getElementById("phone").value.trim();
-
-//   const errorBox = document.getElementById("contact_error");
-//   const thankYouBox = document.getElementById("rsvp_thankyou");
-
-//   // Reset UI
-//   errorBox.style.display = "none";
-//   thankYouBox.style.display = "none";
-
-//   // Rule: If attending YES → require email OR phone
-//   if (attendance === "yes" && !email && !phone) {
-//     errorBox.classList.add("show");
-//     return;
-//   }
-
-//   // If validation passes
-//   thankYouBox.classList.add("show");
-
-
-//   // Optional: reset form
-//   this.reset();
-
-// });
-
-
-// attendance.addEventListener("change", () => {
-//   const input = guestsGroup.querySelector("input");
-//   if (attendance.value === "Yes") {
-//     guestsGroup.style.display = "block";
-//     input.required = true;
-//   } else {
-//     guestsGroup.style.display = "none";
-//     input.required = false;
-//     input.value = "";
-//   }
-// });
-
-//   form.addEventListener("submit", async (e) => {
-//     e.preventDefault();
-
-//     if (emailInput.value) {
-//       const reply = document.createElement("input");
-//       reply.type = "hidden";
-//       reply.name = "_replyto";
-//       reply.value = emailInput.value;
-//       form.appendChild(reply);
-//     }
-
-//     try {
-//       const response = await fetch(form.action, {
-//         method: "POST",
-//         body: new FormData(form),
-//         headers: { Accept: "application/json" }
-//       });
-
-//       if (!response.ok) throw new Error();
-
-//       form.style.display = "none";
-//       thankYou.style.display = "block";
-
-//       if (typeof floatingPetals === "function") {
-//         floatingPetals();
-//       }
-
-//     } catch {
-//       alert("Something went wrong. Please try again.");
-//     }
-//   });
-
-//   function floatingPetals() {
-//   const container = document.getElementById("petal-container");
-//   if (!container) return;
-
-//   for (let i = 0; i < 200; i++) {
-//     const petal = document.createElement("div");
-//     petal.classList.add("petal");
-
-//     // Image variety
-//     const variant = Math.floor(Math.random() * 3) + 1;
-//     petal.classList.add(`variant-${variant}`);
-
-//     // Depth selection
-//     const depthRand = Math.random();
-//     let depthClass, size, duration;
-
-//     if (depthRand < 0.3) {
-//       depthClass = "far";
-//       size = Math.random() * 10 + 14;
-//       duration = Math.random() * 8 + 14;
-//     } else if (depthRand < 0.7) {
-//       depthClass = "mid";
-//       size = Math.random() * 12 + 18;
-//       duration = Math.random() * 6 + 12;
-//     } else {
-//       depthClass = "near";
-//       size = Math.random() * 14 + 26;
-//       duration = Math.random() * 4 + 9;
-//     }
-
-//     petal.classList.add(depthClass);
-
-//     petal.style.width = petal.style.height = `${size}px`;
-//     petal.style.left = Math.random() * 100 + "vw";
-//     petal.style.animationDuration = `${duration}s`;
-//     petal.style.animationDelay = `${Math.random() * 2}s`;
-
-//     container.appendChild(petal);
-
-//     setTimeout(() => petal.remove(), (duration + 2) * 1000);
-//   }
-// }
-// attendance.addEventListener("change", () => {
-//   const input = guestsGroup.querySelector("input");
-
-//   if (attendance.value === "Yes") {
-//     guestsGroup.classList.add("visible");
-//     input.required = true;
-//   } else {
-//     guestsGroup.classList.remove("visible");
-//     input.required = false;
-//     input.value = "";
-//   }
-// });
+  if (attendance.value === "Yes") {
+    guestsGroup.classList.add("visible");
+    input.required = true;
+  } else {
+    guestsGroup.classList.remove("visible");
+    input.required = false;
+    input.value = "";
+  }
+});
 
 
 
