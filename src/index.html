@@ -556,40 +556,6 @@ function applyLanguage(lang) {
   document.getElementById("btn-gr").style.opacity = lang === "gr" ? "1" : "0.5";
 }
 
-const attendanceField = document.getElementById("attendance");
-const emailField = document.getElementById("email");
-const phoneField = document.getElementById("phone");
-
-document.getElementById("rsvp-form").addEventListener("submit", function (e) {
-
-  e.preventDefault(); // Prevent default submission for controlled handling
-
-  const attendance = document.getElementById("attendance").value;
-  const email = document.getElementById("email").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-
-  const errorBox = document.getElementById("contact_error");
-  const thankYouBox = document.getElementById("rsvp_thankyou");
-
-  // Reset UI
-  errorBox.style.display = "none";
-  thankYouBox.style.display = "none";
-
-  // Rule: If attending YES → require email OR phone
-  if (attendance === "yes" && !email && !phone) {
-    errorBox.classList.add("show");
-    return;
-  }
-
-  // If validation passes
-  thankYouBox.classList.add("show");
-
-
-  // Optional: reset form
-  this.reset();
-
-});
-
 // On page load
 document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("language") || "en";

@@ -1,20 +1,51 @@
 const form = document.getElementById("rsvp-form");
-  const thankYou = document.getElementById("rsvp-thankyou");
-  const attendance = document.getElementById("attendance");
-  const guestsGroup = document.getElementById("guests-group");
-  const emailInput = document.getElementById("email");
+const thankYou = document.getElementById("rsvp-thankyou");
+const attendance = document.getElementById("attendance");
+const guestsGroup = document.getElementById("guests-group");
+const emailInput = document.getElementById("email");
 
-  attendance.addEventListener("change", () => {
-    const input = guestsGroup.querySelector("input");
-    if (attendance.value === "Yes") {
-      guestsGroup.style.display = "block";
-      input.required = true;
-    } else {
-      guestsGroup.style.display = "none";
-      input.required = false;
-      input.value = "";
-    }
-  });
+document.getElementById("rsvp-form").addEventListener("submit", function (e) {
+
+  e.preventDefault(); // Prevent default submission for controlled handling
+
+  const attendance = document.getElementById("attendance").value;
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+
+  const errorBox = document.getElementById("contact_error");
+  const thankYouBox = document.getElementById("rsvp_thankyou");
+
+  // Reset UI
+  errorBox.style.display = "none";
+  thankYouBox.style.display = "none";
+
+  // Rule: If attending YES → require email OR phone
+  if (attendance === "yes" && !email && !phone) {
+    errorBox.classList.add("show");
+    return;
+  }
+
+  // If validation passes
+  thankYouBox.classList.add("show");
+
+
+  // Optional: reset form
+  this.reset();
+
+});
+
+
+attendance.addEventListener("change", () => {
+  const input = guestsGroup.querySelector("input");
+  if (attendance.value === "Yes") {
+    guestsGroup.style.display = "block";
+    input.required = true;
+  } else {
+    guestsGroup.style.display = "none";
+    input.required = false;
+    input.value = "";
+  }
+});
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
