@@ -54,17 +54,14 @@ form.addEventListener("submit", async (e) => {
   }
 
   // 3️⃣ If attending YES → require phone AND guests
-  if (attendanceValue === "Yes") {
+  if (!phoneValue) {
+    errorPhone.style.display = "block";
+    hasError = true;
+  }
 
-    if (!phoneValue) {
-      errorPhone.style.display = "block";
-      hasError = true;
-    }
-
-    if (!guestsValue || parseInt(guestsValue) < 1) {
-      errorAttend.style.display = "block";
-      hasError = true;
-    }
+  if (!guestsValue || parseInt(guestsValue) < 1) {
+    errorAttend.style.display = "block";
+    hasError = true;
   }
 
   if (hasError) return; // ❌ STOP submission completely
