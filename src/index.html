@@ -150,7 +150,7 @@
       <label id="mobile"></label>
       <input type="tel" name="phone" id="phone" pattern="[0-9+\s]{7,15}">
     </div>
-    <p id="contact-error" style="color: crimson; display:none; font-size: 0.9rem;"></p>
+    <p id="contact_error" style="color: crimson; display:none; font-size: 0.9rem;"></p>
     <div class="rsvp-row">
       <div class="rsvp-group">
         <label id="attend"></label>
@@ -407,7 +407,7 @@ const translations = {
     </a>
   <footer style ="text-align: center;">Υπάρχουν ακόμα αναπάντητα ερωτήματα; Δείτε παρακάτω για περισσότερες λεπτομέρειες!</footer>
       `,
-    bride_team:`<span style="color:gold; font-family: 'GFS Didot', serif;">Νυφο</span><span style="font-family: 'GFS Didot', serif;">παρέα</span>`,
+    bride_team:`<span style="color:gold; font-family: 'GFS Didot', serif;">Νυφο</span><span style="color:white;font-family: 'GFS Didot', serif;">παρέα</span>`,
     bride_invitation:`
      <p>
         Υπέροχη νυφο-ομάδα μου 🤍<br><br>
@@ -418,7 +418,7 @@ const translations = {
         <b>Σάββατο 27 Ιουνίου, 2026 · 13:00</b>
       </p>
       `,
-    team_groom:`<span style="color:gold;font-family: 'GFS Didot', serif;">Γαμπρο</span><span style="font-family: 'GFS Didot', serif;">Παρέα</span>`,
+    team_groom:`<span style="color:gold;font-family: 'GFS Didot', serif;">Γαμπρο</span><span style="color:white;font-family: 'GFS Didot', serif;">παρέα</span>`,
     groom_invitation:`<p>
         Κυριοι, στεφανώνομαι!🤵💍<br><br>
         Εξοπληστείτε μα την καλύτερη των διαθέσεων, καλλωπιστείτε κι ελάτε να κάνουμε μία πρόποση 
@@ -556,17 +556,38 @@ function applyLanguage(lang) {
   document.getElementById("btn-gr").style.opacity = lang === "gr" ? "1" : "0.5";
 }
 
-document.getElementById("rsvp-form").addEventListener("submit", function(e) {
+const attendanceField = document.getElementById("attendance");
+const emailField = document.getElementById("email");
+const phoneField = document.getElementById("phone");
+
+document.getElementById("rsvp-form").addEventListener("submit", function (e) {
+
+  e.preventDefault(); // Prevent default submission for controlled handling
+
+  const attendance = document.getElementById("attendance").value;
   const email = document.getElementById("email").value.trim();
   const phone = document.getElementById("phone").value.trim();
-  const error = document.getElementById("contact-error");
 
-  if (!email && !phone) {
-    e.preventDefault();
-    error.style.display = "block";
-  } else {
-    error.style.display = "none";
+  const errorBox = document.getElementById("contact_error");
+  const thankYouBox = document.getElementById("rsvp_thankyou");
+
+  // Reset UI
+  errorBox.style.display = "none";
+  thankYouBox.style.display = "none";
+
+  // Rule: If attending YES → require email OR phone
+  if (attendance === "yes" && !email && !phone) {
+    errorBox.classList.add("show");
+    return;
   }
+
+  // If validation passes
+  thankYouBox.classList.add("show");
+
+
+  // Optional: reset form
+  this.reset();
+
 });
 
 // On page load

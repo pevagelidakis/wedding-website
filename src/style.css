@@ -798,3 +798,13 @@ p {
   background: gold;
   color: black;
 }
+
+
+.fade-message {
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+
+.fade-message.show {
+  opacity: 1;
+}
