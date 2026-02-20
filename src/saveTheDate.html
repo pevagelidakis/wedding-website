@@ -17,14 +17,17 @@
   body {
     background: #f4f4f4;
   font-family: 'Alex Brush', cursive;
+  background:
+        url("media/SaveTheDate_pre.jpg") center / cover no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment:scroll;
   }
 
   /* Maintain exact 1536x2048 ratio */
   .card {
     position: relative;
     width: 100%;
-    background:
-        url("media/SaveTheDate_pre.jpg") center / cover no-repeat;
     max-width: 768px; /* scale as needed */
     aspect-ratio: 1536 / 2048;
     margin: auto;
@@ -219,16 +222,17 @@ const translations = {
     `
   },
   gr: {
-    save:"Η Ομορφότερη Ημερομηνία",
-    date:"<b>Ιούνιος 2026</b>",
+    save:`<span style="font-family: 'Playfair Display', recursive;">Η Ομορφότερη Ημερομηνία</span>`,
+    date:`<b style="font-family: 'Playfair Display', recursive;">Ιούνιος 2026</b>`,
     names:`
-      Μαριάννα <br>
+      
+    <span style="font-family: 'Playfair Display', recursive;"> Μαριάννα </span><br>
       & <br>
-      Παναγιώτης
+    <span style="font-family: 'Playfair Display', recursive;">  Παναγιώτης </span>
     `,
     cal_header:`
-      <div><b>Κ</b></div><div><b>Δ</b></div><div><b>Τ</b></div>
-      <div><b>Τ</b></div><div><b>Π</b></div><div><b>Π</b></div><div><b>Σ</b></div>
+      <div><bstyle="font-family: 'Playfair Display', recursive;">Κ</b></div><div><b style="font-family: 'Playfair Display', recursive;">Δ</b></div><div><b style="font-family: 'Playfair Display', recursive;">Τ</b></div>
+      <div><bstyle="font-family: 'Playfair Display', recursive;">Τ</b></div><div><b style="font-family: 'Playfair Display', recursive;">Π</b></div><div><b style="font-family: 'Playfair Display', recursive;">Π</b></div><div><b style="font-family: 'Playfair Display', recursive;">Σ</b></div>
     `
   }
 };
