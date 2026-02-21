@@ -99,8 +99,11 @@ form.addEventListener("submit", async (e) => {
     const { data, error } = await supabase
       .from("rsvps")
       .insert(payload)
-      .select();
-    
+
+    // 🔥 Call edge function to send email
+    await supabase.functions.invoke("send-rsvp-email", {
+      body: payload
+    });
 
     if (error) {
       console.error("Supabase insert error:", error.message);
