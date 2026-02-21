@@ -107,7 +107,7 @@ form.addEventListener("submit", async (e) => {
 
     try{
       await supabase.functions.invoke("send-rsvp-email", {
-        body: insertData
+        body: payload
       });
     }catch (e){
           console.warn('Email failed (RSVP saved):', e);
