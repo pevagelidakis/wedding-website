@@ -87,20 +87,19 @@ form.addEventListener("submit", async (e) => {
 
     const { data, error } = await supabase
       .from("rsvps")
-      .insert([
-        {
+        .insert({
           full_name: nameValue,
-          attendance: attendanceValue,
+          attendance: attendanceValue === "yes" ? "Yes" : "No",
           seats_reserved:
-            attendanceValue === "yes" ? parseInt(guestsValue) : null,
+            attendanceValue === "yes" ? Number(guestsValue) : null,
           phone: attendanceValue === "yes" ? phoneValue : null,
-        },
-      ]);
+        }).select();
 
     if (error) {
-      console.error("Supabase error:", error);
-      alert("Something went wrong. Please try again.");
-      form.querySelector("button[type='submit']").disabled = false;
+      console.error("Supabase insert error:", error.message);
+      console.error("Details:", error.details);
+      console.error("Hint:", error.hint);
+      alert(error.message);
       return;
     }
 
