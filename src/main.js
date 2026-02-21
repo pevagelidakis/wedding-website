@@ -85,7 +85,6 @@ form.addEventListener("submit", async (e) => {
             attendance: attendanceValue,
             seats_reserved:
               attendanceValue === "Yes" ? parseInt(guestsValue) : null,
-            email: emailValue || null,
             phone: phoneValue || null
           }
         ]);
