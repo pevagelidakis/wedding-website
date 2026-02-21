@@ -114,6 +114,8 @@ form.addEventListener("submit", async (e) => {
       if (emailError) {
         console.error("Email invoke error:", emailError);
         console.warn("RSVP saved but email failed");
+        alert(emailError.message);
+
       } else if (emailData && !emailData.success) {
         console.error("Email send failed:", emailData.error);
       }
@@ -123,12 +125,12 @@ form.addEventListener("submit", async (e) => {
     }
 
 
-    if (error) {
-      console.error("Supabase insert error:", error.message);
-      if (error.details) {console.error("Details:", error.details);}
-      if (error.hint) {console.error("Hint:", error.hint);}
-      alert(error.message);
-      return;
+    // if (error) {
+    //   console.error("Supabase insert error:", error.message);
+    //   if (error.details) {console.error("Details:", error.details);}
+    //   if (error.hint) {console.error("Hint:", error.hint);}
+    //   alert(error.message);
+    //   return;
     }
 
     // ✅ Success state
