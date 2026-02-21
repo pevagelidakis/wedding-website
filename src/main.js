@@ -106,23 +106,39 @@ form.addEventListener("submit", async (e) => {
     }
 
     // 2. Send email (non-blocking)
+    // Replace the entire email try/catch block with this:
     try {
-      const { data: emailData, error: emailError } = await supabase.functions.invoke("send-rsvp-email", {
-        body: payload
+      const RESEND_API_KEY = 're_AKb8NLAo_KU5G1AZyegWTRzmLj8Drc76C'; // Get from resend.com
+      
+      const emailResponse = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${RESEND_API_KEY}`
+        },
+        body: JSON.stringify({
+          from: 'Wedding RSVP <onboarding@resend.dev>',
+          to: 'ssikadile@gmail.com',
+          subject: `New Wedding RSVP: ${payload.full_name}`,
+          html: `
+            <h2>🎉 New RSVP: ${payload.full_name}</h2>
+            <p><strong>Attending:</strong> ${payload.attendance}</p>
+            <p><strong>Guests:</strong> ${payload.seats_reserved || '—'}</p>
+            <p><strong>Phone:</strong> ${payload.phone || '—'}</p>
+            <p><strong>Message:</strong> ${payload.message || 'None'}</p>
+          `
+        })
       });
 
-      if (emailError) {
-        console.error("Email invoke error:", emailError);
-        console.warn("RSVP saved but email failed");
-        alert(emailError.message);
-
-      } else if (emailData && !emailData.success) {
-        console.error("Email send failed:", emailData.error);
+      const emailData = await emailResponse.json();
+      
+      if (!emailResponse.ok) {
+        console.warn('Email failed (RSVP saved):', emailData);
       }
     } catch (emailErr) {
-      console.error("Email function error:", emailErr);
-      // Email failure doesn't block UI
+      console.warn('Email notification failed (RSVP saved):', emailErr);
     }
+
 
 
     // if (error) {
