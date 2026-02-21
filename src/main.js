@@ -90,7 +90,7 @@ form.addEventListener("submit", async (e) => {
         .insert({
           full_name: nameValue,
           attendance: attendanceValue === "yes" ? "Yes" : "No",
-          seats_reserved:
+          seats_res:
             attendanceValue === "yes" ? Number(guestsValue) : null,
           phone: attendanceValue === "yes" ? phoneValue : null,
         }).select();
