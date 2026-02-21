@@ -8,6 +8,7 @@ const form = document.getElementById("rsvp-form");
 const thankYou = document.getElementById("rsvp-thankyou");
 const attendance = document.getElementById("attendance");
 const guestsGroup = document.getElementById("guests-group");
+const message = document.getElementById("msg_2_couple");
 
 const nameInput = form.querySelector("input[name='name']");
 const phoneInput = document.getElementById("phone");
@@ -51,6 +52,7 @@ form.addEventListener("submit", async (e) => {
   const phoneValue = phoneInput.value.trim();
   const attendanceValue = attendance.value?.toLowerCase();
   const guestsValue = guestsInput.value.trim();
+  const isAttending = attendanceValue === "yes";
 
   let hasError = false;
 
@@ -67,7 +69,7 @@ form.addEventListener("submit", async (e) => {
   }
 
   // ✅ Only require phone + guests if attending YES
-  if (attendanceValue === "yes") {
+  if (isAttending) {
     if (!phoneValue) {
       errorPhone.style.display = "block";
       hasError = true;
@@ -87,12 +89,10 @@ form.addEventListener("submit", async (e) => {
 
     const payload = {
       full_name: nameValue,
-      attendance: attendanceValue === "yes" ? "Yes" : "No",
-      seats_reserved:
-        attendanceValue === "yes" ? guestsValue : null,
-      phone:
-        attendanceValue === "yes" ? phoneValue : null,
-      message: null
+      attendance: isAttending ? "Yes" : "No",
+      seats_reserved: isAttending ? guestsValue : null,
+      phone:isAttending ? phoneValue : null,
+      message: message
     };
 
     const { data, error } = await supabase
