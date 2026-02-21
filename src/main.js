@@ -40,9 +40,8 @@ attendance.addEventListener("change", () => {
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  e.stopPropagation();
 
-  // Reset all errors
+  // Reset UI state
   errorName.style.display = "none";
   errorPhone.style.display = "none";
   errorAttend.style.display = "none";
@@ -50,80 +49,84 @@ form.addEventListener("submit", async (e) => {
 
   const nameValue = nameInput.value.trim();
   const phoneValue = phoneInput.value.trim();
-  const attendanceValue = attendance.value;
+  const attendanceValue = attendance.value?.toLowerCase();
   const guestsValue = guestsInput.value.trim();
 
   let hasError = false;
 
-  // 1️⃣ Name required
+  // ✅ Name required
   if (!nameValue) {
     errorName.style.display = "block";
     hasError = true;
   }
 
-  // 2️⃣ Attendance required
+  // ✅ Attendance required
   if (!attendanceValue) {
     errorAttend.style.display = "block";
     hasError = true;
   }
 
-  // 3️⃣ If attending YES → require phone AND guests
-  if (!phoneValue) {
-    errorPhone.style.display = "block";
-    hasError = true;
-  }
-
-  if (!guestsValue || parseInt(guestsValue) < 1) {
-    errorAttend.style.display = "block";
-    hasError = true;
-  }
-
-  if (hasError) return; // ❌ STOP submission completely
-
-  if (phoneValue.value) {
-    try{
-      // 🚀 Insert into Supabase
-      const { error } = await supabase
-        .from("rsvps")
-        .insert([
-          {
-            full_name: nameValue,
-            attendance: attendanceValue,
-            seats_reserved:
-              attendanceValue === "Yes" ? parseInt(guestsValue) : null,
-            phone: phoneValue
-          }
-        ]);
-        if (error) {
-          console.error(error);
-          alert("Something went wrong. Please try again.");
-          return;
-        }
-    
-      // const response = await fetch(form.action, {
-      //   method: "POST",
-      //   body: new FormData(form),
-      //   headers: { Accept: "application/json" }
-      // });
-
-      if (!response.ok) throw new Error();
-
-      form.style.opacity = "0";
-      form.style.pointerEvents = "none";
-
-      setTimeout(() => {
-        form.style.display = "none";
-        thankYou.classList.add("show");
-      }, 400);
-
-      thankYou.style.display = "block";
-
-      if (typeof floatingPetals === "function") {
-        floatingPetals();
-      }
-    } catch {
-      alert("Oops, something feels off. Please try again.");
+  // ✅ Only require phone + guests if attending YES
+  if (attendanceValue === "yes") {
+    if (!phoneValue) {
+      errorPhone.style.display = "block";
+      hasError = true;
     }
+
+    if (!guestsValue || parseInt(guestsValue) < 1) {
+      errorAttend.style.display = "block";
+      hasError = true;
+    }
+  }
+
+  if (hasError) return;
+
+  try {
+    // Optional: disable button while submitting
+    form.querySelector("button[type='submit']").disabled = true;
+
+    const { data, error } = await supabase
+      .from("rsvps")
+      .insert([
+        {
+          full_name: nameValue,
+          attendance: attendanceValue,
+          seats_reserved:
+            attendanceValue === "yes" ? parseInt(guestsValue) : null,
+          phone: attendanceValue === "yes" ? phoneValue : null,
+        },
+      ]);
+
+    if (error) {
+      console.error("Supabase error:", error);
+      alert("Something went wrong. Please try again.");
+      form.querySelector("button[type='submit']").disabled = false;
+      return;
+    }
+
+    // ✅ Success state
+    form.reset();
+    guestsGroup.classList.remove("visible");
+
+    form.style.opacity = "0";
+    form.style.pointerEvents = "none";
+
+    setTimeout(() => {
+      form.style.display = "none";
+      thankYou.classList.add("show");
+    }, 400);
+
+    thankYou.style.display = "block";
+
+    if (typeof floatingPetals === "function") {
+      floatingPetals();
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Oops, something feels off. Please try again.");
+  } finally {
+    form.querySelector("button[type='submit']").disabled = false;
   }
 });
 
