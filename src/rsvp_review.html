@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSVP Review</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+      color: white;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      margin-bottom: 40px;
+      letter-spacing: 2px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card-wrapper {
+      perspective: 1000px;
+    }
+
+    .card {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      transform-style: preserve-3d;
+      transition: transform 0.7s ease;
+      cursor: pointer;
+    }
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      padding: 25px;
+      box-sizing: border-box;
+      background: #1f1f1f;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: border 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .card-wrapper:hover .card-face {
+      border: 1px solid rgba(212, 175, 55, 0.9);
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+    }
+
+    .card-front {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .card-front h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      margin: 0 0 10px;
+    }
+
+    .status {
+      font-size: 16px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+
+    .attending {
+      background: rgba(46, 204, 113, 0.2);
+      color: #2ecc71;
+    }
+
+    .not-attending {
+      background: rgba(231, 76, 60, 0.2);
+      color: #e74c3c;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-y: auto;
+    }
+
+    .card-back p {
+      margin: 6px 0;
+    }
+
+    .label {
+      font-weight: 500;
+      opacity: 0.7;
+    }
+
+    .empty-state {
+      text-align: center;
+      opacity: 0.6;
+      margin-top: 60px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Wedding RSVPs</h1>
+  <div class="grid" id="rsvpGrid"></div>
+  <div id="emptyState" class="empty-state" style="display:none;">No RSVPs yet.</div>
+
+  <script>
+    const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA"; // Replace with full anon public key
+
+    // Use global supabase object provided by CDN without redeclaring it
+    const { createClient } = supabase;
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function sanitize(value) {
+      if (!value) return "—";
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    async function loadRsvps() {
+      const grid = document.getElementById("rsvpGrid");
+      const emptyState = document.getElementById("emptyState");
+
+      const { data, error } = await sb
+        .from("rsvps")
+        .select("*")
+        .order("timestamp", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching RSVPs:", error);
+        emptyState.style.display = "block";
+        emptyState.textContent = "Failed to load RSVPs.";
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        emptyState.style.display = "block";
+        return;
+      }
+
+      data.forEach(rsvp => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "card-wrapper";
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const isAttending = rsvp.attendance === "Attending";
+
+        card.innerHTML = `
+          <div class="card-face card-front">
+            <h2>${sanitize(rsvp.full_name)}</h2>
+            <div class="status ${isAttending ? 'attending' : 'not-attending'}">
+              ${sanitize(rsvp.attendance)}
+            </div>
+          </div>
+          <div class="card-face card-back">
+            <p><span class="label">Name:</span> ${sanitize(rsvp.full_name)}</p>
+            <p><span class="label">Attendance:</span> ${sanitize(rsvp.attendance)}</p>
+            <p><span class="label">Guests:</span> ${sanitize(rsvp.seats_reserved)}</p>
+            <p><span class="label">Phone:</span> ${sanitize(rsvp.phone)}</p>
+            <p><span class="label">Message:</span> ${sanitize(rsvp.message) || 'None'}</p>
+          </div>
+        `;
+
+        card.addEventListener("click", () => {
+          card.classList.toggle("flipped");
+        });
+
+        wrapper.appendChild(card);
+        grid.appendChild(wrapper);
+      });
+    }
+
+    loadRsvps();
+  </script>
+</body>
+</html>
