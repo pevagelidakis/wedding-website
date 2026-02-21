@@ -103,8 +103,8 @@ form.addEventListener("submit", async (e) => {
 
     if (error) {
       console.error("Supabase insert error:", error.message);
-      console.error("Details:", error.details);
-      console.error("Hint:", error.hint);
+      if (error.details) {console.error("Details:", error.details);}
+      if (error.hint) {console.error("Hint:", error.hint);}
       alert(error.message);
       return;
     }
