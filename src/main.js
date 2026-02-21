@@ -8,7 +8,6 @@ const form = document.getElementById("rsvp-form");
 const thankYou = document.getElementById("rsvp-thankyou");
 const attendance = document.getElementById("attendance");
 const guestsGroup = document.getElementById("guests-group");
-const message = document.getElementById("msg");
 
 const nameInput = form.querySelector("input[name='name']");
 const phoneInput = document.getElementById("phone");
@@ -52,7 +51,8 @@ form.addEventListener("submit", async (e) => {
   const phoneValue = phoneInput.value.trim();
   const attendanceValue = attendance.value?.toLowerCase();
   const guestsValue = guestsInput.value.trim();
-  const messageValue = message?.value?.trim() || null;
+  const messageInput = document.getElementById("msg");
+  const messageValue = messageInput ? messageInput.value.trim() : null;
   const isAttending = attendanceValue === "yes";
 
   let hasError = false;
