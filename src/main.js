@@ -75,38 +75,50 @@ form.addEventListener("submit", async (e) => {
   if (hasError) return; // ❌ STOP submission completely
 
   if (phoneValue.value) {
-    const reply = document.createElement("input");
-    reply.type = "hidden";
-    reply.name = "_replyto";
-    reply.value = phoneValue.value;
-    form.appendChild(reply);
-  }
+    try{
+      // 🚀 Insert into Supabase
+      const { error } = await supabase
+        .from("rsvps")
+        .insert([
+          {
+            full_name: nameValue,
+            attendance: attendanceValue,
+            seats_reserved:
+              attendanceValue === "Yes" ? parseInt(guestsValue) : null,
+            email: emailValue || null,
+            phone: phoneValue || null
+          }
+        ]);
+        if (error) {
+          console.error(error);
+          alert("Something went wrong. Please try again.");
+          return;
+        }
+    
+      // const response = await fetch(form.action, {
+      //   method: "POST",
+      //   body: new FormData(form),
+      //   headers: { Accept: "application/json" }
+      // });
 
-  try {
-    const response = await fetch(form.action, {
-      method: "POST",
-      body: new FormData(form),
-      headers: { Accept: "application/json" }
-    });
+      if (!response.ok) throw new Error();
 
-    if (!response.ok) throw new Error();
+      form.style.opacity = "0";
+      form.style.pointerEvents = "none";
 
-    form.style.opacity = "0";
-    form.style.pointerEvents = "none";
+      setTimeout(() => {
+        form.style.display = "none";
+        thankYou.classList.add("show");
+      }, 400);
 
-    setTimeout(() => {
-      form.style.display = "none";
-      thankYou.classList.add("show");
-    }, 400);
+      thankYou.style.display = "block";
 
-    thankYou.style.display = "block";
-
-    if (typeof floatingPetals === "function") {
-      floatingPetals();
+      if (typeof floatingPetals === "function") {
+        floatingPetals();
+      }
+    } catch {
+      alert("Oops, something feels off. Please try again.");
     }
-
-  } catch {
-    alert("Oops, something feels off. Please try again.");
   }
 });
 
