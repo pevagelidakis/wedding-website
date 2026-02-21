@@ -52,7 +52,7 @@ form.addEventListener("submit", async (e) => {
   const phoneValue = phoneInput.value.trim();
   const attendanceValue = attendance.value?.toLowerCase();
   const guestsValue = guestsInput.value.trim();
-  const messageValue = message.value.trim();
+  const messageValue = message?.value?.trim() || null;
   const isAttending = attendanceValue === "yes";
 
   let hasError = false;
@@ -93,7 +93,7 @@ form.addEventListener("submit", async (e) => {
       attendance: isAttending ? "Yes" : "No",
       seats_reserved: isAttending ? guestsValue : null,
       phone:isAttending ? phoneValue : null,
-      message: messageValue
+      message: messageValue || null
     };
 
     const { data, error } = await supabase
