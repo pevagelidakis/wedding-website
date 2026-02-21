@@ -87,11 +87,11 @@ form.addEventListener("submit", async (e) => {
 
     const payload = {
       full_name: nameValue,
-      attendance: attendance.value === "yes" ? "Yes" : "No",
+      attendance: attendanceValue === "yes" ? "Yes" : "No",
       seats_reserved:
-        attendance.value === "yes" ? guestsValue : null,
+        attendanceValue === "yes" ? guestsValue : null,
       phone:
-        attendance.value === "yes" ? phoneValue : null,
+        attendanceValue === "yes" ? phoneValue : null,
       message: null
     };
 
