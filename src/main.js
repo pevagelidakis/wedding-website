@@ -96,27 +96,30 @@ form.addEventListener("submit", async (e) => {
       message: messageValue || null
     };
 
-    const { data, error } = await supabase
+    const { data: insertData, error: insertError } = await supabase
       .from("rsvps")
-      .insert(payload)
+      .insert(payload);
 
     if (insertError) {
-    console.error("DB insert error:", insertError);
-    throw new Error(insertError.message);
-  }
+      console.error("DB insert error:", insertError);
+      throw new Error(insertError.message);
+    }
 
-    // 2. Send email - handle response properly
-    const { data: emailData, error: emailError } = await supabase.functions.invoke("send-rsvp-email", {
-      body: payload
-    });
+    // 2. Send email (non-blocking)
+    try {
+      const { data: emailData, error: emailError } = await supabase.functions.invoke("send-rsvp-email", {
+        body: payload
+      });
 
-    if (emailError) {
-      console.error("Email invoke error:", emailError);
-      // Don't fail UI on email error - DB insert succeeded!
-      console.warn("RSVP saved but email failed");
-    } else if (emailData && !emailData.success) {
-      console.error("Email send failed:", emailData.error);
-      // Non-blocking warning
+      if (emailError) {
+        console.error("Email invoke error:", emailError);
+        console.warn("RSVP saved but email failed");
+      } else if (emailData && !emailData.success) {
+        console.error("Email send failed:", emailData.error);
+      }
+    } catch (emailErr) {
+      console.error("Email function error:", emailErr);
+      // Email failure doesn't block UI
     }
 
 
