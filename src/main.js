@@ -8,7 +8,7 @@ const form = document.getElementById("rsvp-form");
 const thankYou = document.getElementById("rsvp-thankyou");
 const attendance = document.getElementById("attendance");
 const guestsGroup = document.getElementById("guests-group");
-const message = document.getElementById("msg_2_couple");
+const message = document.getElementById("message");
 
 const nameInput = form.querySelector("input[name='name']");
 const phoneInput = document.getElementById("phone");
