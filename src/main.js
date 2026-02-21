@@ -131,7 +131,7 @@ form.addEventListener("submit", async (e) => {
     //   if (error.hint) {console.error("Hint:", error.hint);}
     //   alert(error.message);
     //   return;
-    }
+    // }
 
     // ✅ Success state
     form.reset();
