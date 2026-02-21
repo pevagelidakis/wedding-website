@@ -85,15 +85,21 @@ form.addEventListener("submit", async (e) => {
     // Optional: disable button while submitting
     form.querySelector("button[type='submit']").disabled = true;
 
+    const payload = {
+      full_name: nameValue,
+      attendance: attendance.value === "yes" ? "Yes" : "No",
+      seats_reserved:
+        attendance.value === "yes" ? Number(guestsValue) : null,
+      phone:
+        attendance.value === "yes" ? phoneValue : null,
+      message: null
+    };
+
     const { data, error } = await supabase
       .from("rsvps")
-        .insert({
-          full_name: nameValue,
-          attendance: attendanceValue === "yes" ? "Yes" : "No",
-          seats_res:
-            attendanceValue === "yes" ? Number(guestsValue) : null,
-          phone: attendanceValue === "yes" ? phoneValue : null,
-        }).select();
+      .insert(payload)
+      .select();
+    
 
     if (error) {
       console.error("Supabase insert error:", error.message);
