@@ -100,10 +100,25 @@ form.addEventListener("submit", async (e) => {
       .from("rsvps")
       .insert(payload)
 
-    // 🔥 Call edge function to send email
-    await supabase.functions.invoke("send-rsvp-email", {
+    if (insertError) {
+    console.error("DB insert error:", insertError);
+    throw new Error(insertError.message);
+  }
+
+    // 2. Send email - handle response properly
+    const { data: emailData, error: emailError } = await supabase.functions.invoke("send-rsvp-email", {
       body: payload
     });
+
+    if (emailError) {
+      console.error("Email invoke error:", emailError);
+      // Don't fail UI on email error - DB insert succeeded!
+      console.warn("RSVP saved but email failed");
+    } else if (emailData && !emailData.success) {
+      console.error("Email send failed:", emailData.error);
+      // Non-blocking warning
+    }
+
 
     if (error) {
       console.error("Supabase insert error:", error.message);
