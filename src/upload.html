@@ -230,11 +230,12 @@ video,canvas{
   <button id="galleryModeBtn" class="mode-btn"></button>
 </div>
 
-<input type="file" id="fileInput" accept="image/*,video/*" style="display:none;" />
+<input type="file" id="fileInput" accept="image/*,video/*" multiple style="display:none;" />
 
 <div class="camera-wrapper">
   <video id="video" autoplay playsinline></video>
   <canvas id="canvas" style="display:none;"></canvas>
+  <div id="galleryPreview" style="display:none; padding:15px; gap:10px; flex-wrap:wrap;"></div>
 </div>
 
 <div class="controls">

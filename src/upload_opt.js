@@ -121,8 +121,12 @@ function takePhoto() {
   canvas.getContext("2d").drawImage(video, 0, 0);
 
   canvas.toBlob(blob => {
-    capturedBlob = blob;
-    capturedType = "image/jpeg";
+    // capturedBlob = blob;
+    // capturedType = "image/jpeg";
+    capturedFiles = [{
+        blob: blob,
+        type: "image/jpeg"
+    }];
   }, "image/jpeg", 0.85);
 
   video.style.display = "none";
@@ -131,60 +135,6 @@ function takePhoto() {
 }
 
 /* ================= VIDEO ================= */
-
-// async function startRecording() {
-//   isRecording = true;
-//   recordBtn.classList.add("recording");
-
-//   stopStream();
-
-//   stream = await navigator.mediaDevices.getUserMedia({
-//     video: {
-//       facingMode: currentFacingMode,
-//       width: { ideal: 1280 },
-//       height: { ideal: 720 }
-//     },
-//     audio: {
-//       echoCancellation: true,
-//       noiseSuppression: true,
-//       autoGainControl: true
-//     }
-//   });
-
-//   video.srcObject = stream;
-//   video.muted = true;
-//   await video.play();
-
-//   recordedChunks = [];
-//   mediaRecorder = new MediaRecorder(stream, {
-//     mimeType: "video/webm;codecs=vp8,opus"
-//   });
-
-//   mediaRecorder.ondataavailable = e => {
-//     if (e.data.size > 0) recordedChunks.push(e.data);
-//   };
-
-//   mediaRecorder.onstop = () => {
-//     capturedBlob = new Blob(recordedChunks, { type: "video/webm" });
-//     capturedType = "video/webm";
-
-//     stopStream();
-
-//     video.srcObject = null;
-//     video.src = URL.createObjectURL(capturedBlob);
-//     video.controls = true;
-//     video.muted = false;
-
-//     showPreviewButtons();
-//   };
-
-//   mediaRecorder.start();
-
-//   // Auto-stop after max duration
-//   setTimeout(() => {
-//     if (isRecording) stopRecording();
-//   }, MAX_DURATION);
-// }
 function startRecording() {
   if (!stream) return;
 
@@ -202,9 +152,12 @@ function startRecording() {
   };
 
   mediaRecorder.onstop = () => {
-    capturedBlob = new Blob(recordedChunks, { type: "video/webm" });
-    capturedType = "video/webm";
-
+    // capturedBlob = new Blob(recordedChunks, { type: "video/webm" });
+    // capturedType = "video/webm";
+    capturedFiles = [{
+        blob: new Blob(recordedChunks, { type: "video/webm" }),
+        type: "video/webm"
+    }];
     video.srcObject = null;
     video.src = URL.createObjectURL(capturedBlob);
     video.controls = true;
@@ -219,14 +172,7 @@ function startRecording() {
     if (isRecording) stopRecording();
   }, MAX_DURATION);
 }
-// function stopRecording() {
-//   isRecording = false;
-//   recordBtn.classList.remove("recording");
 
-//   if (mediaRecorder && mediaRecorder.state !== "inactive") {
-//     mediaRecorder.stop();
-//   }
-// }
 function stopRecording() {
   isRecording = false;
   recordBtn.classList.remove("recording");
@@ -248,26 +194,10 @@ function showPreviewButtons() {
 
 /* ================= RETAKE ================= */
 
-// retakeBtn.addEventListener("click", async () => {
+retakeBtn.addEventListener("click", async () => {
+    let capturedFiles = []; // array of { blob, type }
 //   capturedBlob = null;
 //   capturedType = null;
-
-//   video.controls = false;
-//   video.style.display = "block";
-//   canvas.style.display = "none";
-
-//   retakeBtn.style.display = "none";
-//   uploadBtn.style.display = "none";
-//   shareBtn.style.display = "none";
-
-//   recordBtn.style.display = "block";
-//   switchBtn.style.display = "inline-block";
-
-//   await startCamera();
-// });
-retakeBtn.addEventListener("click", async () => {
-  capturedBlob = null;
-  capturedType = null;
 
   video.src = "";
   video.srcObject = null;
@@ -292,55 +222,174 @@ retakeBtn.addEventListener("click", async () => {
 
 /* ================= UPLOAD ================= */
 
+// uploadBtn.addEventListener("click", async () => {
+//   if (!capturedBlob) return;
+
+//   // Cooldown protection
+//   if (Date.now() - lastUploadTime < UPLOAD_COOLDOWN) {
+//     status.innerText = "Please wait before uploading again.";
+//     return;
+//   }
+
+//   if (capturedBlob.size > MAX_FILE_SIZE) {
+//     status.innerText = "File too large. Please record shorter video.";
+//     return;
+//   }
+
+//   lastUploadTime = Date.now();
+//   uploadBtn.disabled = true;
+//   status.innerText = "Uploading...";
+
+//   const visibility = document.getElementById("visibility").value;
+//   const bucketName = visibility === "public" ? "public-pics" : "private-pics";
+
+//   const extension = capturedType.startsWith("image")
+//     ? "jpg"
+//     : "webm";
+
+//   const filePath = `memory_${crypto.randomUUID()}.${extension}`;
+
+//   const { error } = await supabase.storage
+//     .from(bucketName)
+//     .upload(filePath, capturedBlob, {
+//       contentType: capturedType,
+//       upsert: false
+//     });
+
+//   if (error) {
+//     status.innerText = "Upload failed 😢";
+//     uploadBtn.disabled = false;
+//     return;
+//   }
+
+//   await supabase.from("uploads").insert([{
+//     file_path: filePath,
+//     bucket: bucketName,
+//     file_type: capturedType
+//   }]);
+
+//   status.innerText = "Uploaded successfully 🤍";
+
+//   setTimeout(() => window.location.reload(), 1200);
+// });
+
 uploadBtn.addEventListener("click", async () => {
-  if (!capturedBlob) return;
+  if (!capturedFiles.length) return;
 
-  // Cooldown protection
-  if (Date.now() - lastUploadTime < UPLOAD_COOLDOWN) {
-    status.innerText = "Please wait before uploading again.";
-    return;
-  }
-
-  if (capturedBlob.size > MAX_FILE_SIZE) {
-    status.innerText = "File too large. Please record shorter video.";
-    return;
-  }
-
-  lastUploadTime = Date.now();
   uploadBtn.disabled = true;
   status.innerText = "Uploading...";
 
   const visibility = document.getElementById("visibility").value;
   const bucketName = visibility === "public" ? "public-pics" : "private-pics";
 
-  const extension = capturedType.startsWith("image")
-    ? "jpg"
-    : "webm";
+  for (const fileObj of capturedFiles) {
 
-  const filePath = `memory_${crypto.randomUUID()}.${extension}`;
+    if (fileObj.blob.size > MAX_FILE_SIZE) continue;
 
-  const { error } = await supabase.storage
-    .from(bucketName)
-    .upload(filePath, capturedBlob, {
-      contentType: capturedType,
-      upsert: false
-    });
+    const extension = fileObj.type.startsWith("image")
+      ? "jpg"
+      : "webm";
 
-  if (error) {
-    status.innerText = "Upload failed 😢";
-    uploadBtn.disabled = false;
-    return;
+    const filePath = `memory_${crypto.randomUUID()}.${extension}`;
+
+    const { error } = await supabase.storage
+      .from(bucketName)
+      .upload(filePath, fileObj.blob, {
+        contentType: fileObj.type,
+        upsert: false
+      });
+
+    if (!error) {
+      await supabase.from("uploads").insert([{
+        file_path: filePath,
+        bucket: bucketName,
+        file_type: fileObj.type
+      }]);
+    }
   }
-
-  await supabase.from("uploads").insert([{
-    file_path: filePath,
-    bucket: bucketName,
-    file_type: capturedType
-  }]);
 
   status.innerText = "Uploaded successfully 🤍";
 
   setTimeout(() => window.location.reload(), 1200);
+});
+
+
+fileInput.addEventListener("change", (e) => {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+
+  capturedFiles = [];
+
+  modeSelection.style.display = "none";
+  cameraWrapper.style.display = "block";
+  controls.style.display = "flex";
+
+  recordBtn.style.display = "none";
+  switchBtn.style.display = "none";
+
+  video.style.display = "none";
+  canvas.style.display = "none";
+
+  const previewContainer = document.getElementById("galleryPreview");
+  previewContainer.innerHTML = "";
+  previewContainer.style.display = "flex";
+
+  files.forEach(file => {
+    capturedFiles.push({
+      blob: file,
+      type: file.type
+    });
+
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+    wrapper.style.width = "100px";
+    wrapper.style.height = "100px";
+    wrapper.style.borderRadius = "12px";
+    wrapper.style.overflow = "hidden";
+
+    let element;
+
+    if (file.type.startsWith("image")) {
+      element = document.createElement("img");
+      element.src = URL.createObjectURL(file);
+      element.style.width = "100%";
+      element.style.height = "100%";
+      element.style.objectFit = "cover";
+    } else {
+      element = document.createElement("video");
+      element.src = URL.createObjectURL(file);
+      element.muted = true;
+      element.playsInline = true;
+      element.style.width = "100%";
+      element.style.height = "100%";
+      element.style.objectFit = "cover";
+    }
+
+    // Remove button
+    const removeBtn = document.createElement("button");
+    removeBtn.innerText = "✕";
+    removeBtn.style.position = "absolute";
+    removeBtn.style.top = "4px";
+    removeBtn.style.right = "4px";
+    removeBtn.style.background = "rgba(0,0,0,0.6)";
+    removeBtn.style.color = "#fff";
+    removeBtn.style.border = "none";
+    removeBtn.style.borderRadius = "50%";
+    removeBtn.style.width = "22px";
+    removeBtn.style.height = "22px";
+    removeBtn.style.cursor = "pointer";
+
+    removeBtn.onclick = () => {
+      wrapper.remove();
+      capturedFiles = capturedFiles.filter(f => f.blob !== file);
+    };
+
+    wrapper.appendChild(element);
+    wrapper.appendChild(removeBtn);
+    previewContainer.appendChild(wrapper);
+  });
+
+  showPreviewButtons();
 });
 
 /* ================= CLEANUP ================= */
