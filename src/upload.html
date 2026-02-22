@@ -208,8 +208,12 @@ video,canvas{
 <div class="controls">
   <button id="switchBtn" class="switch-btn"><i class="fa-solid fa-camera-rotate"></i></button>
   <div id="recordBtn" class="record-btn"></div>
-</div>  
-  <div class="rsvp-group" id="visibility">
+
+  <button id="retakeBtn" class="retake-btn"><i class="fa-solid fa-arrow-rotate-left"></i> Retake</button>
+  <button id="shareBtn" class="share-btn" aria-label="Share"> <i class="fa-solid fa-share-nodes"></i> Share</button>
+  <button id="uploadBtn" class="upload-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</button>
+</div>
+<div class="rsvp-group" id="visibility">
       <label>Visibility</label>
       <select id="visibility">
         <option value="public" id="public">Public (everyone sees)</option>
@@ -217,11 +221,6 @@ video,canvas{
       </select>
     </div>
 
-<div class="controls">
-  <button id="retakeBtn" class="retake-btn"><i class="fa-solid fa-arrow-rotate-left"></i> Retake</button>
-  <button id="shareBtn" class="share-btn" aria-label="Share"> <i class="fa-solid fa-share-nodes"></i> Share</button>
-  <button id="uploadBtn" class="upload-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</button>
-</div>
 <p id="status"></p>
 
 <script type="module" src="upload.js"></script>
