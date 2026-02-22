@@ -16,12 +16,9 @@
 }
 
 header {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px 20px;
+  position: absolute;
+  top: 0;
+  width: 100%;
 }
 
 .language-switch {
@@ -271,7 +268,7 @@ video,canvas{
     shareBtn:`<i class="fa-solid fa-share-nodes"></i> Share`,
     uploadBtn:`<i class="fa-solid fa-arrow-up-from-bracket"></i> Upload`,
     visibility_:`
-    label>Προσβασιμότητα Υλικού</label>
+    <label>Content Accessibility</label>
     <select id="visibility">
       <option value="public"  id="public">✨ Public Realm (Bring to light! 💡)</option>
       <option value="private" id="private">🖤 Classified (For our little eyes only! 👀🫣)</option>
