@@ -276,14 +276,18 @@ uploadBtn.addEventListener("click", async () => {
   if (!capturedBlob) return;
 
   status.innerText = "Uploading...";
-
+  const visibilitySelect = document.getElementById("visibility");
+  const selectedVisibility = visibilitySelect.value
+  const bucketName = selectedVisibility === "public"
+    ? "public-pics"
+    : "private-pics";
   const extension =
     capturedType === "image/jpeg" ? "jpg" : "webm";
 
   const filePath = `memory_${Date.now()}.${extension}`;
 
   const { error } = await supabase.storage
-    .from("public-pics")
+    .from(bucketName)
     .upload(filePath, capturedBlob, { upsert: true });
 
   if (error) {
@@ -293,8 +297,9 @@ uploadBtn.addEventListener("click", async () => {
 
   await supabase.from("uploads").insert([{
     file_path: filePath,
+    bucket:bucketName,
     file_type: capturedType,
-    visibility: "public"
+    // visibility: selectedVisibility
   }]);
 
   status.innerText = "Uploaded successfully 🤍";
