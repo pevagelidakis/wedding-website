@@ -190,6 +190,12 @@ function startRecording() {
     if (isRecording) stopRecording();
   }, MAX_DURATION);
 }
+
+function stopRecording() {
+  isRecording = false;
+  recordBtn.classList.remove("recording");
+  if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+}
 /* ================= PREVIEW ================= */
 function showPreviewButtons() {
   recordBtn.style.display = "none";
