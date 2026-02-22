@@ -237,10 +237,18 @@ async function startRecording() {
   mediaRecorder.start();
 }
 
+// function stopRecording() {
+//   isRecording = false;
+//   recordBtn.classList.remove("recording");
+//   mediaRecorder.stop();
+// }
 function stopRecording() {
   isRecording = false;
   recordBtn.classList.remove("recording");
-  mediaRecorder.stop();
+
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
+    mediaRecorder.stop();
+  }
 }
 
 /* ================= PREVIEW MODE ================= */
@@ -280,8 +288,13 @@ shareBtn.addEventListener("click", async () => {
   if (!capturedBlob) return;
 
   try {
-    const extension =
-      capturedType === "image/jpeg" ? "jpg" : "webm";
+    // const extension =
+    //   capturedType === "image/jpeg" ? "jpg" : "webm";
+    let extension = "webm";
+
+    if (capturedType.startsWith("image")) extension = "jpg";
+    if (capturedType.includes("mp4")) extension = "mp4";
+    if (capturedType.includes("webm")) extension = "webm";
 
     const fileName = `Panos_Marianna_Wedding_${Date.now()}.${extension}`;
 
@@ -331,14 +344,26 @@ uploadBtn.addEventListener("click", async () => {
   const bucketName = selectedVisibility === "public"
     ? "public-pics"
     : "private-pics";
-  const extension =
-    capturedType === "image/jpeg" ? "jpg" : "webm";
+
+  // const extension =
+  // capturedType === "image/jpeg" ? "jpg" : "webm";
+  let extension = "webm";
+
+  if (capturedType.startsWith("image")) extension = "jpg";
+  if (capturedType.includes("mp4")) extension = "mp4";
+  if (capturedType.includes("webm")) extension = "webm";
 
   const filePath = `memory_${Date.now()}.${extension}`;
 
+  // const { error } = await supabase.storage
+  //   .from(bucketName)
+  //   .upload(filePath, capturedBlob, { upsert: true });
   const { error } = await supabase.storage
     .from(bucketName)
-    .upload(filePath, capturedBlob, { upsert: true });
+    .upload(filePath, capturedBlob, {
+      contentType: capturedType,
+      upsert: true
+    });
 
   if (error) {
     status.innerText = "Upload failed 😢";
