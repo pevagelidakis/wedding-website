@@ -184,6 +184,14 @@ video,canvas{
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(198,165,106,0.25);
 }
+
+.action-buttons{
+  margin-top:20px;
+  display:none;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
 </style>
 </head>
 
@@ -207,6 +215,7 @@ video,canvas{
 <div class="controls">
   <button id="switchBtn" class="switch-btn"><i class="fa-solid fa-camera-rotate"></i></button>
   <div id="recordBtn" class="record-btn"></div>
+</div>  
   <div class="rsvp-group" id="visibility">
       <label>Visibility</label>
       <select id="visibility">
@@ -215,9 +224,8 @@ video,canvas{
       </select>
     </div>
 
+<div class="action-buttons">
   <button id="retakeBtn" class="retake-btn"><i class="fa-solid fa-arrow-rotate-left"></i> Retake</button>
-
-
   <button id="shareBtn" class="share-btn" aria-label="Share"> <i class="fa-solid fa-share-nodes"></i> Share</button>
   <button id="uploadBtn" class="upload-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</button>
 </div>
