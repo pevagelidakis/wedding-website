@@ -97,18 +97,20 @@ fileInput.addEventListener("change", (e) => {
 /* ================= CAMERA ================= */
 
 async function startCamera() {
-  if (stream) stream.getTracks().forEach(t => t.stop());
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
 
   stream = await navigator.mediaDevices.getUserMedia({
     video: { facingMode: currentFacingMode },
-    audio: true
+    audio: false // 🚀 DO NOT open mic here
   });
 
   video.srcObject = stream;
+  video.muted = true;          // 🚀 CRITICAL FOR MOBILE
+  video.playsInline = true;    // iOS fix
+  await video.play();
 }
-
-startCamera();
-
 /* ================= SWITCH ================= */
 
 switchBtn.addEventListener("click", async () => {
@@ -162,12 +164,56 @@ function takePhoto() {
 
 /* ================= VIDEO ================= */
 
-function startRecording() {
+// function startRecording() {
+//   isRecording = true;
+//   recordBtn.classList.add("recording");
+
+//   recordedChunks = [];
+//   mediaRecorder = new MediaRecorder(stream);
+
+//   mediaRecorder.ondataavailable = e => {
+//     if (e.data.size > 0) recordedChunks.push(e.data);
+//   };
+
+//   mediaRecorder.onstop = () => {
+//     capturedBlob = new Blob(recordedChunks, { type: "video/webm" });
+//     capturedType = "video/webm";
+
+//     video.srcObject = null;
+//     video.src = URL.createObjectURL(capturedBlob);
+//     video.controls = true;
+
+//     showPreviewButtons();
+//   };
+
+//   mediaRecorder.start();
+// }
+async function startRecording() {
   isRecording = true;
   recordBtn.classList.add("recording");
 
+  // 🚀 Restart camera WITH audio
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
+
+  stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: currentFacingMode },
+    audio: {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true
+    }
+  });
+
+  video.srcObject = stream;
+  video.muted = true;
+  await video.play();
+
   recordedChunks = [];
-  mediaRecorder = new MediaRecorder(stream);
+  mediaRecorder = new MediaRecorder(stream, {
+    mimeType: "video/webm;codecs=vp8,opus"
+  });
 
   mediaRecorder.ondataavailable = e => {
     if (e.data.size > 0) recordedChunks.push(e.data);
@@ -177,9 +223,13 @@ function startRecording() {
     capturedBlob = new Blob(recordedChunks, { type: "video/webm" });
     capturedType = "video/webm";
 
+    // Stop mic immediately
+    stream.getTracks().forEach(track => track.stop());
+
     video.srcObject = null;
     video.src = URL.createObjectURL(capturedBlob);
     video.controls = true;
+    video.muted = false;
 
     showPreviewButtons();
   };
