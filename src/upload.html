@@ -158,6 +158,32 @@ video,canvas{
   font-size:14px;
   opacity:.8;
 }
+
+
+.rsvp-group input,
+.rsvp-group select,
+.rsvp-group textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.95);
+  transition: all 0.3s ease;
+}
+
+.rsvp-group textarea {
+  resize: none;
+}
+
+.rsvp-group input:focus,
+.rsvp-group select:focus,
+.rsvp-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(198,165,106,0.25);
+}
 </style>
 </head>
 
@@ -188,6 +214,13 @@ video,canvas{
   <button id="shareBtn" class="share-btn" aria-label="Share"> <i class="fa-solid fa-share-nodes"></i> Share</button>
   <button id="uploadBtn" class="upload-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</button>
 </div>
+<div class="rsvp-group" id="visibility">
+      <label>Visibility</label>
+      <select id="visibility">
+        <option value="public" id="public">Public (everyone sees)</option>
+        <option value="private" id="private">Private (we only)</option>
+      </select>
+    </div>
 <p id="status"></p>
 
 <script type="module" src="upload.js"></script>
