@@ -83,7 +83,7 @@ recordBtn.addEventListener("touchend", endHold);
 
 function startHold(e) {
   e.preventDefault();
-  holdTimer = setTimeout(() => startRecording(), 600);
+  holdTimer = setTimeout(() => startRecording(), 300);
 }
 
 function endHold(e) {
@@ -116,7 +116,7 @@ function takePhoto() {
 
   canvas.toBlob(blob => {
     capturedFiles.push({ blob, type: "image/jpeg" });
-    showPreview(blob, "image");
+    // showPreview(blob, "image");
   }, "image/jpeg", 0.85);
 
   video.style.display = "none";
@@ -180,7 +180,7 @@ function startRecording() {
     video.style.display = "block";
     galleryPreview.style.display = "none";
 
-    showPreview(blob, "video");
+    // showPreview(blob, "video");
     showPreviewButtons();
   };
 
