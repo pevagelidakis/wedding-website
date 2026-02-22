@@ -28,6 +28,8 @@ const status = document.getElementById("status");
 
 let stream = null;
 let currentFacingMode = "environment";
+// let capturedBlob = null;
+// let capturedType = null;
 let capturedFiles = []; // { blob, type }
 let mediaRecorder = null;
 let recordedChunks = [];
@@ -187,6 +189,8 @@ function showPreviewButtons() {
 /* ================= RETAKE ================= */
 
 retakeBtn.addEventListener("click", async () => {
+//   let capturedBlob = null;
+//   let capturedType = null;
   let capturedFiles = []; // { blob, type }
 
   video.src = "";
