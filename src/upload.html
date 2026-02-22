@@ -236,7 +236,7 @@ video,canvas{
   <button id="shareBtn" class="share-btn" aria-label="Share"> <i class="fa-solid fa-share-nodes"></i> Share</button>
   <button id="uploadBtn" class="upload-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</button>
 </div>
-<div class="rsvp-group" id="visibility">
+<div class="rsvp-group" id="visibility_">
   <label>Visibility</label>
   <select id="visibility">
     <option value="public" id="public">Public (everyone sees)</option>
@@ -259,8 +259,11 @@ video,canvas{
     shareBtn:`<i class="fa-solid fa-share-nodes"></i> Share`,
     uploadBtn:`<i class="fa-solid fa-arrow-up-from-bracket"></i> Upload`,
     visibility:`
-    <option value="public"  id="public">✨ Public Realm (Bring to light! 💡)</option>
-    <option value="private" id="private">🖤 Classified (For our little eyes only! 👀🫣)</option>
+    label>Προσβασιμότητα Υλικού</label>
+    <select id="visibility">
+      <option value="public"  id="public">✨ Public Realm (Bring to light! 💡)</option>
+      <option value="private" id="private">🖤 Classified (For our little eyes only! 👀🫣)</option>
+    </select>
     `
   },
   gr: {
@@ -274,8 +277,12 @@ video,canvas{
     shareBtn:`<i class="fa-solid fa-share-nodes"></i> Κοινοποίηση`,
     uploadBtn:`<i class="fa-solid fa-arrow-up-from-bracket"></i> Ανέβασμα`,
     visibility:`
-    <option value="public"  id="public">✨ Δημόσια · Όλα στη φόρα!</option>
-    <option value="private" id="private">🖤 Απόρρητο (Για τα ματάκια μας μόνο! 👀🫣)</option>
+    <label>Προσβασιμότητα Υλικού</label>
+    <select id="visibility">
+      <option value="public"  id="public">✨ Δημόσια · Όλα στο φως!</option>
+      <option value="private" id="private">🖤 Απόρρητο (Για τα ματάκια μας μόνο! 👀🫣)</option>
+    </select>
+
     `
   }
 };
