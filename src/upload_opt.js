@@ -43,7 +43,7 @@ const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
 const UPLOAD_COOLDOWN = 10000; // 10 seconds
 
 /* =========================================================
-   CAMERA START (NO AUDIO)
+   CAMERA START
 ========================================================= */
 
 async function startCamera() {
@@ -55,11 +55,15 @@ async function startCamera() {
       width: { ideal: 1280 },
       height: { ideal: 720 }
     },
-    audio: false
+    audio: {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true
+    }
   });
 
   video.srcObject = stream;
-  video.muted = true;
+  video.muted = true;      // prevents feedback
   video.playsInline = true;
   await video.play();
 }
@@ -128,30 +132,67 @@ function takePhoto() {
 
 /* ================= VIDEO ================= */
 
-async function startRecording() {
+// async function startRecording() {
+//   isRecording = true;
+//   recordBtn.classList.add("recording");
+
+//   stopStream();
+
+//   stream = await navigator.mediaDevices.getUserMedia({
+//     video: {
+//       facingMode: currentFacingMode,
+//       width: { ideal: 1280 },
+//       height: { ideal: 720 }
+//     },
+//     audio: {
+//       echoCancellation: true,
+//       noiseSuppression: true,
+//       autoGainControl: true
+//     }
+//   });
+
+//   video.srcObject = stream;
+//   video.muted = true;
+//   await video.play();
+
+//   recordedChunks = [];
+//   mediaRecorder = new MediaRecorder(stream, {
+//     mimeType: "video/webm;codecs=vp8,opus"
+//   });
+
+//   mediaRecorder.ondataavailable = e => {
+//     if (e.data.size > 0) recordedChunks.push(e.data);
+//   };
+
+//   mediaRecorder.onstop = () => {
+//     capturedBlob = new Blob(recordedChunks, { type: "video/webm" });
+//     capturedType = "video/webm";
+
+//     stopStream();
+
+//     video.srcObject = null;
+//     video.src = URL.createObjectURL(capturedBlob);
+//     video.controls = true;
+//     video.muted = false;
+
+//     showPreviewButtons();
+//   };
+
+//   mediaRecorder.start();
+
+//   // Auto-stop after max duration
+//   setTimeout(() => {
+//     if (isRecording) stopRecording();
+//   }, MAX_DURATION);
+// }
+function startRecording() {
+  if (!stream) return;
+
   isRecording = true;
   recordBtn.classList.add("recording");
 
-  stopStream();
-
-  stream = await navigator.mediaDevices.getUserMedia({
-    video: {
-      facingMode: currentFacingMode,
-      width: { ideal: 1280 },
-      height: { ideal: 720 }
-    },
-    audio: {
-      echoCancellation: true,
-      noiseSuppression: true,
-      autoGainControl: true
-    }
-  });
-
-  video.srcObject = stream;
-  video.muted = true;
-  await video.play();
-
   recordedChunks = [];
+
   mediaRecorder = new MediaRecorder(stream, {
     mimeType: "video/webm;codecs=vp8,opus"
   });
@@ -164,8 +205,6 @@ async function startRecording() {
     capturedBlob = new Blob(recordedChunks, { type: "video/webm" });
     capturedType = "video/webm";
 
-    stopStream();
-
     video.srcObject = null;
     video.src = URL.createObjectURL(capturedBlob);
     video.controls = true;
@@ -176,12 +215,18 @@ async function startRecording() {
 
   mediaRecorder.start();
 
-  // Auto-stop after max duration
   setTimeout(() => {
     if (isRecording) stopRecording();
   }, MAX_DURATION);
 }
+// function stopRecording() {
+//   isRecording = false;
+//   recordBtn.classList.remove("recording");
 
+//   if (mediaRecorder && mediaRecorder.state !== "inactive") {
+//     mediaRecorder.stop();
+//   }
+// }
 function stopRecording() {
   isRecording = false;
   recordBtn.classList.remove("recording");
@@ -190,7 +235,6 @@ function stopRecording() {
     mediaRecorder.stop();
   }
 }
-
 /* ================= PREVIEW ================= */
 
 function showPreviewButtons() {
@@ -204,12 +248,30 @@ function showPreviewButtons() {
 
 /* ================= RETAKE ================= */
 
+// retakeBtn.addEventListener("click", async () => {
+//   capturedBlob = null;
+//   capturedType = null;
+
+//   video.controls = false;
+//   video.style.display = "block";
+//   canvas.style.display = "none";
+
+//   retakeBtn.style.display = "none";
+//   uploadBtn.style.display = "none";
+//   shareBtn.style.display = "none";
+
+//   recordBtn.style.display = "block";
+//   switchBtn.style.display = "inline-block";
+
+//   await startCamera();
+// });
 retakeBtn.addEventListener("click", async () => {
   capturedBlob = null;
   capturedType = null;
 
+  video.src = "";
+  video.srcObject = null;
   video.controls = false;
-  video.style.display = "block";
   canvas.style.display = "none";
 
   retakeBtn.style.display = "none";
@@ -219,7 +281,13 @@ retakeBtn.addEventListener("click", async () => {
   recordBtn.style.display = "block";
   switchBtn.style.display = "inline-block";
 
-  await startCamera();
+  modeSelection.style.display = "flex";
+  cameraWrapper.style.display = "none";
+  controls.style.display = "none";
+
+  status.innerText = "";
+
+  stopStream();
 });
 
 /* ================= UPLOAD ================= */
