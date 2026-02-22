@@ -15,6 +15,21 @@
   --glass:rgba(255,255,255,0.08);
 }
 
+header {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.language-switch {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
 body{
   margin:0;
   font-family:'Inter',sans-serif;
@@ -174,7 +189,7 @@ video,canvas{
 }
 
 .rsvp-group label{
-  margin-top:10px;
+  margin-top:20px;
   font-family: 'Playfair Display', cursive;
   font-size: 0.95rem;
 }
@@ -190,14 +205,20 @@ video,canvas{
 </style>
 </head>
 
+<header>
+<div class="language-switch">
+  <button onclick="setLanguage('en')" id="btn-en">EN</button>
+  <button onclick="setLanguage('gr')" id="btn-gr">GR</button>
+</div>
+</header>
+
 <body>
 
-<h2>Capture the Moment</h2>
-<div class="subtitle">Tap for photo • Hold for video</div>
-
+<h2 id="header"></h2>
+<div class="subtitle" id="subtitle"></div>
 <div id="modeSelection" class="mode-selection">
-  <button id="cameraModeBtn" class="mode-btn">📸 Use Camera</button>
-  <button id="galleryModeBtn" class="mode-btn"><i class="fa-solid fa-images"></i> From Files</button>
+  <button id="cameraModeBtn" class="mode-btn"></button>
+  <button id="galleryModeBtn" class="mode-btn"></button>
 </div>
 
 <input type="file" id="fileInput" accept="image/*,video/*" style="display:none;" />
@@ -216,15 +237,75 @@ video,canvas{
   <button id="uploadBtn" class="upload-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Upload</button>
 </div>
 <div class="rsvp-group" id="visibility">
-      <label>Visibility</label>
-      <select id="visibility">
-        <option value="public" id="public">Public (everyone sees)</option>
-        <option value="private" id="private">Private (we only)</option>
-      </select>
-    </div>
+  <label>Visibility</label>
+  <select id="visibility">
+    <option value="public" id="public">Public (everyone sees)</option>
+    <option value="private" id="private">Private (we only)</option>
+  </select>
+</div>
 
 <p id="status"></p>
 
+<script>
+  const translations = {
+  en: {
+    header: "Capture the Moment! 🤩",
+    subtitle: "Tap for photo • Hold for video",
+    cameraModeBtn:"📸 Use Camera",
+    galleryModeBtn:`
+      <i class="fa-solid fa-images"></i> From Files
+    `,
+    retakeBtn:`<i class="fa-solid fa-arrow-rotate-left"></i> Retake`,
+    shareBtn:`<i class="fa-solid fa-share-nodes"></i> Share`,
+    uploadBtn:`<i class="fa-solid fa-arrow-up-from-bracket"></i> Upload`,
+    visibility:`
+    <option value="public"  id="public">✨ Public Realm (Let the cat out of the bag!🐈👜)</option>
+    <option value="private" id="private">🖤 Classified (For our eyes only 👀)</option>
+    `
+  },
+  gr: {
+    header: "Απαθανάτισε τη Στιγμή! 🤩",
+    subtitle: "Πατήστε για φωτογραφία • Κρατήστε για βίντεο",
+    cameraModeBtn:"📸 Κάμερα",
+    galleryModeBtn:`
+      <i class="fa-solid fa-images"></i> Από Αρχεία
+    `,
+    retakeBtn:`<i class="fa-solid fa-arrow-rotate-left"></i> Πάμε πάλι!`,
+    shareBtn:`<i class="fa-solid fa-share-nodes"></i> Κοινοποίηση`,
+    uploadBtn:`<i class="fa-solid fa-arrow-up-from-bracket"></i> Ανέβασμα`,
+    visibility:`
+    <option value="public"  id="public">✨ Δημόσια · Όλα στη φόρα!</option>
+    <option value="private" id="private">🖤 Απόρρητο (Για τα ματάκια μας μόνο 👀🫣)</option>
+    `
+  }
+};
+
+function setLanguage(lang) {
+  localStorage.setItem("language", lang);
+  applyLanguage(lang);
+}
+
+function applyLanguage(lang) {
+  document.documentElement.lang = lang;
+
+  Object.keys(translations[lang]).forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.innerHTML = translations[lang][id];
+    }
+  });
+
+  // Highlight active button
+  document.getElementById("btn-en").style.opacity = lang === "en" ? "1" : "0.5";
+  document.getElementById("btn-gr").style.opacity = lang === "gr" ? "1" : "0.5";
+}
+
+// On page load
+document.addEventListener("DOMContentLoaded", () => {
+  const savedLang = localStorage.getItem("language") || "en";
+  applyLanguage(savedLang);
+});
+</script>
 <script type="module" src="upload.js"></script>
 </body>
 </html>
