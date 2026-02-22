@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-:root{
+/* :root{
   --gold:#d4af37;
   --ivory:#f8f6f1;
   --glass:rgba(255,255,255,0.08);
@@ -67,8 +67,6 @@ h2{
   margin-bottom:30px;
 }
 
-/* MODE SELECTION */
-
 .mode-selection{
   display:flex;
   gap:20px;
@@ -92,8 +90,6 @@ h2{
   border-color:var(--gold);
 }
 
-/* CAMERA */
-
 .camera-wrapper{
   position:relative;
   width:100%;
@@ -109,8 +105,6 @@ video,canvas{
   width:100%;
   display:block;
 }
-
-/* CONTROLS */
 
 .controls{
   margin-top:25px;
@@ -170,7 +164,7 @@ video,canvas{
 .share-icon {
   width: 20px;
   height: 20px;
-  fill: currentColor; /* VERY IMPORTANT */
+  fill: currentColor;
 }
 
 .share-btn:hover {
@@ -209,8 +203,145 @@ video,canvas{
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(198,165,106,0.25);
+} */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* no scroll */
+  font-family:'Inter',sans-serif;
+  background:
+      linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.9)),
+      url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2000&auto=format&fit=crop') 
+      no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  color: var(--ivory);
 }
 
+header {
+  position: relative;
+  width: 100%;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  box-sizing: border-box;
+}
+
+.language-switch {
+  display: flex;
+  gap: 5px;
+}
+
+h2 {
+  font-family:'Playfair Display',serif;
+  font-size: 24px;
+  margin: 0;
+  text-align: center;
+  margin-top: 10px; /* below header */
+  z-index: 5;
+}
+
+.subtitle {
+  font-size: 14px;
+  opacity: .7;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* MODE SELECTION */
+.mode-selection {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 5px;
+  z-index: 5;
+}
+
+.mode-btn {
+  padding: 12px 18px;
+  border-radius: 40px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: var(--glass);
+  backdrop-filter: blur(8px);
+  color: var(--ivory);
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.mode-btn:hover {
+  transform: scale(1.05);
+  border-color: var(--gold);
+}
+
+/* CAMERA WRAPPER */
+.camera-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: calc(100vh - 120px); /* full screen minus header+controls */
+  border-radius: 20px;
+  overflow: hidden;
+  background: black;
+  display: none; /* shown only after mode selection */
+  flex-shrink: 0;
+}
+
+/* VIDEO & CANVAS */
+video, canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+canvas {
+  display: none; /* only after taking photo/video */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* CONTROLS */
+.controls {
+  position: absolute;
+  bottom: 10px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.switch-btn, .record-btn, .retake-btn, .upload-btn, .share-btn {
+  cursor: pointer;
+}
+
+/* SHARE / BUTTON STYLES */
+.retake-btn, .upload-btn, .share-btn {
+  padding: 8px 14px;
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,.3);
+  background: var(--glass);
+  color: var(--ivory);
+  font-size: 13px;
+  display: none;
+}
+
+#status {
+  font-size: 14px;
+  opacity: 0.8;
+  text-align: center;
+  margin-top: 5px;
+}
 </style>
 </head>
 
