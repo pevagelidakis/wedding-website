@@ -188,9 +188,8 @@ function showPreviewButtons() {
 /* ================= RETAKE ================= */
 
 retakeBtn.addEventListener("click", async () => {
-    let capturedFiles = []; // array of { blob, type }
-//   capturedBlob = null;
-//   capturedType = null;
+  capturedBlob = null;
+  capturedType = null;
 
   video.src = "";
   video.srcObject = null;
