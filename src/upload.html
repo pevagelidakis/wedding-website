@@ -39,7 +39,7 @@ header {
   background: gold;
   color: black;
 }
-body{
+/* body{
   margin:0;
   font-family:'Inter',sans-serif;
   background:
@@ -53,6 +53,23 @@ body{
   align-items:center;
   padding:30px 20px;
   min-height:100vh;
+} */
+ html, body {
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  overflow:hidden; /* prevent scrolling */
+  font-family:'Inter',sans-serif;
+  background:
+      linear-gradient(rgba(0,0,0,.80), rgba(0,0,0,.90)),
+      url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2000&auto=format&fit=crop') 
+      no-repeat center center fixed;
+  background-size:cover;
+  color:var(--ivory);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
 h2{
@@ -69,10 +86,15 @@ h2{
 
 /* MODE SELECTION */
 
-.mode-selection{
+/* .mode-selection{
   display:flex;
   gap:20px;
   margin-bottom:30px;
+} */
+ .mode-selection{
+  display:flex;
+  gap:20px;
+  margin-bottom:20px;
 }
 
 .mode-btn{
@@ -94,7 +116,7 @@ h2{
 
 /* CAMERA */
 
-.camera-wrapper{
+/* .camera-wrapper{
   position:relative;
   width:100%;
   max-width:420px;
@@ -103,11 +125,29 @@ h2{
   background:black;
   box-shadow:0 20px 60px rgba(0,0,0,.6);
   display:none;
+} */
+ .camera-wrapper{
+  position:relative;
+  width:100%;
+  max-width:420px;
+  height: calc(100vh - 120px); /* fit mobile screen minus controls */
+  border-radius:20px;
+  overflow:hidden;
+  background:black;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  display:none;
+  flex-shrink:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
+
 
 video,canvas{
   width:100%;
   display:block;
+
+  object-fit: cover
 }
 
 /* CONTROLS */
@@ -118,6 +158,8 @@ video,canvas{
   justify-content:center;
   align-items:center;
   gap:30px;
+
+  position: absolute; bottom: 10px;
 }
 
 .switch-btn{
@@ -177,11 +219,30 @@ video,canvas{
   color: #000;
 }
 
-#status{
+/* #status{
   margin-top:25px;
   font-size:14px;
   opacity:.8;
+} */
+
+/* Status */
+#status{
+  margin-top:15px;
+  font-size:14px;
+  opacity:.8;
+  text-align:center;
 }
+
+/* Gallery preview */
+#galleryPreview {
+  display:flex;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  margin-top:10px;
+  padding:4px;
+  width:100%;
+}
+
 
 
 .rsvp-group input,

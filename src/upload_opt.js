@@ -95,20 +95,6 @@ function endHold(e) {
 }
 
 /* ================= PHOTO ================= */
-// function takePhoto() {
-//   canvas.width = video.videoWidth;
-//   canvas.height = video.videoHeight;
-//   canvas.getContext("2d").drawImage(video, 0, 0);
-
-//   canvas.toBlob(blob => {
-//     capturedFiles.push({ blob, type: "image/jpeg" });
-//     showPreview(blob, "image");
-//   }, "image/jpeg", 0.85);
-
-//   video.style.display = "none";
-//   canvas.style.display = "block";
-//   showPreviewButtons();
-// }
 function takePhoto() {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
@@ -125,38 +111,6 @@ function takePhoto() {
   showPreviewButtons();
 }
 
-/* ================= VIDEO ================= */
-// function startRecording() {
-//   if (!stream) return;
-
-//   isRecording = true;
-//   recordBtn.classList.add("recording");
-//   recordedChunks = [];
-
-//   mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm;codecs=vp8,opus" });
-//   mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-//   mediaRecorder.onstop = () => {
-//     const blob = new Blob(recordedChunks, { type: "video/webm" });
-//     capturedFiles.push({ blob, type: "video/webm" });
-
-//     video.srcObject = null;
-//     video.src = URL.createObjectURL(blob);
-//     video.controls = true;
-//     video.muted = false;
-
-//     showPreview(blob, "video");
-//     showPreviewButtons();
-//   };
-
-//   mediaRecorder.start();
-//   setTimeout(() => { if (isRecording) stopRecording(); }, MAX_DURATION);
-// }
-
-// function stopRecording() {
-//   isRecording = false;
-//   recordBtn.classList.remove("recording");
-//   if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
-// }
 /* ================= VIDEO ================= */
 function startRecording() {
   if (!stream) return;
@@ -254,26 +208,6 @@ function showPreview(blob, type) {
 }
 
 /* ================= RETAKE ================= */
-// retakeBtn.addEventListener("click", () => {
-//   capturedFiles = [];
-//   galleryPreview.innerHTML = "";
-//   video.src = "";
-//   video.srcObject = null;
-//   video.controls = false;
-//   canvas.style.display = "none";
-
-//   retakeBtn.style.display = "none";
-//   uploadBtn.style.display = "none";
-//   shareBtn.style.display = "none";
-//   recordBtn.style.display = "block";
-//   switchBtn.style.display = "inline-block";
-//   modeSelection.style.display = "flex";
-//   cameraWrapper.style.display = "none";
-//   controls.style.display = "none";
-//   status.innerText = "";
-
-//   stopStream();
-// });
 retakeBtn.addEventListener("click", async () => {
   capturedFiles = [];
   galleryPreview.innerHTML = "";
@@ -343,6 +277,37 @@ uploadBtn.addEventListener("click", async () => {
 
   status.innerText = "Uploaded successfully 🤍";
   setTimeout(() => window.location.reload(), 1200);
+});
+
+
+/* ================= SHARE ================= */
+shareBtn.addEventListener("click", async () => {
+  if (!capturedFiles.length) {
+    status.innerText = "No files to share 🤍";
+    return;
+  }
+
+  try {
+    const filesToShare = capturedFiles.map(fileObj => {
+      const ext = fileObj.type.startsWith("image") ? "jpg" : "webm";
+      return new File([fileObj.blob], `wedding_memory_${Date.now()}.${ext}`, { type: fileObj.type });
+    });
+
+    if (navigator.share && navigator.canShare({ files: filesToShare })) {
+      await navigator.share({
+        title: "Wedding Memories 🤍",
+        text: "Captured at the wedding ✨",
+        files: filesToShare
+      });
+      status.innerText = "Shared successfully 🤍";
+    } else {
+      status.innerText = "Sharing not supported on this device, try uploading instead.";
+    }
+
+  } catch (err) {
+    console.error(err);
+    status.innerText = "Sharing failed or canceled.";
+  }
 });
 
 /* ================= CLEANUP ================= */
