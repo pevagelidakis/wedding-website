@@ -95,6 +95,20 @@ function endHold(e) {
 }
 
 /* ================= PHOTO ================= */
+// function takePhoto() {
+//   canvas.width = video.videoWidth;
+//   canvas.height = video.videoHeight;
+//   canvas.getContext("2d").drawImage(video, 0, 0);
+
+//   canvas.toBlob(blob => {
+//     capturedFiles.push({ blob, type: "image/jpeg" });
+//     showPreview(blob, "image");
+//   }, "image/jpeg", 0.85);
+
+//   video.style.display = "none";
+//   canvas.style.display = "block";
+//   showPreviewButtons();
+// }
 function takePhoto() {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
@@ -107,9 +121,42 @@ function takePhoto() {
 
   video.style.display = "none";
   canvas.style.display = "block";
+  galleryPreview.style.display = "none";  // hide gallery preview
   showPreviewButtons();
 }
 
+/* ================= VIDEO ================= */
+// function startRecording() {
+//   if (!stream) return;
+
+//   isRecording = true;
+//   recordBtn.classList.add("recording");
+//   recordedChunks = [];
+
+//   mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm;codecs=vp8,opus" });
+//   mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+//   mediaRecorder.onstop = () => {
+//     const blob = new Blob(recordedChunks, { type: "video/webm" });
+//     capturedFiles.push({ blob, type: "video/webm" });
+
+//     video.srcObject = null;
+//     video.src = URL.createObjectURL(blob);
+//     video.controls = true;
+//     video.muted = false;
+
+//     showPreview(blob, "video");
+//     showPreviewButtons();
+//   };
+
+//   mediaRecorder.start();
+//   setTimeout(() => { if (isRecording) stopRecording(); }, MAX_DURATION);
+// }
+
+// function stopRecording() {
+//   isRecording = false;
+//   recordBtn.classList.remove("recording");
+//   if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+// }
 /* ================= VIDEO ================= */
 function startRecording() {
   if (!stream) return;
@@ -129,20 +176,20 @@ function startRecording() {
     video.controls = true;
     video.muted = false;
 
+    canvas.style.display = "none";
+    video.style.display = "block";
+    galleryPreview.style.display = "none";
+
     showPreview(blob, "video");
     showPreviewButtons();
   };
 
   mediaRecorder.start();
-  setTimeout(() => { if (isRecording) stopRecording(); }, MAX_DURATION);
-}
 
-function stopRecording() {
-  isRecording = false;
-  recordBtn.classList.remove("recording");
-  if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+  setTimeout(() => {
+    if (isRecording) stopRecording();
+  }, MAX_DURATION);
 }
-
 /* ================= PREVIEW ================= */
 function showPreviewButtons() {
   recordBtn.style.display = "none";
@@ -201,13 +248,36 @@ function showPreview(blob, type) {
 }
 
 /* ================= RETAKE ================= */
-retakeBtn.addEventListener("click", () => {
+// retakeBtn.addEventListener("click", () => {
+//   capturedFiles = [];
+//   galleryPreview.innerHTML = "";
+//   video.src = "";
+//   video.srcObject = null;
+//   video.controls = false;
+//   canvas.style.display = "none";
+
+//   retakeBtn.style.display = "none";
+//   uploadBtn.style.display = "none";
+//   shareBtn.style.display = "none";
+//   recordBtn.style.display = "block";
+//   switchBtn.style.display = "inline-block";
+//   modeSelection.style.display = "flex";
+//   cameraWrapper.style.display = "none";
+//   controls.style.display = "none";
+//   status.innerText = "";
+
+//   stopStream();
+// });
+retakeBtn.addEventListener("click", async () => {
   capturedFiles = [];
   galleryPreview.innerHTML = "";
+  galleryPreview.style.display = "none";  // hide gallery preview
+
+  video.style.display = "block";          // show camera view
+  canvas.style.display = "none";          // hide canvas
+  video.controls = false;
   video.src = "";
   video.srcObject = null;
-  video.controls = false;
-  canvas.style.display = "none";
 
   retakeBtn.style.display = "none";
   uploadBtn.style.display = "none";
@@ -215,11 +285,11 @@ retakeBtn.addEventListener("click", () => {
   recordBtn.style.display = "block";
   switchBtn.style.display = "inline-block";
   modeSelection.style.display = "flex";
-  cameraWrapper.style.display = "none";
-  controls.style.display = "none";
+  cameraWrapper.style.display = "block";  // show camera wrapper
+  controls.style.display = "flex";
   status.innerText = "";
 
-  stopStream();
+  await startCamera();                     // restart camera preview
 });
 
 /* ================= GALLERY FILES ================= */
