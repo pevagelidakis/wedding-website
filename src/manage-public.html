@@ -187,7 +187,7 @@ async function loadFiles2() {
   status.innerText = "";
 }
 
-async function loadFiles() {
+async function loadFiles3() {
 
   status.innerText = "Loading...";
 
@@ -228,6 +228,56 @@ async function loadFiles() {
 
     createImageCard(file.name, signedData.signedUrl);
     loadedFiles.add(file.name);
+  }
+
+  status.innerText = "";
+}
+
+async function loadFiles() {
+
+  status.innerText = "Loading...";
+
+  const { data, error } =
+    await supabase.storage
+      .from("public-pics")
+      .list("", { limit: 1000 });
+
+  if (error) {
+    status.innerText = "Error: " + error.message;
+    return;
+  }
+
+  photoGallery.innerHTML = "";
+  videoGallery.innerHTML = "";
+  selectedFiles.clear();
+
+  if (!data || data.length === 0) {
+    status.innerText = "No files found.";
+    return;
+  }
+
+  const validFiles = data.filter(file =>
+    file.name &&
+    file.metadata &&
+    file.metadata.size > 0
+  );
+
+  for (const file of validFiles) {
+
+    const { data: signedData } =
+      await supabase.storage
+        .from("public-pics")
+        .createSignedUrl(file.name, 120);
+
+    if (!signedData) continue;
+
+    const mimetype = file.metadata.mimetype || "";
+
+    if (mimetype.startsWith("video")) {
+      createMediaCard(file.name, signedData.signedUrl, "video");
+    } else {
+      createMediaCard(file.name, signedData.signedUrl, "image");
+    }
   }
 
   status.innerText = "";
@@ -353,7 +403,7 @@ function createImageCard2(fileName, imageUrl) {
   gallery.appendChild(card);
 }
 
-function createImageCard(fileName, imageUrl) {
+function createImageCard3(fileName, imageUrl) {
 
   const card = document.createElement("div");
   card.className = "photo-card";
@@ -380,45 +430,133 @@ function createImageCard(fileName, imageUrl) {
   gallery.appendChild(card);
 }
 
+function createMediaCard(fileName, url, type) {
+
+  const card = document.createElement("div");
+  card.className = "photo-card";
+  card.dataset.file = fileName;
+
+  let element;
+
+  if (type === "video") {
+    element = document.createElement("video");
+    element.src = url;
+    element.controls = true;
+  } else {
+    element = document.createElement("img");
+    element.src = url;
+  }
+
+  element.loading = "lazy";
+  element.classList.add("media-item");
+
+  card.appendChild(element);
+
+  card.addEventListener("click", (e) => {
+
+    // prevent selecting when clicking video controls
+    if (e.target.tagName === "VIDEO") return;
+
+    if (selectedFiles.has(fileName)) {
+      selectedFiles.delete(fileName);
+      card.classList.remove("selected");
+    } else {
+      selectedFiles.add(fileName);
+      card.classList.add("selected");
+    }
+
+  });
+
+  if (type === "video") {
+    videoGallery.appendChild(card);
+  } else {
+    photoGallery.appendChild(card);
+  }
+}
 
 moveBtn.addEventListener("click", async () => {
 
   if (selectedFiles.size === 0) {
-    status.innerText = "No photos selected.";
+    status.innerText = "No files selected.";
     return;
   }
 
-  const confirmDelete = confirm(
-    `Delete ${selectedFiles.size} selected photo(s)?`
-  );
+  if (!confirm(`Move ${selectedFiles.size} file(s) to private?`)) return;
 
-  if (!confirmDelete) return;
-
-  status.innerText = "Deleting...";
+  status.innerText = "Moving files...";
 
   const filesArray = Array.from(selectedFiles);
 
-  const { error } =
+  for (const filePath of filesArray) {
+
+    // 1️⃣ Download from public
+    const { data: fileData } =
+      await supabase.storage
+        .from("public-pics")
+        .download(filePath);
+
+    if (!fileData) continue;
+
+    // 2️⃣ Upload to private bucket
+    await supabase.storage
+      .from("private-pics")
+      .upload(filePath, fileData, { upsert: true });
+
+    // 3️⃣ Remove from public bucket
     await supabase.storage
       .from("public-pics")
-      .remove(filesArray);
+      .remove([filePath]);
 
-  if (error) {
-    console.error(error);
-    status.innerText = "Delete failed.";
-    return;
+    // 4️⃣ Update database
+    await supabase
+      .from("uploads")
+      .update({ bucket: "private-pics", visibility: "private" })
+      .eq("file_path", filePath);
   }
 
-  // Optional: update DB visibility or delete record
-  await supabase
-    .from("uploads")
-    .delete()
-    .in("file_path", filesArray);
-
-  status.innerText = "Deleted successfully.";
+  status.innerText = "Moved successfully.";
 
   loadFiles();
 });
+
+// moveBtn.addEventListener("click", async () => {
+
+//   if (selectedFiles.size === 0) {
+//     status.innerText = "No photos selected.";
+//     return;
+//   }
+
+//   const confirmDelete = confirm(
+//     `Delete ${selectedFiles.size} selected photo(s)?`
+//   );
+
+//   if (!confirmDelete) return;
+
+//   status.innerText = "Deleting...";
+
+//   const filesArray = Array.from(selectedFiles);
+
+//   const { error } =
+//     await supabase.storage
+//       .from("public-pics")
+//       .remove(filesArray);
+
+//   if (error) {
+//     console.error(error);
+//     status.innerText = "Delete failed.";
+//     return;
+//   }
+
+//   // Optional: update DB visibility or delete record
+//   await supabase
+//     .from("uploads")
+//     .delete()
+//     .in("file_path", filesArray);
+
+//   status.innerText = "Deleted successfully.";
+
+//   loadFiles();
+// });
 
 
 loadFiles();
@@ -494,12 +632,19 @@ h2{
 }
 
 /* ================= IMAGE ================= */
-.photo-card img{
+/* .photo-card img{
   width:100%;
   height:260px;
   object-fit:cover;
   display:block;
   transition:transform .4s ease;
+} */
+
+.media-item{
+  width:100%;
+  height:260px;
+  object-fit:contain; /* FULL media visible */
+  background:#000;
 }
 
 .photo-card:hover img{
@@ -580,7 +725,11 @@ button{
 
 <h2>Manage Public Photos</h2>
 
-<div id="gallery" class="gallery"></div>
+<h3>Photos</h3>
+<div id="photoGallery" class="gallery"></div>
+
+<h3>Videos</h3>
+<div id="videoGallery" class="gallery"></div>
 
 <button id="moveBtn">Move Selected to Private</button>
 
