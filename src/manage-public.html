@@ -683,6 +683,9 @@ setupInfiniteScroll();
 setupMoveButton();
 subscribeRealtime();
 
+function getPublicUrl(fileName) {
+  return `${SUPABASE_URL}/storage/v1/object/public/public-pics/${fileName}`;
+}
 /* ================= LOAD PAGE ================= */
 
 async function loadPage() {
@@ -706,8 +709,7 @@ async function loadPage() {
 
     if (!file.name) continue;
 
-    const url =
-      `${SUPABASE_URL}/storage/v1/object/public/public-pics/${file.name}`;
+    const url = getPublicUrl(file.name)
 
     if (file.metadata?.mimetype?.startsWith("video")) {
       createMediaCard(file.name, url, "video");
@@ -725,7 +727,10 @@ function renderBatch(files) {
 
   files.forEach(file => {
 
-    const url = `${SUPABASE_URL}/storage/v1/object/public/${PUBLIC_BUCKET}/${file.file_path}`;
+    const img = document.createElement("img");
+    const url = getPublicUrl(file.file_path);
+    img.src = url;
+    // const url = `${SUPABASE_URL}/storage/v1/object/public/${PUBLIC_BUCKET}/${file.file_path}`;
 
     createMediaCard(file.file_path, url, file.mimetype);
 
@@ -874,8 +879,7 @@ function subscribeRealtime() {
 
         const file = payload.new;
 
-        const url =
-          `${SUPABASE_URL}/storage/v1/object/public/${PUBLIC_BUCKET}/${file.file_path}`;
+        const url =getSignedUrl(file.file_path);
 
         createMediaCard(file.file_path, url, file.mimetype);
 
