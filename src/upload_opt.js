@@ -172,8 +172,9 @@ function showPreview(blob, type) {
   wrapper.style.marginRight = "8px";
 
   canvas.style.display = "none";          // hide canvas
-  cameraWrapper.style.display="none";
-  
+  video.style.display = "none";
+
+
   let element;
   if (type === "image") {
     element = document.createElement("img");
