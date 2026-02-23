@@ -254,16 +254,16 @@ fileInput.addEventListener("change", (e) => {
   if (!files.length) return;
 
   stopStream();
-  cameraWrapper.style.display = "block";
-  controls.style.display = "none";
-  galleryPreview.innerHTML = "";
-  galleryPreview.style.display = "flex";
-
   capturedFiles = [];
   files.forEach(file => {
     capturedFiles.push({ blob: file, type: file.type });
     showPreview(file, file.type.startsWith("image") ? "image" : "video");
   });
+  cameraWrapper.style.display = "block";
+  controls.style.display = "flex";
+  galleryPreview.innerHTML = "";
+  galleryPreview.style.display = "flex";
+
 
   modeSelection.style.display = "none";
   recordBtn.style.display = "none";
