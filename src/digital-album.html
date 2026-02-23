@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8" />
@@ -474,5 +474,348 @@ supabase
     <button id="shareBtn" class="modal-btn"><i class="fa-solid fa-share-nodes"></i> Share</button>
   </div>
 </div>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wedding Memories</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="icon" type="image/png" href="./media/us-married_copy.png">
+
+<style>
+:root{
+  --gold:#d4af37;
+  --ivory:#f8f6f1;
+}
+
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:
+      linear-gradient(rgba(0,0,0,.80), rgba(0,0,0,.90)),
+      url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2000&auto=format&fit=crop') 
+      no-repeat center center fixed;
+    background-size:cover;
+  color:var(--ivory);
+  padding:40px 20px;
+}
+
+h1{
+  font-family:'Playfair Display',serif;
+  text-align:center;
+  font-size:32px;
+  margin-bottom:10px;
+}
+
+.subtitle{
+  text-align:center;
+  opacity:.7;
+  margin-bottom:40px;
+}
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:30px;
+  max-width:1400px;
+  margin:0 auto 50px auto;
+}
+
+.photo-card{
+  position:relative;
+  border-radius:25px;
+  overflow:hidden;
+  background:#111;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  transition:all .4s ease;
+  cursor:pointer;
+}
+
+.photo-card img, .photo-card video{
+  width:100%;
+  height:320px;
+  object-fit:cover;
+  display:block;
+  transition:transform .6s ease;
+}
+
+.photo-card:hover img,
+.photo-card:hover video{
+  transform:scale(1.05);
+}
+
+.photo-card:hover{
+  box-shadow:0 25px 80px rgba(212,175,55,.3);
+}
+
+.fade-in{
+  animation:fade .6s ease forwards;
+  opacity:0;
+}
+
+@keyframes fade{
+  to{opacity:1;}
+}
+
+#status{
+  text-align:center;
+  margin-top:40px;
+  font-size:14px;
+  opacity:.6;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.95);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  padding:20px;
+}
+
+.modal-content{
+  max-width:90%;
+  max-height:80%;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 20px 80px rgba(0,0,0,.8);
+}
+
+.modal-content img,
+.modal-content video{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+.modal-actions{
+  position:absolute;
+  bottom:40px;
+  display:flex;
+  gap:20px;
+}
+
+.modal-btn{
+  padding:12px 20px;
+  border-radius:30px;
+  border:none;
+  cursor:pointer;
+  font-size:14px;
+  background:var(--gold);
+  color:#000;
+  font-weight:600;
+}
+
+.close-btn{
+  position:absolute;
+  top:30px;
+  right:30px;
+  font-size:28px;
+  cursor:pointer;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Panos & Marianna</h1>
+<div class="subtitle">Our beautiful Wedding Memories 🤍 Thank you for being part of our story!</div>
+
+<h2>Photos</h2>
+<div id="photoGallery" class="gallery"></div>
+
+<h2>Videos</h2>
+<div id="videoGallery" class="gallery"></div>
+
+<p id="status">Updating automatically...</p>
+
+<!-- FULLSCREEN MODAL -->
+<div id="mediaModal" class="modal">
+  <span id="closeModal" class="close-btn">✕</span>
+  <div class="modal-content">
+    <img id="modalImage" src="" style="display:none;" />
+    <video id="modalVideo" controls style="display:none;"></video>
+  </div>
+  <div class="modal-actions">
+    <button id="downloadBtn" class="modal-btn"><i class="fa-solid fa-download"></i> Download</button>
+    <button id="shareBtn" class="modal-btn"><i class="fa-solid fa-share-nodes"></i> Share</button>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE"; // Replace with your anon key
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const photoGallery = document.getElementById("photoGallery");
+const videoGallery = document.getElementById("videoGallery");
+const status = document.getElementById("status");
+
+let loadedFiles = new Set();
+const PAGE_SIZE = 100; // Lazy-load 100 files per batch
+let allFiles = [];
+let lastIndex = 0;
+
+// ================== LOAD FILES WITH LAZY PAGINATION ==================
+async function loadMedia(nextPage = false) {
+  if (!nextPage) {
+    photoGallery.innerHTML = "";
+    videoGallery.innerHTML = "";
+    loadedFiles.clear();
+    lastIndex = 0;
+    status.innerText = "Loading files...";
+
+    const { data, error } = await supabase.storage.from("public-pics").list("", { limit: 10000 });
+    if (error) { status.innerText = "Failed to load files"; console.error(error); return; }
+
+    // Flatten folders
+    allFiles = [];
+    for (const item of data) {
+      if (!item.metadata) {
+        const { data: folderFiles } = await supabase.storage.from("public-pics").list(item.name, { limit: 1000 });
+        if (folderFiles) folderFiles.forEach(f => { if (f.metadata?.size>0) allFiles.push(`${item.name}/${f.name}`); });
+      } else if (item.metadata?.size>0) {
+        allFiles.push(item.name);
+      }
+    }
+
+    allFiles.sort((a,b) => b.localeCompare(a)); // newest first
+  }
+
+  const pageFiles = allFiles.slice(lastIndex, lastIndex + PAGE_SIZE);
+  lastIndex += PAGE_SIZE;
+
+  if (pageFiles.length === 0) { status.innerText = ""; return; }
+
+  const { data: signedUrls } = await supabase.storage.from("public-pics").createSignedUrls(pageFiles, 3600);
+
+  signedUrls.forEach(item => {
+    if (!item.signedUrl || loadedFiles.has(item.path)) return;
+    loadedFiles.add(item.path);
+
+    const ext = item.path.toLowerCase();
+    if (ext.endsWith(".mp4") || ext.endsWith(".webm") || ext.endsWith(".mov")) {
+      createMediaCard(item.path, item.signedUrl, "video");
+    } else {
+      createMediaCard(item.path, item.signedUrl, "image");
+    }
+  });
+
+  status.innerText = `Loaded ${Math.min(lastIndex, allFiles.length)} / ${allFiles.length}`;
+}
+
+// ================== CREATE MEDIA CARD ==================
+function createMediaCard(fileName, url, type){
+  const card = document.createElement("div");
+  card.className = "photo-card fade-in";
+
+  if(type==="video"){
+    const videoThumb = document.createElement("video");
+    videoThumb.src = url;
+    videoThumb.preload="metadata";
+    videoThumb.muted = true;
+    videoThumb.loop = true;
+    videoThumb.classList.add("media-item");
+    card.appendChild(videoThumb);
+  } else {
+    const img = document.createElement("img");
+    img.src = url;
+    img.loading = "lazy";
+    img.classList.add("media-item");
+    card.appendChild(img);
+  }
+
+  card.addEventListener("click", () => openModal(url, type));
+
+  if(type==="video") videoGallery.appendChild(card);
+  else photoGallery.appendChild(card);
+}
+
+// ================== MODAL HANDLING ==================
+const modal = document.getElementById("mediaModal");
+const modalImage = document.getElementById("modalImage");
+const modalVideo = document.getElementById("modalVideo");
+const closeModalBtn = document.getElementById("closeModal");
+const downloadBtn = document.getElementById("downloadBtn");
+const shareBtn = document.getElementById("shareBtn");
+
+let currentURL = null;
+let currentType = null;
+
+function openModal(url, type){
+  currentURL = url;
+  currentType = type;
+  if(type==="image"){
+    modalImage.src = url;
+    modalImage.style.display="block";
+    modalVideo.style.display="none";
+  } else {
+    modalVideo.src = url;
+    modalVideo.style.display="block";
+    modalImage.style.display="none";
+    modalVideo.play();
+  }
+  modal.style.display="flex";
+}
+
+closeModalBtn.addEventListener("click", ()=> modal.style.display="none");
+
+// ================== DOWNLOAD ==================
+downloadBtn.addEventListener("click", async ()=>{
+  const response = await fetch(currentURL);
+  const blob = await response.blob();
+  const filename = currentURL.split("/").pop();
+  const file = new File([blob], filename, { type: blob.type });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(file);
+  link.download = filename;
+  link.click();
+});
+
+// ================== SHARE ==================
+shareBtn.addEventListener("click", async ()=>{
+  try{
+    const response = await fetch(currentURL);
+    const blob = await response.blob();
+    const filename = currentURL.split("/").pop();
+    const file = new File([blob], filename, { type: blob.type });
+
+    if(navigator.share && navigator.canShare?.({ files:[file] })){
+      await navigator.share({ title:"Wedding Memory 🤍", text:"Beautiful moment from the wedding ✨", files:[file] });
+    } else alert("Sharing not supported on this device.");
+  } catch(err){ console.log("Share cancelled"); }
+});
+
+// ================== REAL-TIME UPDATES ==================
+supabase.channel("storage-changes")
+  .on("postgres_changes", { event:"INSERT", schema:"public", table:"uploads", filter:"visibility=eq.public" }, payload=>{
+    const filePath = payload.new.file_path;
+    if(!loadedFiles.has(filePath)) loadMedia(true);
+  })
+  .subscribe();
+
+// ================== LAZY LOAD ON SCROLL ==================
+window.addEventListener("scroll", ()=>{
+  if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 200){
+    loadMedia(true);
+  }
+});
+
+// INITIAL LOAD
+loadMedia();
+</script>
 </body>
 </html>
