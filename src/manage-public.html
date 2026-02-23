@@ -262,6 +262,8 @@ async function loadFiles() {
     .filter(file => file.name && file.metadata?.size > 0)
     .map(file => file.name);
 
+  validFiles.sort((a,b)=> b.localeCompare(a));
+  
   // 🔥 BATCH SIGNED URL CREATION (FAST + SAFE)
   const { data: signedUrls, error: signError } =
     await supabase.storage
@@ -500,23 +502,28 @@ function createMediaCard(fileName, url, type) {
   let element;
 
   if (type === "video") {
-    element = document.createElement("video");
-    element.src = url;
-    element.controls = true;
+
+    element = document.createElement("div");
+    element.className = "video-thumb";
+    element.style.background = "#000";
+
+    const playIcon = document.createElement("div");
+    playIcon.innerHTML = "▶";
+    playIcon.className = "play-icon";
+
+    element.appendChild(playIcon);
+
   } else {
+
     element = document.createElement("img");
     element.src = url;
+    element.loading = "lazy";
+    element.classList.add("media-item");
   }
-
-  element.loading = "lazy";
-  element.classList.add("media-item");
 
   card.appendChild(element);
 
-  card.addEventListener("click", (e) => {
-
-    // prevent selecting when clicking video controls
-    if (e.target.tagName === "VIDEO") return;
+  card.addEventListener("click", () => {
 
     if (selectedFiles.has(fileName)) {
       selectedFiles.delete(fileName);
@@ -529,9 +536,9 @@ function createMediaCard(fileName, url, type) {
   });
 
   if (type === "video") {
-    videoGallery.appendChild(card);
+    videoGallery.prepend(card);
   } else {
-    photoGallery.appendChild(card);
+    photoGallery.prepend(card);
   }
 }
 
@@ -776,6 +783,21 @@ button{
 #status{
   text-align:center;
   margin-top:20px;
+  opacity:.8;
+}
+
+.video-thumb{
+  width:100%;
+  height:260px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#111;
+}
+
+.play-icon{
+  font-size:48px;
+  color:white;
   opacity:.8;
 }
 
