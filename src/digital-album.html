@@ -665,11 +665,25 @@ const videoGallery = document.getElementById("videoGallery");
 const status = document.getElementById("status");
 
 let loadedFiles = new Set();
-const PAGE_SIZE = 100; // Lazy-load 100 files per batch
+const PAGE_SIZE = 100; 
 let allFiles = [];
 let lastIndex = 0;
 
-// ================== LOAD FILES WITH LAZY PAGINATION ==================
+let currentURL = null;
+let currentFileName = null;
+let currentType = "image";
+
+const modal = document.getElementById("mediaModal");
+const closeModalBtn = document.getElementById("closeModal");
+const downloadBtn = document.getElementById("downloadBtn");
+const shareBtn = document.getElementById("shareBtn");
+
+// ================= UTILITY =================
+function isMobile() {
+  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// ================= LOAD MEDIA WITH LAZY PAGINATION =================
 async function loadMedia(nextPage = false) {
   if (!nextPage) {
     photoGallery.innerHTML = "";
@@ -681,7 +695,6 @@ async function loadMedia(nextPage = false) {
     const { data, error } = await supabase.storage.from("public-pics").list("", { limit: 10000 });
     if (error) { status.innerText = "Failed to load files"; console.error(error); return; }
 
-    // Flatten folders
     allFiles = [];
     for (const item of data) {
       if (!item.metadata) {
@@ -692,7 +705,7 @@ async function loadMedia(nextPage = false) {
       }
     }
 
-    allFiles.sort((a,b) => b.localeCompare(a)); // newest first
+    allFiles.sort((a,b) => b.localeCompare(a));
   }
 
   const pageFiles = allFiles.slice(lastIndex, lastIndex + PAGE_SIZE);
@@ -717,7 +730,7 @@ async function loadMedia(nextPage = false) {
   status.innerText = `Loaded ${Math.min(lastIndex, allFiles.length)} / ${allFiles.length}`;
 }
 
-// ================== CREATE MEDIA CARD ==================
+// ================= CREATE MEDIA CARD =================
 function createMediaCard(fileName, url, type){
   const card = document.createElement("div");
   card.className = "photo-card fade-in";
@@ -738,39 +751,24 @@ function createMediaCard(fileName, url, type){
     card.appendChild(img);
   }
 
-  card.addEventListener("click", () => openModal(url, type));
+  card.addEventListener("click", () => openModal(url, fileName, type));
 
   if(type==="video") videoGallery.appendChild(card);
   else photoGallery.appendChild(card);
 }
 
-// ================== MODAL HANDLING ==================
-function isMobile() {
-  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-const modal = document.getElementById("mediaModal");
-const modalImage = document.getElementById("modalImage");
-const modalVideo = document.getElementById("modalVideo");
-const closeModalBtn = document.getElementById("closeModal");
-const downloadBtn = document.getElementById("downloadBtn");
-const shareBtn = document.getElementById("shareBtn");
-
-let currentURL = null;
-let currentType = "image"; // "image" or "video"
-
-function openModal(url, fileName, type) {
+// ================= MODAL HANDLING =================
+function openModal(url, fileName, type){
   currentURL = url;
   currentFileName = fileName;
-  currentType = type; // save type
+  currentType = type;
 
   modal.style.display = "flex";
 
-  // Remove old content
   const container = modal.querySelector(".modal-content");
   container.innerHTML = "";
 
-  if (type === "video") {
+  if(type==="video"){
     const video = document.createElement("video");
     video.src = url;
     video.controls = true;
@@ -784,32 +782,28 @@ function openModal(url, fileName, type) {
     container.appendChild(img);
   }
 
-  // Hide share button on desktop
-  if (!isMobile()) {
-    shareBtn.style.display = "none";
-  } else {
-    shareBtn.style.display = "inline-block";
-  }
+  shareBtn.style.display = isMobile() ? "inline-block" : "none";
 }
 
-closeModalBtn.addEventListener("click", ()=> {
+closeModalBtn.addEventListener("click", ()=>{
   modal.style.display="none";
-  modalVideo.pause();
+  const video = modal.querySelector("video");
+  if(video) video.pause();
 });
 
-// ================== DOWNLOAD ==================
+// ================= DOWNLOAD =================
 downloadBtn.addEventListener("click", async ()=>{
-  try {
+  if(!currentURL) return;
+  try{
     const response = await fetch(currentURL);
     const blob = await response.blob();
-    const filename = currentURL.split("/").pop();
+    const filename = currentFileName || currentURL.split("/").pop().split("?")[0];
 
     if(isMobile()){
-      // On mobile, fallback to open blob in new tab (force download)
+      // Open blob in new tab on mobile
       const blobURL = URL.createObjectURL(blob);
       window.open(blobURL, "_blank");
     } else {
-      // Desktop: normal download
       const file = new File([blob], filename, { type: blob.type });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(file);
@@ -818,47 +812,40 @@ downloadBtn.addEventListener("click", async ()=>{
       link.click();
       link.remove();
     }
+
   } catch(err){
     console.error("Download failed", err);
     alert("Download failed.");
   }
 });
 
-// ================== SHARE ==================
-async function shareMedia(url, type) {
-  if (!isMobile()) return; // hide share button on desktop
+// ================= SHARE =================
+shareBtn.addEventListener("click", async ()=>{
+  if(!currentURL || !isMobile()) return;
 
-  try {
-    const response = await fetch(url);
+  try{
+    const response = await fetch(currentURL);
     const blob = await response.blob();
+    const filename = currentFileName || currentURL.split("/").pop().split("?")[0];
+    const mime = currentType==="image" ? blob.type || "image/jpeg" : blob.type || "video/mp4";
 
-    const mime = type === "image" 
-      ? blob.type || "image/jpeg" 
-      : blob.type || "video/mp4";
-
-    const filename = url.split("/").pop().split("?")[0];
     const file = new File([blob], filename, { type: mime });
 
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    if(navigator.canShare && navigator.canShare({ files:[file] })){
       await navigator.share({
         title: "Wedding Memory 🤍",
         text: "Beautiful moment from the wedding ✨",
         files: [file]
       });
-    } else {
-      alert("Sharing is not supported on this device.");
-    }
+    } else alert("Sharing not supported on this device.");
 
-  } catch (err) {
+  } catch(err){
     console.error("Share failed:", err);
     alert("Sharing failed or cancelled.");
   }
-}
-
-shareBtn.addEventListener("click", () => {
-  shareMedia(currentURL, currentType);
 });
-// ================== REAL-TIME UPDATES ==================
+
+// ================= REAL-TIME UPDATES =================
 supabase.channel("storage-changes")
   .on("postgres_changes", { event:"INSERT", schema:"public", table:"uploads", filter:"visibility=eq.public" }, payload=>{
     const filePath = payload.new.file_path;
@@ -866,7 +853,7 @@ supabase.channel("storage-changes")
   })
   .subscribe();
 
-// ================== LAZY LOAD ON SCROLL ==================
+// ================= LAZY LOAD ON SCROLL =================
 window.addEventListener("scroll", ()=>{
   if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 200){
     loadMedia(true);
