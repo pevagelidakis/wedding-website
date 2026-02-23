@@ -233,43 +233,43 @@ retakeBtn.addEventListener("click", async () => {
 });
 
 /* ================= GALLERY FILES ================= */
-// fileInput.addEventListener("change", (e) => {
-//   const files = Array.from(e.target.files);
-//   if (!files.length) return;
-
-//   files.forEach(file => {
-//     capturedFiles.push({ blob: file, type: file.type });
-//     showPreview(file, file.type.startsWith("image") ? "image" : "video");
-//   });
-
-//   modeSelection.style.display = "none";
-//   cameraWrapper.style.display = "block";
-//   controls.style.display = "flex";
-//   recordBtn.style.display = "none";
-//   switchBtn.style.display = "none";
-//   showPreviewButtons();
-// });
 fileInput.addEventListener("change", (e) => {
   const files = Array.from(e.target.files);
   if (!files.length) return;
 
-  stopStream();
-  capturedFiles = [];
   files.forEach(file => {
     capturedFiles.push({ blob: file, type: file.type });
     showPreview(file, file.type.startsWith("image") ? "image" : "video");
   });
-  cameraWrapper.style.display = "block";
-  controls.style.display = "flex";
-  galleryPreview.innerHTML = "";
-  galleryPreview.style.display = "flex";
-
 
   modeSelection.style.display = "none";
+  cameraWrapper.style.display = "block";
+  controls.style.display = "flex";
   recordBtn.style.display = "none";
   switchBtn.style.display = "none";
   showPreviewButtons();
 });
+// fileInput.addEventListener("change", (e) => {
+//   const files = Array.from(e.target.files);
+//   if (!files.length) return;
+
+//   stopStream();
+//   capturedFiles = [];
+//   files.forEach(file => {
+//     capturedFiles.push({ blob: file, type: file.type });
+//     showPreview(file, file.type.startsWith("image") ? "image" : "video");
+//   });
+//   cameraWrapper.style.display = "block";
+//   controls.style.display = "flex";
+//   galleryPreview.innerHTML = "";
+//   galleryPreview.style.display = "flex";
+
+
+//   modeSelection.style.display = "none";
+//   recordBtn.style.display = "none";
+//   switchBtn.style.display = "none";
+//   showPreviewButtons();
+// });
 /* ================= UPLOAD ================= */
 uploadBtn.addEventListener("click", async () => {
   if (!capturedFiles.length) return;
