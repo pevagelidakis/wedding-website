@@ -687,35 +687,35 @@ subscribeRealtime();
 
 async function loadPage() {
 
-  if (isLoading || !hasMore) return;
-
-  isLoading = true;
   status.innerText = "Loading...";
 
-  const start = currentPage * PAGE_SIZE;
-  const end = start + PAGE_SIZE - 1;
-
-  const { data, error } = await supabase
-    .from("uploads")
-    .select("file_path, mimetype")
-    .eq("visibility", "public")
-    .order("created_at", { ascending: false })
-    .range(start, end);
+  const { data, error } =
+    await supabase.storage
+      .from("public-pics")
+      .list("", { limit: 1000 });
 
   if (error) {
-    status.innerText = "Error loading.";
-    isLoading = false;
+    status.innerText = error.message;
     return;
   }
 
-  if (!data || data.length < PAGE_SIZE) {
-    hasMore = false;
+  photoGallery.innerHTML = "";
+  videoGallery.innerHTML = "";
+
+  for (const file of data) {
+
+    if (!file.name) continue;
+
+    const url =
+      `${SUPABASE_URL}/storage/v1/object/public/public-pics/${file.name}`;
+
+    if (file.metadata?.mimetype?.startsWith("video")) {
+      createMediaCard(file.name, url, "video");
+    } else {
+      createMediaCard(file.name, url, "image");
+    }
   }
 
-  renderBatch(data);
-
-  currentPage++;
-  isLoading = false;
   status.innerText = "";
 }
 
