@@ -745,7 +745,6 @@ function createMediaCard(fileName, url, type){
 }
 
 // ================== MODAL HANDLING ==================
-// ================== MODAL HANDLING ==================
 function isMobile() {
   return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
@@ -758,30 +757,38 @@ const downloadBtn = document.getElementById("downloadBtn");
 const shareBtn = document.getElementById("shareBtn");
 
 let currentURL = null;
-let currentType = null;
+let currentType = "image"; // "image" or "video"
 
-function openModal(url, type){
+function openModal(url, fileName, type) {
   currentURL = url;
-  currentType = type;
+  currentFileName = fileName;
+  currentType = type; // save type
 
-  if(type==="image"){
-    modalImage.src = url;
-    modalImage.style.display="block";
-    modalVideo.style.display="none";
+  modal.style.display = "flex";
+
+  // Remove old content
+  const container = modal.querySelector(".modal-content");
+  container.innerHTML = "";
+
+  if (type === "video") {
+    const video = document.createElement("video");
+    video.src = url;
+    video.controls = true;
+    video.autoplay = true;
+    video.style.width = "100%";
+    video.style.height = "auto";
+    container.appendChild(video);
   } else {
-    modalVideo.src = url;
-    modalVideo.style.display="block";
-    modalImage.style.display="none";
-    modalVideo.play();
+    const img = document.createElement("img");
+    img.src = url;
+    container.appendChild(img);
   }
 
-  modal.style.display="flex";
-
-  // Mobile check: only show share on mobile
-  if(isMobile() && navigator.canShare){
-    shareBtn.style.display="inline-block";
+  // Hide share button on desktop
+  if (!isMobile()) {
+    shareBtn.style.display = "none";
   } else {
-    shareBtn.style.display="none";
+    shareBtn.style.display = "inline-block";
   }
 }
 
@@ -818,21 +825,20 @@ downloadBtn.addEventListener("click", async ()=>{
 });
 
 // ================== SHARE ==================
-// ================== SHARE ==================
-shareBtn.addEventListener("click", async () => {
-  if (!isMobile()) return; // avoid desktop
+async function shareMedia(url, type) {
+  if (!isMobile()) return; // hide share button on desktop
 
   try {
-    const response = await fetch(currentURL);
+    const response = await fetch(url);
     const blob = await response.blob();
 
-    // Correct MIME type for files
-    const mimeType = currentType === "image" ? blob.type || "image/jpeg" : blob.type || "video/mp4";
-    const filename = currentURL.split("/").pop();
+    const mime = type === "image" 
+      ? blob.type || "image/jpeg" 
+      : blob.type || "video/mp4";
 
-    const file = new File([blob], filename, { type: mimeType });
+    const filename = url.split("/").pop().split("?")[0];
+    const file = new File([blob], filename, { type: mime });
 
-    // Check if sharing files is supported
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({
         title: "Wedding Memory 🤍",
@@ -840,14 +846,18 @@ shareBtn.addEventListener("click", async () => {
         files: [file]
       });
     } else {
-      alert("Sharing not supported on this device.");
+      alert("Sharing is not supported on this device.");
     }
+
   } catch (err) {
     console.error("Share failed:", err);
     alert("Sharing failed or cancelled.");
   }
-});
+}
 
+shareBtn.addEventListener("click", () => {
+  shareMedia(currentURL, currentType);
+});
 // ================== REAL-TIME UPDATES ==================
 supabase.channel("storage-changes")
   .on("postgres_changes", { event:"INSERT", schema:"public", table:"uploads", filter:"visibility=eq.public" }, payload=>{
