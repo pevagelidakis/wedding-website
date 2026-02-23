@@ -745,6 +745,11 @@ function createMediaCard(fileName, url, type){
 }
 
 // ================== MODAL HANDLING ==================
+// ================== MODAL HANDLING ==================
+function isMobile() {
+  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 const modal = document.getElementById("mediaModal");
 const modalImage = document.getElementById("modalImage");
 const modalVideo = document.getElementById("modalVideo");
@@ -758,6 +763,7 @@ let currentType = null;
 function openModal(url, type){
   currentURL = url;
   currentType = type;
+
   if(type==="image"){
     modalImage.src = url;
     modalImage.style.display="block";
@@ -768,35 +774,67 @@ function openModal(url, type){
     modalImage.style.display="none";
     modalVideo.play();
   }
+
   modal.style.display="flex";
+
+  // Mobile check: only show share on mobile
+  if(isMobile() && navigator.canShare){
+    shareBtn.style.display="inline-block";
+  } else {
+    shareBtn.style.display="none";
+  }
 }
 
-closeModalBtn.addEventListener("click", ()=> modal.style.display="none");
+closeModalBtn.addEventListener("click", ()=> {
+  modal.style.display="none";
+  modalVideo.pause();
+});
 
 // ================== DOWNLOAD ==================
 downloadBtn.addEventListener("click", async ()=>{
-  const response = await fetch(currentURL);
-  const blob = await response.blob();
-  const filename = currentURL.split("/").pop();
-  const file = new File([blob], filename, { type: blob.type });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(file);
-  link.download = filename;
-  link.click();
+  try {
+    const response = await fetch(currentURL);
+    const blob = await response.blob();
+    const filename = currentURL.split("/").pop();
+
+    if(isMobile()){
+      // On mobile, fallback to open blob in new tab (force download)
+      const blobURL = URL.createObjectURL(blob);
+      window.open(blobURL, "_blank");
+    } else {
+      // Desktop: normal download
+      const file = new File([blob], filename, { type: blob.type });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(file);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+  } catch(err){
+    console.error("Download failed", err);
+    alert("Download failed.");
+  }
 });
 
 // ================== SHARE ==================
 shareBtn.addEventListener("click", async ()=>{
+  if(!isMobile() || !navigator.canShare) return;
+
   try{
     const response = await fetch(currentURL);
     const blob = await response.blob();
     const filename = currentURL.split("/").pop();
     const file = new File([blob], filename, { type: blob.type });
 
-    if(navigator.share && navigator.canShare?.({ files:[file] })){
-      await navigator.share({ title:"Wedding Memory 🤍", text:"Beautiful moment from the wedding ✨", files:[file] });
-    } else alert("Sharing not supported on this device.");
-  } catch(err){ console.log("Share cancelled"); }
+    await navigator.share({
+      title: "Wedding Memory 🤍",
+      text: "Beautiful moment from the wedding ✨",
+      files:[file]
+    });
+  } catch(err){ 
+    console.log("Share cancelled or failed", err); 
+  }
 });
 
 // ================== REAL-TIME UPDATES ==================
