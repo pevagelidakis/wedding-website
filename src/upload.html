@@ -9,36 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-:root{
-  --gold:#d4af37;
-  --ivory:#f8f6f1;
-  --glass:rgba(255,255,255,0.08);
-}
 /* 
-header {
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
-.language-switch {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-.language-switch button {
-  background: transparent;
-  border: 1px solid gold;
-  color: gold;
-  padding: 5px 10px;
-  margin-left: 5px;
-  cursor: pointer;
-}
-
-.language-switch button:hover {
-  background: gold;
-  color: black;
-}
 body{
   margin:0;
   font-family:'Inter',sans-serif;
@@ -224,20 +195,6 @@ html, body {
   color: var(--ivory);
 }
 
-header {
-  position: relative;
-  width: 100%;
-  z-index: 10;
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px 20px;
-  box-sizing: border-box;
-}
-
-.language-switch {
-  display: flex;
-  gap: 5px;
-}
 
 h2 {
   font-family:'Playfair Display',serif;
@@ -341,6 +298,73 @@ canvas {
   opacity: 0.8;
   text-align: center;
   margin-top: 5px;
+}
+
+:root{
+  --gold:#d4af37;
+  --ivory:#f8f6f1;
+  --glass:rgba(255,255,255,0.08);
+}
+
+header {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+/* header {
+  position: relative;
+  width: 100%;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  box-sizing: border-box;
+} */
+
+.language-switch {
+  display: flex;
+  gap: 5px;
+}
+/* .language-switch {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+} */
+.language-switch button {
+  background: transparent;
+  border: 1px solid gold;
+  color: gold;
+  padding: 5px 10px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.language-switch button:hover {
+  background: gold;
+  color: black;
+}
+
+.record-btn{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 0 6px rgba(255,255,255,.2);
+  cursor:pointer;
+  position:relative;
+}
+
+.record-btn::after{
+  content:"";
+  position:absolute;
+  inset:18px;
+  border-radius:50%;
+  background:#fff;
+}
+
+.record-btn.recording{
+  background:#b30000;
+  transform:scale(1.08);
 }
 </style>
 </head>
