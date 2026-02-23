@@ -818,22 +818,33 @@ downloadBtn.addEventListener("click", async ()=>{
 });
 
 // ================== SHARE ==================
-shareBtn.addEventListener("click", async ()=>{
-  if(!isMobile() || !navigator.canShare) return;
+// ================== SHARE ==================
+shareBtn.addEventListener("click", async () => {
+  if (!isMobile()) return; // avoid desktop
 
-  try{
+  try {
     const response = await fetch(currentURL);
     const blob = await response.blob();
-    const filename = currentURL.split("/").pop();
-    const file = new File([blob], filename, { type: blob.type });
 
-    await navigator.share({
-      title: "Wedding Memory 🤍",
-      text: "Beautiful moment from the wedding ✨",
-      files:[file]
-    });
-  } catch(err){ 
-    console.log("Share cancelled or failed", err); 
+    // Correct MIME type for files
+    const mimeType = currentType === "image" ? blob.type || "image/jpeg" : blob.type || "video/mp4";
+    const filename = currentURL.split("/").pop();
+
+    const file = new File([blob], filename, { type: mimeType });
+
+    // Check if sharing files is supported
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        title: "Wedding Memory 🤍",
+        text: "Beautiful moment from the wedding ✨",
+        files: [file]
+      });
+    } else {
+      alert("Sharing not supported on this device.");
+    }
+  } catch (err) {
+    console.error("Share failed:", err);
+    alert("Sharing failed or cancelled.");
   }
 });
 
