@@ -171,10 +171,6 @@ function showPreview(blob, type) {
   wrapper.style.overflow = "hidden";
   wrapper.style.marginRight = "8px";
 
-  canvas.style.display = "none";          // hide canvas
-  video.style.display = "none";
-
-
   let element;
   if (type === "image") {
     element = document.createElement("img");
@@ -237,23 +233,43 @@ retakeBtn.addEventListener("click", async () => {
 });
 
 /* ================= GALLERY FILES ================= */
+// fileInput.addEventListener("change", (e) => {
+//   const files = Array.from(e.target.files);
+//   if (!files.length) return;
+
+//   files.forEach(file => {
+//     capturedFiles.push({ blob: file, type: file.type });
+//     showPreview(file, file.type.startsWith("image") ? "image" : "video");
+//   });
+
+//   modeSelection.style.display = "none";
+//   cameraWrapper.style.display = "block";
+//   controls.style.display = "flex";
+//   recordBtn.style.display = "none";
+//   switchBtn.style.display = "none";
+//   showPreviewButtons();
+// });
 fileInput.addEventListener("change", (e) => {
   const files = Array.from(e.target.files);
   if (!files.length) return;
 
+  stopStream();
+  cameraWrapper.style.display = "none";
+  controls.style.display = "none";
+  galleryPreview.innerHTML = "";
+  galleryPreview.style.display = "flex";
+
+  capturedFiles = [];
   files.forEach(file => {
     capturedFiles.push({ blob: file, type: file.type });
     showPreview(file, file.type.startsWith("image") ? "image" : "video");
   });
 
   modeSelection.style.display = "none";
-  cameraWrapper.style.display = "block";
-  controls.style.display = "flex";
   recordBtn.style.display = "none";
   switchBtn.style.display = "none";
   showPreviewButtons();
 });
-
 /* ================= UPLOAD ================= */
 uploadBtn.addEventListener("click", async () => {
   if (!capturedFiles.length) return;
