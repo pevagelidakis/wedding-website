@@ -492,15 +492,42 @@ supabase
   --gold:#d4af37;
   --ivory:#f8f6f1;
 }
-
-body{
-  margin:0;
-  font-family:'Inter',sans-serif;
+html{
   background:
       linear-gradient(rgba(0,0,0,.80), rgba(0,0,0,.90)),
       url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2000&auto=format&fit=crop') 
       no-repeat center center fixed;
     background-size:cover;
+}
+
+header {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.language-switch {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.language-switch button {
+  background: transparent;
+  border: 1px solid gold;
+  color: gold;
+  padding: 5px 10px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.language-switch button:hover {
+  background: gold;
+  color: black;
+}
+
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
   color:var(--ivory);
   padding:40px 20px;
 }
@@ -520,7 +547,7 @@ h1{
 
 .gallery{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  /* grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); */
   gap:30px;
   max-width:1400px;
   margin:0 auto 50px auto;
@@ -627,17 +654,23 @@ h1{
 </head>
 
 <body>
+<header>
+  <div class="language-switch">
+    <button onclick="setLanguage('en')" id="btn-en">EN</button>
+    <button onclick="setLanguage('gr')" id="btn-gr">GR</button>
+  </div>
+</header>
 
-<h1>Panos & Marianna</h1>
-<div class="subtitle">Our beautiful Wedding Memories 🤍 Thank you for being part of our story!</div>
+<h1 id="header"></h1>
+<div class="subtitle" id="subtitle"></div>
 
-<h2>Photos</h2>
+<h2 id="photos_header"></h2>
 <div id="photoGallery" class="gallery"></div>
 
-<h2>Videos</h2>
+<h2 id="videos_header"></h2>
 <div id="videoGallery" class="gallery"></div>
 
-<p id="status">Updating automatically...</p>
+<p id="status" id="status"></p>
 
 <!-- FULLSCREEN MODAL -->
 <div id="mediaModal" class="modal">
@@ -646,10 +679,7 @@ h1{
     <img id="modalImage" src="" style="display:none;" />
     <video id="modalVideo" controls style="display:none;"></video>
   </div>
-  <div class="modal-actions">
-    <button id="downloadBtn" class="modal-btn"><i class="fa-solid fa-download"></i> Download</button>
-    <button id="shareBtn" class="modal-btn"><i class="fa-solid fa-share-nodes"></i> Share</button>
-  </div>
+  <div class="modal-actions" id="modalActions"></div>
 </div>
 
 <script type="module">
@@ -659,6 +689,65 @@ const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA"; // Replace with your anon key
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const translations = {
+  en: {
+    header: "Wedding Memories 🤍",
+    subtitle: "The Art of Us • The Highlight Reels • Thank you for being part of our story!",
+    photos_header:"Photos",
+    videos_header:"Videos",
+    status:"Updating automatically...",
+    modalActions:`
+    <div class="modal-actions" id="modalActions">
+      <button id="downloadBtn" class="modal-btn"><i class="fa-solid fa-download"></i> Download</button>
+      <button id="shareBtn" class="modal-btn"><i class="fa-solid fa-share-nodes"></i> Share</button>
+    </div>
+    `
+  },
+  gr: {
+    header: "Γαμήλιες Αναμνήσεις 🤍",
+    subtitle: "Η Τέχνη του «Μαζί» • Οι Κορυφαίες Στιγμές • Ευχαριστούμε που είστε κομμάτι της ιστορίας μας!",
+    photos_header:"Φωτογραφίες",
+    video_header:"Βίντεο",
+    status:"Αυτόματη Ανανέωση...",
+    modalActions:`
+    <div class="modal-actions" id="modalActions">
+      <button id="downloadBtn" class="modal-btn"><i class="fa-solid fa-download"></i> Κατέβασμα</button>
+      <button id="shareBtn" class="modal-btn"><i class="fa-solid fa-share-nodes"></i> Κοινοποίηση</button>
+    </div>
+    `,
+  }
+};
+
+function setLanguage(lang) {
+  localStorage.setItem("language", lang);
+  applyLanguage(lang);
+}
+
+function applyLanguage(lang) {
+  document.documentElement.lang = lang;
+
+  Object.keys(translations[lang]).forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.innerHTML = translations[lang][id];
+    }
+  });
+
+  // Highlight active button
+  document.getElementById("btn-en").style.opacity = lang === "en" ? "1" : "0.5";
+  document.getElementById("btn-gr").style.opacity = lang === "gr" ? "1" : "0.5";
+}
+
+// On page load
+document.addEventListener("DOMContentLoaded", () => {
+  const savedLang = localStorage.getItem("language") || "en";
+  applyLanguage(savedLang);
+});
+
+
+
+
 
 const photoGallery = document.getElementById("photoGallery");
 const videoGallery = document.getElementById("videoGallery");
