@@ -694,28 +694,20 @@ const translations = {
   en: {
     header: "Wedding Memories 🤍",
     subtitle: "The Art of Us • The Highlight Reels • Thank you for being part of our story!",
-    photos_header:"Photos",
-    videos_header:"Videos",
-    status:"Updating automatically...",
-    modalActions:`
-    <div class="modal-actions" id="modalActions">
-      <button id="downloadBtn" class="modal-btn"><i class="fa-solid fa-download"></i> Download</button>
-      <button id="shareBtn" class="modal-btn"><i class="fa-solid fa-share-nodes"></i> Share</button>
-    </div>
-    `
+    photos_header: "Photos",
+    videos_header: "Videos",
+    status: "Updating automatically...",
+    downloadBtn: "Download",
+    shareBtn: "Share"
   },
   gr: {
     header: "Γαμήλιες Αναμνήσεις 🤍",
     subtitle: "Η Τέχνη του «Μαζί» • Οι Κορυφαίες Στιγμές • Ευχαριστούμε που είστε κομμάτι της ιστορίας μας!",
-    photos_header:"Φωτογραφίες",
-    video_header:"Βίντεο",
-    status:"Αυτόματη Ανανέωση...",
-    modalActions:`
-    <div class="modal-actions" id="modalActions">
-      <button id="downloadBtn" class="modal-btn"><i class="fa-solid fa-download"></i> Κατέβασμα</button>
-      <button id="shareBtn" class="modal-btn"><i class="fa-solid fa-share-nodes"></i> Κοινοποίηση</button>
-    </div>
-    `,
+    photos_header: "Φωτογραφίες",
+    videos_header: "Βίντεο",
+    status: "Αυτόματη Ανανέωση...",
+    downloadBtn: "Κατέβασμα",
+    shareBtn: "Κοινοποίηση"
   }
 };
 
@@ -725,21 +717,28 @@ function setLanguage(lang) {
 }
 
 function applyLanguage(lang) {
+  const t = translations[lang];
   document.documentElement.lang = lang;
 
-  Object.keys(translations[lang]).forEach(id => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.innerHTML = translations[lang][id];
-    }
-  });
+  // Update page texts
+  document.getElementById("header").textContent = t.header;
+  document.getElementById("subtitle").textContent = t.subtitle;
+  document.getElementById("photos_header").textContent = t.photos_header;
+  document.getElementById("videos_header").textContent = t.videos_header;
+  document.getElementById("status").textContent = t.status;
 
-  // Highlight active button
+  // Update modal buttons without breaking events
+  const downloadBtn = document.getElementById("downloadBtn");
+  const shareBtn = document.getElementById("shareBtn");
+  if (downloadBtn) downloadBtn.childNodes[1].textContent = " " + t.downloadBtn;
+  if (shareBtn) shareBtn.childNodes[1].textContent = " " + t.shareBtn;
+
+  // Highlight active language button
   document.getElementById("btn-en").style.opacity = lang === "en" ? "1" : "0.5";
   document.getElementById("btn-gr").style.opacity = lang === "gr" ? "1" : "0.5";
 }
 
-// On page load
+// Initialize language on page load
 document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("language") || "en";
   applyLanguage(savedLang);
