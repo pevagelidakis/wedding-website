@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="./favicon/favicon-96x96.png">
 <title>Manage Public Photos</title>
 
 <script type="module">
@@ -14,7 +15,8 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 
-const gallery = document.getElementById("gallery");
+const photoGallery = document.getElementById("photoGallery");
+const videoGallery = document.getElementById("videoGallery");
 const moveBtn = document.getElementById("moveBtn");
 const status = document.getElementById("status");
 
@@ -256,34 +258,41 @@ async function loadFiles() {
     return;
   }
 
-  const validFiles = data.filter(file =>
-    file.name &&
-    file.metadata &&
-    file.metadata.size > 0
-  );
+  const validFiles = data
+    .filter(file => file.name && file.metadata?.size > 0)
+    .map(file => file.name);
 
-  for (const file of validFiles) {
+  // 🔥 BATCH SIGNED URL CREATION (FAST + SAFE)
+  const { data: signedUrls, error: signError } =
+    await supabase.storage
+      .from("public-pics")
+      .createSignedUrls(validFiles, 3600); // 1 hour; // 5 minutes
 
-    const { data: signedData } =
-      await supabase.storage
-        .from("public-pics")
-        .createSignedUrl(file.name, 120);
+  if (signError) {
+    status.innerText = "Signed URL error.";
+    return;
+  }
 
-    if (!signedData) continue;
+  signedUrls.forEach(item => {
 
-    const mimetype = file.metadata.mimetype || "";
+    if (!item.signedUrl) return;
+
+    const fileName = item.path;
+    const mimetype =
+      data.find(f => f.name === fileName)?.metadata?.mimetype || "";
 
     if (mimetype.startsWith("video")) {
-      createMediaCard(file.name, signedData.signedUrl, "video");
+      createMediaCard(fileName, item.signedUrl, "video");
     } else {
-      createMediaCard(file.name, signedData.signedUrl, "image");
+      createMediaCard(fileName, item.signedUrl, "image");
     }
-  }
+
+  });
 
   status.innerText = "";
 }
 
-async function appendPhoto(filePath) {
+async function appendPhoto1(filePath) {
 
   const { data: signedData } =
     await supabase.storage
@@ -314,6 +323,58 @@ async function appendPhoto(filePath) {
   selectedFiles.add(filePath);
 }
 
+async function appendPhoto(filePath) {
+
+  // Prevent duplicates
+  if (loadedFiles?.has(filePath)) return;
+
+  const { data: signedData, error } =
+    await supabase.storage
+      .from("public-pics")
+      .createSignedUrl(filePath, 300); // longer expiry
+
+  if (error || !signedData?.signedUrl) return;
+
+  const mediaUrl = signedData.signedUrl;
+
+  const card = document.createElement("div");
+  card.className = "photo-card fade-in";
+  card.dataset.file = filePath;
+
+  let element;
+
+  // Detect by extension (fast + reliable)
+  const lowerPath = filePath.toLowerCase();
+
+  if (lowerPath.endsWith(".mp4") ||
+      lowerPath.endsWith(".webm") ||
+      lowerPath.endsWith(".mov")) {
+
+    element = document.createElement("video");
+    element.src = mediaUrl;
+    element.controls = true;
+    element.preload = "metadata";
+
+  } else {
+
+    element = document.createElement("img");
+    element.src = mediaUrl;
+    element.loading = "lazy";
+  }
+
+  element.classList.add("media-item");
+
+  // Remove broken media automatically
+  //element.onerror = () => card.remove();
+
+  card.appendChild(element);
+
+  // New uploads appear on top
+  gallery.prepend(card);
+
+  // Track loaded
+  if (loadedFiles) loadedFiles.add(filePath);
+}
 // moveBtn.addEventListener("click", async () => {
 
 //   if (selectedFiles.size === 0) {
