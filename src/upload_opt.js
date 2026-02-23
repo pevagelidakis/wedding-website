@@ -254,7 +254,7 @@ fileInput.addEventListener("change", (e) => {
   if (!files.length) return;
 
   stopStream();
-  cameraWrapper.style.display = "none";
+  cameraWrapper.style.display = "block";
   controls.style.display = "none";
   galleryPreview.innerHTML = "";
   galleryPreview.style.display = "flex";
