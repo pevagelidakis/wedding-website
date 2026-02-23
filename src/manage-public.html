@@ -650,250 +650,138 @@ supabase
 
 </script> -->
 <script type="module">
+
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpAE";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-/* ================= CONFIG ================= */
-
-const PAGE_SIZE = 60;
-const PUBLIC_BUCKET = "public-pics";
-const PRIVATE_BUCKET = "private-pics";
-
-/* ================= STATE ================= */
-
-let currentPage = 0;
-let isLoading = false;
-let hasMore = true;
-const selectedFiles = new Set();
-
-/* ================= DOM ================= */
 
 const photoGallery = document.getElementById("photoGallery");
 const videoGallery = document.getElementById("videoGallery");
 const moveBtn = document.getElementById("moveBtn");
 const status = document.getElementById("status");
 
-/* ================= INIT ================= */
+let allFiles = [];
+let selectedFiles = new Set();
 
-init();
-setupInfiniteScroll();
-setupMoveButton();
-subscribeRealtime();
-
+/* ================= PUBLIC URL (no signature) ================= */
 function getPublicUrl(fileName) {
   return `${SUPABASE_URL}/storage/v1/object/public/public-pics/${fileName}`;
 }
-/* ================= LOAD PAGE ================= */
 
-async function loadPage() {
+/* ================= VIRTUALIZED LAZY RENDER ================= */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    const url = el.dataset.src;
+    if (el.tagName === "IMG" || el.tagName === "VIDEO") el.src = url;
+    observer.unobserve(el);
+  });
+}, { rootMargin: "200px" });
 
+function createMediaCard(file) {
+  const { name, type } = file;
+  const url = getPublicUrl(name);
+  const card = document.createElement("div");
+  card.className = "photo-card";
+  card.dataset.file = name;
+
+  let element;
+  if (type === "video") {
+    element = document.createElement("video");
+    element.dataset.src = url;       // lazy load
+    element.controls = true;
+    element.preload = "metadata";
+  } else {
+    element = document.createElement("img");
+    element.dataset.src = url;       // lazy load
+    element.loading = "lazy";
+  }
+
+  element.classList.add("media-item");
+  card.appendChild(element);
+  observer.observe(element);
+
+  card.addEventListener("click", () => {
+    if (selectedFiles.has(name)) {
+      selectedFiles.delete(name);
+      card.classList.remove("selected");
+    } else {
+      selectedFiles.add(name);
+      card.classList.add("selected");
+    }
+  });
+
+  if (type === "video") videoGallery.appendChild(card);
+  else photoGallery.appendChild(card);
+}
+
+/* ================= LOAD FILES ================= */
+async function loadFiles() {
   status.innerText = "Loading...";
+  photoGallery.innerHTML = "";
+  videoGallery.innerHTML = "";
+  selectedFiles.clear();
 
-  const { data, error } =
-    await supabase.storage
-      .from("public-pics")
-      .list("", { limit: 1000 });
-
+  // fetch all files
+  let { data, error } = await supabase.storage.from("public-pics").list("", { limit: 10000 });
   if (error) {
-    status.innerText = error.message;
+    status.innerText = "Failed to load files.";
+    console.error(error);
     return;
   }
 
-  photoGallery.innerHTML = "";
-  videoGallery.innerHTML = "";
+  allFiles = data
+    .filter(f => f.name && f.metadata?.size > 0)
+    .map(f => ({
+      name: f.name,
+      type: f.metadata.mimetype.startsWith("video") ? "video" : "image"
+    }));
 
-  for (const file of data) {
+  // sort newest first
+  allFiles.sort((a,b) => b.name.localeCompare(a.name));
 
-    if (!file.name) continue;
-
-    const url = getPublicUrl(file.name)
-
-    if (file.metadata?.mimetype?.startsWith("video")) {
-      createMediaCard(file.name, url, "video");
-    } else {
-      createMediaCard(file.name, url, "image");
-    }
-  }
-
-  status.innerText = "";
+  // render only first batch
+  allFiles.slice(0, 50).forEach(createMediaCard);
+  status.innerText = `Loaded ${allFiles.length} files`;
 }
 
-/* ================= RENDER ================= */
-
-function renderBatch(files) {
-
-  files.forEach(file => {
-
-    const img = document.createElement("img");
-    const url = getPublicUrl(file.file_path);
-    img.src = url;
-    // const url = `${SUPABASE_URL}/storage/v1/object/public/${PUBLIC_BUCKET}/${file.file_path}`;
-
-    createMediaCard(file.file_path, url, file.mimetype);
-
-  });
-
-}
-
-function createMediaCard(filePath, url, mimetype) {
-
-  const card = document.createElement("div");
-  card.className = "photo-card";
-  card.dataset.file = filePath;
-
-  let element;
-
-  if (mimetype?.startsWith("video")) {
-
-    element = document.createElement("div");
-    element.className = "video-thumb";
-    element.innerHTML = `<span class="play-icon">▶</span>`;
-
-  } else {
-
-    element = document.createElement("img");
-    element.src = url;
-    element.loading = "lazy";
-    element.className = "media-item";
-
+/* ================= LOAD MORE ON SCROLL ================= */
+let batchIndex = 50;
+window.addEventListener("scroll", () => {
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+    const nextBatch = allFiles.slice(batchIndex, batchIndex + 50);
+    nextBatch.forEach(createMediaCard);
+    batchIndex += 50;
   }
+});
 
-  card.appendChild(element);
+/* ================= MOVE SELECTED FILES ================= */
+moveBtn.addEventListener("click", async () => {
+  if (selectedFiles.size === 0) { status.innerText = "No files selected."; return; }
+  if (!confirm(`Move ${selectedFiles.size} file(s) to private?`)) return;
+  status.innerText = "Moving files...";
 
-  card.addEventListener("click", () => toggleSelection(card, filePath));
-
-  if (mimetype?.startsWith("video")) {
-    videoGallery.appendChild(card);
-  } else {
-    photoGallery.appendChild(card);
-  }
-
-}
-
-function toggleSelection(card, filePath) {
-
-  if (selectedFiles.has(filePath)) {
-    selectedFiles.delete(filePath);
-    card.classList.remove("selected");
-  } else {
-    selectedFiles.add(filePath);
-    card.classList.add("selected");
-  }
-
-}
-
-/* ================= MOVE TO PRIVATE ================= */
-
-function setupMoveButton() {
-
-  moveBtn.addEventListener("click", async () => {
-
-    if (selectedFiles.size === 0) {
-      alert("No files selected.");
-      return;
-    }
-
-    if (!confirm(`Move ${selectedFiles.size} file(s)?`)) return;
-
-    status.innerText = "Moving...";
-
-    const filesArray = Array.from(selectedFiles);
-
-    for (const filePath of filesArray) {
-
-      const { data: fileData } =
-        await supabase.storage
-          .from(PUBLIC_BUCKET)
-          .download(filePath);
-
+  for (const fileName of Array.from(selectedFiles)) {
+    try {
+      const { data: fileData } = await supabase.storage.from("public-pics").download(fileName);
       if (!fileData) continue;
-
-      await supabase.storage
-        .from(PRIVATE_BUCKET)
-        .upload(filePath, fileData, { upsert: true });
-
-      await supabase.storage
-        .from(PUBLIC_BUCKET)
-        .remove([filePath]);
-
-      await supabase
-        .from("uploads")
-        .update({ visibility: "private", bucket: PRIVATE_BUCKET })
-        .eq("file_path", filePath);
-
-      removeFromDOM(filePath);
-
+      await supabase.storage.from("private-pics").upload(fileName, fileData, { upsert: true });
+      await supabase.storage.from("public-pics").remove([fileName]);
+      await supabase.from("uploads").update({ bucket: "private-pics", visibility: "private" }).eq("file_path", fileName);
+    } catch (err) {
+      console.error("Move error:", fileName, err);
     }
+  }
 
-    selectedFiles.clear();
-    status.innerText = "Done.";
+  status.innerText = "Move completed.";
+  loadFiles();
+});
 
-  });
-
-}
-
-function removeFromDOM(filePath) {
-
-  const el = document.querySelector(`[data-file="${filePath}"]`);
-  if (el) el.remove();
-
-}
-
-/* ================= INFINITE SCROLL ================= */
-
-function setupInfiniteScroll() {
-
-  const observer = new IntersectionObserver(entries => {
-
-    if (entries[0].isIntersecting) {
-      loadPage();
-    }
-
-  });
-
-  const sentinel = document.createElement("div");
-  sentinel.style.height = "20px";
-  document.body.appendChild(sentinel);
-
-  observer.observe(sentinel);
-}
-
-/* ================= REALTIME ================= */
-
-function subscribeRealtime() {
-
-  supabase
-    .channel("uploads-insert")
-    .on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "uploads",
-        filter: "visibility=eq.public"
-      },
-      payload => {
-
-        const file = payload.new;
-
-        const url =getSignedUrl(file.file_path);
-
-        createMediaCard(file.file_path, url, file.mimetype);
-
-      }
-    )
-    .subscribe();
-
-}
-
-/* ================= START ================= */
-
-function init() {
-  loadPage();
-}
+/* ================= INITIAL LOAD ================= */
+loadFiles();
 </script>
 
 <style>
