@@ -260,7 +260,7 @@ fileInput.addEventListener("change", (e) => {
     showPreview(file, file.type.startsWith("image") ? "image" : "video");
   });
   cameraWrapper.style.display = "block";
-//   controls.style.display = "flex";
+  controls.style.display = "flex";
 //   galleryPreview.innerHTML = "";
   galleryPreview.style.display = "flex";
 
