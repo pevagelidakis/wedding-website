@@ -545,13 +545,13 @@ h1{
   margin-bottom:40px;
 }
 
-.gallery{
+/* .gallery{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
   gap:30px;
   max-width:1400px;
   margin:0 auto 50px auto;
-}
+} 
 
 .photo-card{
   position:relative;
@@ -578,6 +578,37 @@ h1{
 
 .photo-card:hover{
   box-shadow:0 25px 80px rgba(212,175,55,.3);
+}*/
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 18px;
+  max-width: 1200px;
+  margin: 0 auto 60px auto;
+  padding: 0 20px;
+}
+
+.photo-card {
+  width: 100%;
+  aspect-ratio: 4 / 5; /* Elegant portrait look */
+  overflow: hidden;
+  border-radius: 14px;
+  cursor: pointer;
+  background: #f8f8f8;
+  transition: transform 0.3s ease;
+}
+
+.photo-card:hover {
+  transform: scale(1.03);
+}
+
+.photo-card img,
+.photo-card video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .fade-in{
