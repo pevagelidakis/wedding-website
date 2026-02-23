@@ -171,6 +171,8 @@ function showPreview(blob, type) {
   wrapper.style.overflow = "hidden";
   wrapper.style.marginRight = "8px";
 
+  canvas.style.display = "none";          // hide canvas
+
   let element;
   if (type === "image") {
     element = document.createElement("img");
