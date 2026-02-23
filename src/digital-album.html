@@ -492,12 +492,26 @@ supabase
   --gold:#d4af37;
   --ivory:#f8f6f1;
 }
-html{
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  font-family: 'Inter', sans-serif;
+  color: var(--ivory);
+  padding: 40px 20px;
+
   background:
-      linear-gradient(rgba(0,0,0,.80), rgba(0,0,0,.90)),
-      url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2000&auto=format&fit=crop') 
-      no-repeat center center fixed;
-    background-size:cover;
+    linear-gradient(rgba(0,0,0,.80), rgba(0,0,0,.90)),
+    url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2000&auto=format&fit=crop');
+
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* keeps it elegant */
 }
 
 header {
@@ -525,12 +539,12 @@ header {
   color: black;
 }
 
-body{
+/* body{
   margin:0;
   font-family:'Inter',sans-serif;
   color:var(--ivory);
   padding:40px 20px;
-}
+} */
 
 h1{
   font-family:'Playfair Display',serif;
