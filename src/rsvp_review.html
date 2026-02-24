@@ -125,6 +125,18 @@
       margin-top: 60px;
       font-size: 18px;
     }
+
+    .rsvp-total {
+      margin-top: 30px;
+      padding: 18px;
+      text-align: right;
+      font-size: 18px;
+      font-weight: 600;
+      background: rgba(0,0,0,0.4);
+      border-radius: 14px;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(212,175,55,0.3);
+    }
   </style>
 </head>
 <body>
@@ -132,6 +144,9 @@
   <div class="grid" id="rsvpGrid"></div>
   <div id="emptyState" class="empty-state" style="display:none;">No RSVPs yet.</div>
 
+  <div id="rsvpTotal" class="rsvp-total">
+  Total Reserved Seats: <strong id="totalSeats">0</strong>
+</div>
   <script>
     const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA"; // Replace with full anon public key
@@ -204,7 +219,37 @@
         grid.appendChild(wrapper);
       });
     }
+    async function updateTotalSeats() {
+      const { data, error } = await supabase.rpc("get_total_seats");
 
+      if (error) {
+        console.error("Error fetching total seats:", error);
+        return;
+      }
+
+      document.getElementById("totalSeats").textContent = data || 0;
+    }
+
+    // Initial load
+    document.addEventListener("DOMContentLoaded", async () => {
+      await updateTotalSeats();
+
+      // Subscribe to realtime changes
+      supabase
+        .channel("rsvp-total-channel")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "rsvps"
+          },
+          async () => {
+            await updateTotalSeats();
+          }
+        )
+        .subscribe();
+    });
     loadRsvps();
   </script>
 </body>
