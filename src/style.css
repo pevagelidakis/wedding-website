@@ -420,7 +420,7 @@ form {
 .rsvp-group textarea {
   width: 100%;
   padding: 14px 16px;
-  /* font-family: 'Inter', sans-serif; */
+  font-family: 'Playfair Display', serif;
   font-size: 0.95rem;
   border-radius: 14px;
   border: 1px solid rgba(0,0,0,0.25);
