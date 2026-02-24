@@ -808,11 +808,21 @@ loadFiles();
 
 <style>
  body{
-  margin:0;
-  font-family:'Inter',sans-serif;
-  background:radial-gradient(circle at top,#1c1c1c,#0d0d0d);
-  color:#f8f6f1;
-  padding:30px;
+    margin: 0;
+    min-height: 100vh;
+
+    font-family: 'Inter', sans-serif;
+    color: var(--ivory);
+    padding: 40px 20px;
+
+    background:
+      linear-gradient(rgba(0,0,0,.80), rgba(0,0,0,.90)),
+      url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2000&auto=format&fit=crop');
+
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* keeps it elegant */
 }
 
 h2{
