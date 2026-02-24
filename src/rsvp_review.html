@@ -156,7 +156,6 @@
     // Use global supabase object provided by CDN without redeclaring it
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let totalSeats = 0;
 
     function sanitize(value) {
       if (!value) return "—";
@@ -222,66 +221,7 @@
         grid.appendChild(wrapper);
       });
     }
-    let totalSeats = 0;
-const totalSeatsEl = document.getElementById("totalSeats");
-const container = document.getElementById("rsvpContainer");
-
-// Fetch and render everything
-async function loadRsvps() {
-  const { data, error } = await supabase
-    .from("rsvps")
-    .select("*");
-
-  if (error) {
-    console.error("Error loading RSVPs:", error);
-    return;
-  }
-
-  container.innerHTML = "";
-  totalSeats = 0;
-
-  data.forEach(rsvp => {
-    renderRsvpCard(rsvp);
-    totalSeats += rsvp.seats || 0;
-  });
-
-  totalSeatsEl.textContent = totalSeats;
-}
-
-// Render one card
-function renderRsvpCard(rsvp) {
-  const card = document.createElement("div");
-  card.className = "rsvp-card";
-
-  card.innerHTML = `
-    <h3>${rsvp.name}</h3>
-    <p>Seats: <strong>${rsvp.seats}</strong></p>
-    <p>${rsvp.message || ""}</p>
-  `;
-
-  container.appendChild(card);
-}
-
-// Realtime updates
-function setupRealtime() {
-  supabase
-    .channel("rsvp-live")
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "rsvps" },
-      () => {
-        loadRsvps(); // reload safely
-      }
-    )
-    .subscribe();
-}
-
-// Init
-loadRsvps();
-setupRealtime();
-
-    
-    // loadRsvps();
+    loadRsvps();
   </script>
 </body>
 </html>
