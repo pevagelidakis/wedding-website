@@ -156,6 +156,7 @@
     // Use global supabase object provided by CDN without redeclaring it
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let totalSeats = 0;
 
     function sanitize(value) {
       if (!value) return "—";
@@ -196,7 +197,7 @@
         card.className = "card";
 
         const isAttending = rsvp.attendance === "Yes";
-
+        const seatsRes = sanitize(rsvp.seats_reserved);
         card.innerHTML = `
           <div class="card-face card-front">
             <h2>${sanitize(rsvp.full_name)}</h2>
@@ -207,7 +208,7 @@
           <div class="card-face card-back">
             <p><span class="label">Name:</span> ${sanitize(rsvp.full_name)}</p>
             <p><span class="label">Attendance:</span> ${sanitize(rsvp.attendance)}</p>
-            <p><span class="label">Guests:</span> ${sanitize(rsvp.seats_reserved)}</p>
+            <p><span class="label">Guests:</span> ${seatsRes}</p>
             <p><span class="label">Phone:</span> ${sanitize(rsvp.phone)}</p>
             <p><span class="label">Message:</span> ${sanitize(rsvp.message) || 'None'}</p>
           </div>
@@ -221,8 +222,67 @@
         grid.appendChild(wrapper);
       });
     }
+    let totalSeats = 0;
+const totalSeatsEl = document.getElementById("totalSeats");
+const container = document.getElementById("rsvpContainer");
+
+// Fetch and render everything
+async function loadRsvps() {
+  const { data, error } = await supabase
+    .from("rsvps")
+    .select("*");
+
+  if (error) {
+    console.error("Error loading RSVPs:", error);
+    return;
+  }
+
+  container.innerHTML = "";
+  totalSeats = 0;
+
+  data.forEach(rsvp => {
+    renderRsvpCard(rsvp);
+    totalSeats += rsvp.seats || 0;
+  });
+
+  totalSeatsEl.textContent = totalSeats;
+}
+
+// Render one card
+function renderRsvpCard(rsvp) {
+  const card = document.createElement("div");
+  card.className = "rsvp-card";
+
+  card.innerHTML = `
+    <h3>${rsvp.name}</h3>
+    <p>Seats: <strong>${rsvp.seats}</strong></p>
+    <p>${rsvp.message || ""}</p>
+  `;
+
+  container.appendChild(card);
+}
+
+// Realtime updates
+function setupRealtime() {
+  supabase
+    .channel("rsvp-live")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "rsvps" },
+      () => {
+        loadRsvps(); // reload safely
+      }
+    )
+    .subscribe();
+}
+
+// Init
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadRsvps();
+  setupRealtime();
+});
     
-    loadRsvps();
+    // loadRsvps();
   </script>
 </body>
 </html>
