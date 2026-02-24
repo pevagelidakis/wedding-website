@@ -157,6 +157,10 @@
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let totalSeats = 0;
+    const totalSeatsEl = document.getElementById("totalSeats");
+    const container = document.getElementById("rsvpContainer");
+    
     function sanitize(value) {
       if (!value) return "—";
       return String(value)
@@ -221,36 +225,61 @@
         grid.appendChild(wrapper);
       });
     }
-    async function updateTotalSeats() {
-      const { data, error } = await supabase.rpc("get_total_seats");
+
+    // Fetch and render everything
+    async function loadRsvps() {
+      const { data, error } = await supabase
+        .from("rsvps")
+        .select("*");
 
       if (error) {
-        console.error("Error fetching total seats:", error);
+        console.error("Error loading RSVPs:", error);
         return;
       }
 
-      document.getElementById("totalSeats").textContent = data || 0;
+      container.innerHTML = "";
+      totalSeats = 0;
+
+      data.forEach(rsvp => {
+        renderRsvpCard(rsvp);
+        totalSeats += rsvp.seats || 0;
+      });
+
+      totalSeatsEl.textContent = totalSeats;
     }
 
-    // Initial load
-    document.addEventListener("DOMContentLoaded", async () => {
-      await updateTotalSeats();
+    // Render one card
+    function renderRsvpCard(rsvp) {
+      const card = document.createElement("div");
+      card.className = "rsvp-card";
 
-      // Subscribe to realtime changes
+      card.innerHTML = `
+        <h3>${rsvp.name}</h3>
+        <p>Seats: <strong>${rsvp.seats}</strong></p>
+        <p>${rsvp.message || ""}</p>
+      `;
+
+      container.appendChild(card);
+    }
+
+    // Realtime updates
+    function setupRealtime() {
       supabase
-        .channel("rsvp-total-channel")
+        .channel("rsvp-live")
         .on(
           "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "rsvps"
-          },
-          async () => {
-            await updateTotalSeats();
+          { event: "*", schema: "public", table: "rsvps" },
+          () => {
+            loadRsvps(); // reload safely
           }
         )
         .subscribe();
+    }
+
+    // Init
+    document.addEventListener("DOMContentLoaded", async () => {
+      await loadRsvps();
+      setupRealtime();
     });
     loadRsvps();
   </script>
