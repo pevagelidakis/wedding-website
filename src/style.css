@@ -411,6 +411,7 @@ form {
   margin-bottom: 8px;
   font-size: 0.75rem;
   letter-spacing: 2px;
+  font-family: 'Playfair Display', serif;
   text-transform: uppercase;
   color: #777;
 }
@@ -429,12 +430,14 @@ form {
 }
 
 .rsvp-group textarea {
+  font-family: 'Playfair Display', serif;
   resize: none;
 }
 
 .rsvp-group input:focus,
 .rsvp-group select:focus,
 .rsvp-group textarea:focus {
+    font-family: 'Playfair Display', serif;
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(198,165,106,0.25);
