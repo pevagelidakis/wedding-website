@@ -221,37 +221,7 @@
         grid.appendChild(wrapper);
       });
     }
-    async function updateTotalSeats() {
-      const { data, error } = await supabase.rpc("get_total_seats");
-
-      if (error) {
-        console.error("Error fetching total seats:", error);
-        return;
-      }
-
-      document.getElementById("totalSeats").textContent = data || 0;
-    }
-
-    // Initial load
-    document.addEventListener("DOMContentLoaded", async () => {
-      await updateTotalSeats();
-
-      // Subscribe to realtime changes
-      supabase
-        .channel("rsvp-total-channel")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "rsvps"
-          },
-          async () => {
-            await updateTotalSeats();
-          }
-        )
-        .subscribe();
-    });
+    
     loadRsvps();
   </script>
 </body>
