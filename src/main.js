@@ -93,7 +93,7 @@ form.addEventListener("submit", async (e) => {
 
     form.style.display = "none";
     thankYou.style.display = "block";
-    setInterval(() => floatingPetals(100), 800);
+    floatingPetals(100);
   } catch (err) {
     console.error("RSVP Error:", err);
     alert("Something went wrong. Please try again.");
