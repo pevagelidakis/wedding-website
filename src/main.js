@@ -17,6 +17,92 @@ const errorName = document.getElementById("contact_error_name");
 const errorPhone = document.getElementById("contact_error");
 const errorAttend = document.getElementById("contact_error_attend");
 
+const submitBtn = form.querySelector("button[type='submit']");
+attendance.addEventListener("change", () => {
+  const value = attendance.value ? attendance.value.toLowerCase() : "";
+
+  if (value === "yes") {
+    guestsGroup.classList.add("visible");
+    guestsInput.required = true;
+  } else {
+    guestsGroup.classList.remove("visible");
+    guestsInput.required = false;
+    guestsInput.value = "";
+  }
+});
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  // Reset UI
+  errorName.style.display = "none";
+  errorPhone.style.display = "none";
+  errorAttend.style.display = "none";
+  thankYou.style.display = "none";
+
+  const nameValue = nameInput.value.trim();
+  const phoneValue = phoneInput.value.trim();
+  const attendanceValue = attendance.value ? attendance.value.toLowerCase() : "";
+  const guestsValue = guestsInput.value ? parseInt(guestsInput.value, 10) : 0;
+  const messageValue = document.getElementById("msg")?.value.trim() || null;
+
+  let hasError = false;
+
+  if (!nameValue) {
+    errorName.style.display = "block";
+    hasError = true;
+  }
+
+  if (!attendanceValue) {
+    errorAttend.style.display = "block";
+    hasError = true;
+  }
+
+  if (attendanceValue === "yes") {
+    if (!phoneValue) {
+      errorPhone.style.display = "block";
+      hasError = true;
+    }
+
+    if (!guestsValue || guestsValue < 1) {
+      errorAttend.style.display = "block";
+      hasError = true;
+    }
+  }
+
+  if (hasError) return;
+
+  try {
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Sending...";
+
+    const isAttending = attendanceValue =="yes"
+    const { error } = await supabase
+      .from("rsvps")
+      .insert([
+        {
+          full_name: nameValue,
+          phone: isAttending ? phoneValue : null,
+          attendance: isAttending? "Yes" : "No",
+          seats_reserved: isAttending? guestsValue: null,
+          message: messageValue || null
+        }
+      ]);
+
+    if (error) throw error;
+
+    form.style.display = "none";
+    thankYou.style.display = "block";
+    triggerPetals();
+  } catch (err) {
+    console.error("RSVP Error:", err);
+    alert("Something went wrong. Please try again.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerText =
+      translations[document.documentElement.lang].sendBtn;
+  }
+});
 // attendance.addEventListener("change", () => {
 //   const seatsInput = guestsGroup.querySelector("input");
 //   const contactError = document.getElementById("contact_error");
@@ -36,18 +122,6 @@ const errorAttend = document.getElementById("contact_error_attend");
 //     contactError.classList.remove("show");
 //   }
 // });
-attendance.addEventListener("change", () => {
-  const value = attendance.value ? attendance.value.toLowerCase() : "";
-
-  if (value === "yes") {
-    guestsGroup.classList.add("visible");
-    guestsInput.required = true;
-  } else {
-    guestsGroup.classList.remove("visible");
-    guestsInput.required = false;
-    guestsInput.value = "";
-  }
-});
 
 // form.addEventListener("submit", async (e) => {
 //   e.preventDefault();
@@ -147,78 +221,6 @@ attendance.addEventListener("change", () => {
 //     form.querySelector("button[type='submit']").disabled = false;
 //   }
 // });
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  // Reset UI
-  errorName.style.display = "none";
-  errorPhone.style.display = "none";
-  errorAttend.style.display = "none";
-  thankYou.style.display = "none";
-
-  const nameValue = nameInput.value.trim();
-  const phoneValue = phoneInput.value.trim();
-  const attendanceValue = attendance.value ? attendance.value.toLowerCase() : "";
-  const guestsValue = guestsInput.value ? parseInt(guestsInput.value, 10) : 0;
-  const messageValue = document.getElementById("msg")?.value.trim() || null;
-
-  let hasError = false;
-
-  if (!nameValue) {
-    errorName.style.display = "block";
-    hasError = true;
-  }
-
-  if (!attendanceValue) {
-    errorAttend.style.display = "block";
-    hasError = true;
-  }
-
-  if (attendanceValue === "yes") {
-    if (!phoneValue) {
-      errorPhone.style.display = "block";
-      hasError = true;
-    }
-
-    if (!guestsValue || guestsValue < 1) {
-      errorAttend.style.display = "block";
-      hasError = true;
-    }
-  }
-
-  if (hasError) return;
-
-  try {
-    const submitBtn = form.querySelector("button[type='submit']");
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Sending...";
-
-    const { error } = await supabase
-      .from("rsvps")
-      .insert([
-        {
-          name: nameValue,
-          phone: phoneValue || null,
-          attendance: attendanceValue,
-          guests: attendanceValue === "yes" ? guestsValue : 0,
-          message: messageValue
-        }
-      ]);
-
-    if (error) throw error;
-
-    form.style.display = "none";
-    thankYou.style.display = "block";
-    triggerPetals();
-  } catch (err) {
-    console.error("RSVP Error:", err);
-    alert("Something went wrong. Please try again.");
-  } finally {
-    form.querySelector("button[type='submit']").disabled = false;
-    form.querySelector("button[type='submit']").innerText =
-      translations[document.documentElement.lang].sendBtn;
-  }
-});
   
 
 function triggerPetals(count = 25) {
