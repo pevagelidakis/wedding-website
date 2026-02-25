@@ -28,41 +28,64 @@ attendance.addEventListener("change", () => {
   }
 });
 
-// form.addEventListener("submit", async (e) => {
-//   e.preventDefault();
-//   errorName.style.display = "none";
-//   errorPhone.style.display = "none";
-//   errorAttend.style.display = "none";
-//   thankYou.style.display = "none";
-//   const nameValue = nameInput.value.trim();
-//   const phoneValue = phoneInput.value.trim();
-//   const attendanceValue = attendance.value ? attendance.value.toLowerCase() : "";
-//   const guestsValue = guestsInput.value ? parseInt(guestsInput.value, 10) : 0;
-//   const messageValue = document.getElementById("msg")?.value.trim() || null;
-//   let hasError = false;
-//   if (!nameValue) {
-//     errorName.style.display = "block";
-//     hasError = true;
-//   }
-//   if (!attendanceValue) {
-//     errorAttend.style.display = "block";
-//     hasError = true;
-//   }
-//   if (attendanceValue === "yes") {
-//     if (!phoneValue) {
-//       errorPhone.style.display = "block";
-//       hasError = true;
-//     }
-//     if (!guestsValue || guestsValue < 1) {
-//       errorAttend.style.display = "block";
-//       hasError = true;
-//     }
-//   }
-//   if (hasError) return;
-//   try {
-//     submitBtn.disabled = true;
-//     submitBtn.innerText = "Sending...";
-//     const isAttending = attendanceValue =="yes"
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  errorName.style.display = "none";
+  errorPhone.style.display = "none";
+  errorAttend.style.display = "none";
+  thankYou.style.display = "none";
+  const nameValue = nameInput.value.trim();
+  const phoneValue = phoneInput.value.trim();
+  const attendanceValue = attendance.value ? attendance.value.toLowerCase() : "";
+  const guestsValue = guestsInput.value ? parseInt(guestsInput.value, 10) : 0;
+  const messageValue = document.getElementById("msg")?.value.trim() || null;
+  let hasError = false;
+  if (!nameValue) {
+    errorName.style.display = "block";
+    hasError = true;
+  }
+  if (!attendanceValue) {
+    errorAttend.style.display = "block";
+    hasError = true;
+  }
+  if (attendanceValue === "yes") {
+    if (!phoneValue) {
+      errorPhone.style.display = "block";
+      hasError = true;
+    }
+    if (!guestsValue || guestsValue < 1) {
+      errorAttend.style.display = "block";
+      hasError = true;
+    }
+  }
+  if (hasError) return;
+  try {
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Sending...";
+    const isAttending = attendanceValue =="yes"
+
+    // Prepare exact payload matching DB schema
+    const payload = {
+      full_name: nameValue,
+      phone: isAttending ? phoneValue : null,
+      attendance: isAttending ? "Yes" : "No",
+      seats_reserved: isAttending ? guestsValue : null,
+      message: messageValue
+    };
+    await insertWithRetry(payload);
+    form.style.display = "none";
+    thankYou.style.display = "block";
+    floatingPetals(80);
+  } catch (err) {
+    console.error("RSVP final failure:", err);
+    alert("Temporary issue. Please try again in a few seconds.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerText =
+      translations[document.documentElement.lang].sendBtn;
+  }
+});
+
 //     const { error } = await supabase
 //       .from("rsvps")
 //       .insert([
@@ -88,80 +111,80 @@ attendance.addEventListener("change", () => {
 //   }
 // });
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+// form.addEventListener("submit", async (e) => {
+//   e.preventDefault();
 
-  // Reset UI errors
-  errorName.style.display = "none";
-  errorPhone.style.display = "none";
-  errorAttend.style.display = "none";
-  thankYou.style.display = "none";
+//   // Reset UI errors
+//   errorName.style.display = "none";
+//   errorPhone.style.display = "none";
+//   errorAttend.style.display = "none";
+//   thankYou.style.display = "none";
 
-  const nameValue = nameInput.value.trim();
-  const phoneValue = phoneInput.value.trim();
-  const attendanceValue = attendance.value ? attendance.value.toLowerCase() : "";
-  const guestsValue = guestsInput.value ? parseInt(guestsInput.value, 10) : 0;
-  const messageValue = document.getElementById("msg")?.value.trim() || null;
+//   const nameValue = nameInput.value.trim();
+//   const phoneValue = phoneInput.value.trim();
+//   const attendanceValue = attendance.value ? attendance.value.toLowerCase() : "";
+//   const guestsValue = guestsInput.value ? parseInt(guestsInput.value, 10) : 0;
+//   const messageValue = document.getElementById("msg")?.value.trim() || null;
 
-  let hasError = false;
+//   let hasError = false;
 
-  if (!nameValue) {
-    errorName.style.display = "block";
-    hasError = true;
-  }
+//   if (!nameValue) {
+//     errorName.style.display = "block";
+//     hasError = true;
+//   }
 
-  if (!attendanceRaw) {
-    errorAttend.style.display = "block";
-    hasError = true;
-  }
+//   if (!attendanceRaw) {
+//     errorAttend.style.display = "block";
+//     hasError = true;
+//   }
 
-  const isAttending = attendanceValue === "yes";
+//   const isAttending = attendanceValue === "yes";
 
-  if (isAttending) {
-    // const parsedGuests = Number.parseInt(guestsInput.value, 10);
+//   if (isAttending) {
+//     // const parsedGuests = Number.parseInt(guestsInput.value, 10);
 
-    if (!phoneValue) {
-      errorPhone.style.display = "block";
-      hasError = true;
-    }
+//     if (!phoneValue) {
+//       errorPhone.style.display = "block";
+//       hasError = true;
+//     }
 
-    if (guestsValue < 1) {
-      errorAttend.style.display = "block";
-      hasError = true;
-    }
-  }
+//     if (guestsValue < 1) {
+//       errorAttend.style.display = "block";
+//       hasError = true;
+//     }
+//   }
 
-  if (hasError) return;
+//   if (hasError) return;
 
-  // Prepare exact payload matching DB schema
-  const payload = {
-    full_name: nameValue,
-    phone: isAttending ? phoneValue : null,
-    attendance: isAttending ? "Yes" : "No",
-    seats_reserved: isAttending ? guestsValue : null,
-    message: messageValue
-  };
+//   // Prepare exact payload matching DB schema
+//   const payload = {
+//     full_name: nameValue,
+//     phone: isAttending ? phoneValue : null,
+//     attendance: isAttending ? "Yes" : "No",
+//     seats_reserved: isAttending ? guestsValue : null,
+//     message: messageValue
+//   };
 
-  // Prevent double submit
-  submitBtn.disabled = true;
-  submitBtn.innerText = "Sending...";
+//   // Prevent double submit
+//   submitBtn.disabled = true;
+//   submitBtn.innerText = "Sending...";
 
-  try {
-    await insertWithRetry(payload);
+//   try {
+//     await insertWithRetry(payload);
 
-    form.style.display = "none";
-    thankYou.style.display = "block";
-    floatingPetals(80);
+//     form.style.display = "none";
+//     thankYou.style.display = "block";
+//     floatingPetals(80);
 
-  } catch (err) {
-    console.error("RSVP final failure:", err);
-    alert("Temporary issue. Please try again in a few seconds.");
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.innerText =
-      translations[document.documentElement.lang].sendBtn;
-  }
-});
+//   } catch (err) {
+//     console.error("RSVP final failure:", err);
+//     alert("Temporary issue. Please try again in a few seconds.");
+//   } finally {
+//     submitBtn.disabled = false;
+//     submitBtn.innerText =
+//       translations[document.documentElement.lang].sendBtn;
+//   }
+// });
 
 async function insertWithRetry(payload, maxRetries = 3) {
   let attempt = 0;
