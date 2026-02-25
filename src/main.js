@@ -93,7 +93,7 @@ form.addEventListener("submit", async (e) => {
 
     form.style.display = "none";
     thankYou.style.display = "block";
-    triggerPetals();
+    setInterval(() => floatingPetals(100), 800);
   } catch (err) {
     console.error("RSVP Error:", err);
     alert("Something went wrong. Please try again.");
@@ -223,73 +223,79 @@ form.addEventListener("submit", async (e) => {
 // });
   
 
-function triggerPetals(count = 25) {
+// function createPetal() {
+//   const petal = document.createElement("div");
+//   petal.className = "petal";
+//   // Random horizontal start
+//   petal.style.left = Math.random() * 100 + "vw";
+//   // Random duration
+//   const duration = 6 + Math.random() * 6;
+//   petal.style.animationDuration = duration + "s";
+//   // Random drift & rotation
+//   petal.style.setProperty("--drift", (Math.random() * 120 - 60) + "px");
+//   petal.style.setProperty("--rotate", (Math.random() * 720 - 360) + "deg");
+//   // Random depth
+//   const depth = ["far", "mid", "near"];
+//   petal.classList.add(depth[Math.floor(Math.random() * depth.length)]);
+//   // Random image variant
+//   const variant = 1 + Math.floor(Math.random() * 3);
+//   petal.classList.add(`variant-${variant}`);
+//   document.getElementById("petals-container").appendChild(petal);
+
+//   // Cleanup
+//   setTimeout(() => petal.remove(), duration * 1000);
+// }
+
+// function triggerPetals(count = 100){
+//   for (let i = 0; i < count; i++) {
+//     setTimeout(createPetal, i * 120);
+//   }
+// }
+
+
+function floatingPetals(count = 40) {
   const container = document.getElementById("petals-container");
   if (!container) return;
 
-  for (let i = 0; i < count; i++) {
+  // Reduce load on small/mobile devices
+  const isMobile = window.innerWidth < 768;
+  const total = isMobile ? Math.min(count, 25) : count;
+
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 0; i < total; i++) {
     const petal = document.createElement("div");
     petal.className = "petal";
 
-    const left = Math.random() * 100;
-    const duration = 5 + Math.random() * 5;
-    const delay = Math.random() * 2;
-    const drift = (Math.random() - 0.5) * 100;
-
-    petal.style.left = left + "vw";
-    petal.style.animationDuration = duration + "s";
-    petal.style.animationDelay = delay + "s";
-    petal.style.setProperty("--drift", drift + "px");
-
-    container.appendChild(petal);
-
-    // Auto cleanup
-    setTimeout(() => {
-      petal.remove();
-    }, (duration + delay) * 1000);
-  }
-}
-
-
-  function floatingPetals() {
-  const container = document.getElementById("petal-container");
-  if (!container) return;
-
-  for (let i = 0; i < 200; i++) {
-    const petal = document.createElement("div");
-    petal.classList.add("petal");
-
-    // Image variety
-    const variant = Math.floor(Math.random() * 3) + 1;
-    petal.classList.add(`variant-${variant}`);
-
-    // Depth selection
-    const depthRand = Math.random();
-    let depthClass, size, duration;
-
-    if (depthRand < 0.3) {
-      depthClass = "far";
-      size = Math.random() * 10 + 14;
-      duration = Math.random() * 8 + 14;
-    } else if (depthRand < 0.7) {
-      depthClass = "mid";
-      size = Math.random() * 12 + 18;
-      duration = Math.random() * 6 + 12;
-    } else {
-      depthClass = "near";
-      size = Math.random() * 14 + 26;
-      duration = Math.random() * 4 + 9;
-    }
-
-    petal.classList.add(depthClass);
-
-    petal.style.width = petal.style.height = `${size}px`;
+    // Random horizontal start
     petal.style.left = Math.random() * 100 + "vw";
-    petal.style.animationDuration = `${duration}s`;
-    petal.style.animationDelay = `${Math.random() * 2}s`;
 
-    container.appendChild(petal);
+    // Random drift & rotation (GPU friendly)
+    petal.style.setProperty("--drift", (Math.random() * 120 - 60) + "px");
+    petal.style.setProperty("--rotate", (Math.random() * 720 - 360) + "deg");
 
-    setTimeout(() => petal.remove(), (duration + 2) * 1000);
+    // Random duration
+    const duration = 8 + Math.random() * 6;
+    petal.style.animationDuration = duration + "s";
+
+    // Depth selection (no width recalculation needed)
+    const r = Math.random();
+    petal.classList.add(
+      r < 0.33 ? "far" :
+      r < 0.66 ? "mid" : "near"
+    );
+
+    // Variant selection
+    petal.classList.add(`variant-${1 + Math.floor(Math.random() * 3)}`);
+
+    // Auto cleanup (no setTimeout needed)
+    petal.addEventListener("animationend", () => {
+      petal.remove();
+    });
+
+    fragment.appendChild(petal);
   }
+
+  // Single DOM injection
+  container.appendChild(fragment);
 }

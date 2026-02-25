@@ -530,101 +530,6 @@ form {
 
 
 
-@property --x {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
-@property --y {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
-@property --rx {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
-@property --ry {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
-@property --rz {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
-#petal-container {
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  z-index: 9999;
-}
-
-.petal {
-  position: absolute;
-  top: -15%;
-  pointer-events: none;
-  opacity: 0.9;
-
-  background-size: contain;
-  background-repeat: no-repeat;
-
-  animation-name: fall;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
-}
-
-@keyframes fall {
-  to {
-    transform: translateY(120vh) rotate(360deg);
-  }
-}
-
-/* Depth layers */
-.petal.far {
-  transform: scale(0.5);
-  filter: blur(1.2px);
-  opacity: 0.6;
-}
-
-.petal.mid {
-  transform: scale(0.8);
-  filter: blur(0.6px);
-  opacity: 0.8;
-}
-
-.petal.near {
-  transform: scale(1.1);
-  filter: blur(0);
-  opacity: 1;
-}
-
-/* Gentle horizontal sway */
-.petal::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  animation: sway 4s ease-in-out infinite;
-}
-
-@keyframes sway {
-  0%   { transform: translateX(0); }
-  50%  { transform: translateX(60px); }
-  100% { transform: translateX(0); }
-}
-
-/* Petal variants */
-.petal.variant-1 { background-image: url("media/petal1.png"); }
-.petal.variant-2 { background-image: url("media/petal2.png"); }
-.petal.variant-3 { background-image: url("media/petal3.png"); }
 
 
 
@@ -658,7 +563,7 @@ form {
 
 
 
-.gallery {
+/* .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px;
@@ -700,7 +605,7 @@ form {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 12px;
   }
-}
+} */
 
 
 
@@ -971,36 +876,74 @@ form {
 
 
 /* ===== Floating Petals Animation ===== */
+/* ================= PETALS CONTAINER ================= */
 
 #petals-container {
   position: fixed;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
-  z-index: 2000;
+  z-index: 9999;
 }
+
+/* ================= PETAL BASE ================= */
 
 .petal {
   position: absolute;
-  top: -50px;
-  width: 18px;
-  height: 18px;
-  background: radial-gradient(circle at 30% 30%, #fff 0%, #f3c6d3 60%, #e7a9bd 100%);
-  border-radius: 50% 70% 50% 70%;
-  opacity: 0.9;
+  top: -10vh;
+  width: 20px;
+  height: 20px;
+
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  will-change: transform, opacity;
+
   animation: fall linear forwards;
 }
 
+/* ================= FALL ANIMATION ================= */
+
 @keyframes fall {
   0% {
-    transform: translateY(0) translateX(0) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0;
+  }
+
+  10% {
     opacity: 1;
   }
-  50% {
-    transform: translateY(50vh) translateX(-40px) rotate(180deg);
-  }
+
   100% {
-    transform: translateY(110vh) translateX(40px) rotate(360deg);
+    transform: translate3d(var(--drift, 60px), 110vh, 0)
+               rotate(var(--rotate, 360deg));
     opacity: 0;
   }
 }
+
+/* ================= DEPTH LAYERS ================= */
+
+/* Far petals */
+.petal.far {
+  transform: scale(0.5);
+  opacity: 0.5;
+}
+
+/* Mid petals */
+.petal.mid {
+  transform: scale(0.8);
+  opacity: 0.75;
+}
+
+/* Near petals */
+.petal.near {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* ================= VARIANTS ================= */
+
+.petal.variant-1 { background-image: url("media/petal1.png"); }
+.petal.variant-2 { background-image: url("media/petal2.png"); }
+.petal.variant-3 { background-image: url("media/petal3.png"); }
