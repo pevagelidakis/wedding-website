@@ -8,15 +8,12 @@ const form = document.getElementById("rsvp-form");
 const thankYou = document.getElementById("rsvp_thankyou");
 const attendance = document.getElementById("attendance");
 const guestsGroup = document.getElementById("guests-group");
-
 const nameInput = form.querySelector("input[name='name']");
 const phoneInput = document.getElementById("phone");
 const guestsInput = guestsGroup.querySelector("input");
-
 const errorName = document.getElementById("contact_error_name");
 const errorPhone = document.getElementById("contact_error");
 const errorAttend = document.getElementById("contact_error_attend");
-
 const submitBtn = form.querySelector("button[type='submit']");
 attendance.addEventListener("change", () => {
   const value = attendance.value ? attendance.value.toLowerCase() : "";
@@ -31,10 +28,70 @@ attendance.addEventListener("change", () => {
   }
 });
 
+// form.addEventListener("submit", async (e) => {
+//   e.preventDefault();
+//   errorName.style.display = "none";
+//   errorPhone.style.display = "none";
+//   errorAttend.style.display = "none";
+//   thankYou.style.display = "none";
+//   const nameValue = nameInput.value.trim();
+//   const phoneValue = phoneInput.value.trim();
+//   const attendanceValue = attendance.value ? attendance.value.toLowerCase() : "";
+//   const guestsValue = guestsInput.value ? parseInt(guestsInput.value, 10) : 0;
+//   const messageValue = document.getElementById("msg")?.value.trim() || null;
+//   let hasError = false;
+//   if (!nameValue) {
+//     errorName.style.display = "block";
+//     hasError = true;
+//   }
+//   if (!attendanceValue) {
+//     errorAttend.style.display = "block";
+//     hasError = true;
+//   }
+//   if (attendanceValue === "yes") {
+//     if (!phoneValue) {
+//       errorPhone.style.display = "block";
+//       hasError = true;
+//     }
+//     if (!guestsValue || guestsValue < 1) {
+//       errorAttend.style.display = "block";
+//       hasError = true;
+//     }
+//   }
+//   if (hasError) return;
+//   try {
+//     submitBtn.disabled = true;
+//     submitBtn.innerText = "Sending...";
+//     const isAttending = attendanceValue =="yes"
+//     const { error } = await supabase
+//       .from("rsvps")
+//       .insert([
+//         {
+//           full_name: nameValue,
+//           phone: isAttending ? phoneValue : null,
+//           attendance: isAttending? "Yes" : "No",
+//           seats_reserved: isAttending? guestsValue: null,
+//           message: messageValue || null
+//         }
+//       ]);
+//     if (error) throw error;
+//     form.style.display = "none";
+//     thankYou.style.display = "block";
+//     floatingPetals(100);
+//   } catch (err) {
+//     console.error("RSVP Error:", err);
+//     alert("Something went wrong. Please try again.");
+//   } finally {
+//     submitBtn.disabled = false;
+//     submitBtn.innerText =
+//       translations[document.documentElement.lang].sendBtn;
+//   }
+// });
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  // Reset UI
+  // Reset UI errors
   errorName.style.display = "none";
   errorPhone.style.display = "none";
   errorAttend.style.display = "none";
@@ -53,18 +110,22 @@ form.addEventListener("submit", async (e) => {
     hasError = true;
   }
 
-  if (!attendanceValue) {
+  if (!attendanceRaw) {
     errorAttend.style.display = "block";
     hasError = true;
   }
 
-  if (attendanceValue === "yes") {
+  const isAttending = attendanceValue === "yes";
+
+  if (isAttending) {
+    // const parsedGuests = Number.parseInt(guestsInput.value, 10);
+
     if (!phoneValue) {
       errorPhone.style.display = "block";
       hasError = true;
     }
 
-    if (!guestsValue || guestsValue < 1) {
+    if (guestsValue < 1) {
       errorAttend.style.display = "block";
       hasError = true;
     }
@@ -72,37 +133,93 @@ form.addEventListener("submit", async (e) => {
 
   if (hasError) return;
 
+  // Prepare exact payload matching DB schema
+  const payload = {
+    full_name: nameValue,
+    phone: isAttending ? phoneValue : null,
+    attendance: isAttending ? "Yes" : "No",
+    seats_reserved: isAttending ? guestsValue : null,
+    message: messageValue
+  };
+
+  // Prevent double submit
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Sending...";
+
   try {
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Sending...";
-
-    const isAttending = attendanceValue =="yes"
-    const { error } = await supabase
-      .from("rsvps")
-      .insert([
-        {
-          full_name: nameValue,
-          phone: isAttending ? phoneValue : null,
-          attendance: isAttending? "Yes" : "No",
-          seats_reserved: isAttending? guestsValue: null,
-          message: messageValue || null
-        }
-      ]);
-
-    if (error) throw error;
+    await insertWithRetry(payload);
 
     form.style.display = "none";
     thankYou.style.display = "block";
-    floatingPetals(100);
+    floatingPetals(80);
+
   } catch (err) {
-    console.error("RSVP Error:", err);
-    alert("Something went wrong. Please try again.");
+    console.error("RSVP final failure:", err);
+    alert("Temporary issue. Please try again in a few seconds.");
   } finally {
     submitBtn.disabled = false;
     submitBtn.innerText =
       translations[document.documentElement.lang].sendBtn;
   }
 });
+
+async function insertWithRetry(payload, maxRetries = 3) {
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    try {
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timeout")), 8000)
+      );
+      const insertPromise = supabase
+        .from("rsvps")
+        .insert([payload]);
+      const { error } = await Promise.race([
+        insertPromise,
+        timeoutPromise
+      ]);
+      if (error) throw error;
+      return; // Success
+    } catch (err) {
+      attempt++;
+      // If last attempt, throw
+      if (attempt >= maxRetries) {
+        throw err;
+      }
+      // Exponential backoff (300ms → 900ms → 1800ms)
+      const delay = 300 * Math.pow(3, attempt - 1);
+      await new Promise(res => setTimeout(res, delay));
+    }
+  }
+}
+
+function floatingPetals(count = 40) {
+  const container = document.getElementById("petals-container");
+  if (!container) return;
+  const isMobile = window.innerWidth < 768;
+  const total = isMobile ? Math.min(count, 25) : count;
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < total; i++) {
+    const petal = document.createElement("div");
+    petal.className = "petal";
+    petal.style.left = Math.random() * 100 + "vw";
+    petal.style.setProperty("--drift", (Math.random() * 120 - 60) + "px");
+    petal.style.setProperty("--rotate", (Math.random() * 720 - 360) + "deg");
+    const duration = 8 + Math.random() * 6;
+    petal.style.animationDuration = duration + "s";
+    const r = Math.random();
+    petal.classList.add(
+      r < 0.33 ? "far" :
+      r < 0.66 ? "mid" : "near"
+    );
+    petal.classList.add(`variant-${1 + Math.floor(Math.random() * 3)}`);
+    petal.addEventListener("animationend", () => {
+      petal.remove();
+    });
+    fragment.appendChild(petal);
+  }
+  container.appendChild(fragment);
+}
+
 // attendance.addEventListener("change", () => {
 //   const seatsInput = guestsGroup.querySelector("input");
 //   const contactError = document.getElementById("contact_error");
@@ -253,49 +370,3 @@ form.addEventListener("submit", async (e) => {
 // }
 
 
-function floatingPetals(count = 40) {
-  const container = document.getElementById("petals-container");
-  if (!container) return;
-
-  // Reduce load on small/mobile devices
-  const isMobile = window.innerWidth < 768;
-  const total = isMobile ? Math.min(count, 25) : count;
-
-  const fragment = document.createDocumentFragment();
-
-  for (let i = 0; i < total; i++) {
-    const petal = document.createElement("div");
-    petal.className = "petal";
-
-    // Random horizontal start
-    petal.style.left = Math.random() * 100 + "vw";
-
-    // Random drift & rotation (GPU friendly)
-    petal.style.setProperty("--drift", (Math.random() * 120 - 60) + "px");
-    petal.style.setProperty("--rotate", (Math.random() * 720 - 360) + "deg");
-
-    // Random duration
-    const duration = 8 + Math.random() * 6;
-    petal.style.animationDuration = duration + "s";
-
-    // Depth selection (no width recalculation needed)
-    const r = Math.random();
-    petal.classList.add(
-      r < 0.33 ? "far" :
-      r < 0.66 ? "mid" : "near"
-    );
-
-    // Variant selection
-    petal.classList.add(`variant-${1 + Math.floor(Math.random() * 3)}`);
-
-    // Auto cleanup (no setTimeout needed)
-    petal.addEventListener("animationend", () => {
-      petal.remove();
-    });
-
-    fragment.appendChild(petal);
-  }
-
-  // Single DOM injection
-  container.appendChild(fragment);
-}

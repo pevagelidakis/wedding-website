@@ -10,13 +10,11 @@ const modeSelection = document.getElementById("modeSelection");
 const cameraModeBtn = document.getElementById("cameraModeBtn");
 const galleryModeBtn = document.getElementById("galleryModeBtn");
 const fileInput = document.getElementById("fileInput");
-
 const cameraWrapper = document.querySelector(".camera-wrapper");
 const controls = document.querySelector(".controls");
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const galleryPreview = document.getElementById("galleryPreview");
-
 const recordBtn = document.getElementById("recordBtn");
 const switchBtn = document.getElementById("switchBtn");
 const retakeBtn = document.getElementById("retakeBtn");
@@ -39,12 +37,10 @@ const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
 /* ================= CAMERA ================= */
 async function startCamera() {
   stopStream();
-
   stream = await navigator.mediaDevices.getUserMedia({
     video: { facingMode: currentFacingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
     audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
   });
-
   video.srcObject = stream;
   video.muted = true;
   video.playsInline = true;
@@ -102,7 +98,6 @@ function takePhoto() {
 
   canvas.toBlob(blob => {
     capturedFiles.push({ blob, type: "image/jpeg" });
-    // showPreview(blob, "image");
   }, "image/jpeg", 0.85);
 
   video.style.display = "none";
@@ -133,8 +128,6 @@ function startRecording() {
     canvas.style.display = "none";
     video.style.display = "block";
     galleryPreview.style.display = "none";
-
-    // showPreview(blob, "video");
     showPreviewButtons();
   };
 
@@ -233,22 +226,6 @@ retakeBtn.addEventListener("click", async () => {
 });
 
 /* ================= GALLERY FILES ================= */
-// fileInput.addEventListener("change", (e) => {
-//   const files = Array.from(e.target.files);
-//   if (!files.length) return;
-
-//   files.forEach(file => {
-//     capturedFiles.push({ blob: file, type: file.type });
-//     showPreview(file, file.type.startsWith("image") ? "image" : "video");
-//   });
-
-//   modeSelection.style.display = "none";
-//   cameraWrapper.style.display = "block";
-//   controls.style.display = "flex";
-//   recordBtn.style.display = "none";
-//   switchBtn.style.display = "none";
-//   showPreviewButtons();
-// });
 fileInput.addEventListener("change", (e) => {
   const files = Array.from(e.target.files);
   if (!files.length) return;
@@ -261,7 +238,6 @@ fileInput.addEventListener("change", (e) => {
   });
   cameraWrapper.style.display = "block";
   controls.style.display = "flex";
-//   galleryPreview.innerHTML = "";
   galleryPreview.style.display = "flex";
 
 
