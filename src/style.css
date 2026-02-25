@@ -710,11 +710,11 @@ form {
   text-align: center;
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .desktop-message {
     display: none;
   }
-}
+} */
 
 .language-switch {
   position: absolute;
