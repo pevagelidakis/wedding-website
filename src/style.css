@@ -862,7 +862,7 @@ form {
   display: flex;
   justify-content: center;   /* horizontal center */
   background: 
-    linear-gradient(to bottom, #f9f9f9, #ffffff)
+    linear-gradient(to bottom, #f9f9f9, #ffffff),
     url("media/papyrus-bg.jpg")     center / cover no-repeat;
   padding: 80px 20px;   /* controlled spacing */
 }
@@ -967,4 +967,37 @@ form {
 /* BACK SIDE */
 .flip-card-back {
   transform: rotateY(180deg);
+}
+
+
+/* ===== Floating Petals Animation ===== */
+
+#petals-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2000;
+}
+
+.petal {
+  position: absolute;
+  top: -50px;
+  width: 18px;
+  height: 18px;
+  background: radial-gradient(circle at 30% 30%, #fff 0%, #f3c6d3 60%, #e7a9bd 100%);
+  border-radius: 50% 70% 50% 70%;
+  opacity: 0.9;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) translateX(50px) rotate(360deg);
+    opacity: 0;
+  }
 }

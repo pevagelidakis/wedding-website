@@ -5,7 +5,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const form = document.getElementById("rsvp-form");
-const thankYou = document.getElementById("rsvp-thankyou");
+const thankYou = document.getElementById("rsvp_thankyou");
 const attendance = document.getElementById("attendance");
 const guestsGroup = document.getElementById("guests-group");
 
@@ -17,31 +17,140 @@ const errorName = document.getElementById("contact_error_name");
 const errorPhone = document.getElementById("contact_error");
 const errorAttend = document.getElementById("contact_error_attend");
 
-attendance.addEventListener("change", () => {
-  const seatsInput = guestsGroup.querySelector("input");
-  const contactError = document.getElementById("contact_error");
+// attendance.addEventListener("change", () => {
+//   const seatsInput = guestsGroup.querySelector("input");
+//   const contactError = document.getElementById("contact_error");
 
-  // Always normalize value
-  const value = attendance.value.toLowerCase();
+//   // Always normalize value
+//   const value = attendance.value.toLowerCase();
+
+//   if (value === "yes") {
+//     guestsGroup.classList.add("visible");
+//     seatsInput.required = true;
+//   } else {
+//     guestsGroup.classList.remove("visible");
+//     seatsInput.required = false;
+//     seatsInput.value = "";
+
+//     // 🔥 IMPORTANT: Hide error if switching to "No"
+//     contactError.classList.remove("show");
+//   }
+// });
+attendance.addEventListener("change", () => {
+  const value = attendance.value ? attendance.value.toLowerCase() : "";
 
   if (value === "yes") {
     guestsGroup.classList.add("visible");
-    seatsInput.required = true;
+    guestsInput.required = true;
   } else {
     guestsGroup.classList.remove("visible");
-    seatsInput.required = false;
-    seatsInput.value = "";
-
-    // 🔥 IMPORTANT: Hide error if switching to "No"
-    contactError.classList.remove("show");
+    guestsInput.required = false;
+    guestsInput.value = "";
   }
 });
 
+// form.addEventListener("submit", async (e) => {
+//   e.preventDefault();
 
+//   // Reset UI state
+//   errorName.style.display = "none";
+//   errorPhone.style.display = "none";
+//   errorAttend.style.display = "none";
+//   thankYou.style.display = "none";
+
+//   const nameValue = nameInput.value.trim();
+//   const phoneValue = phoneInput.value.trim();
+//   const attendanceValue = attendance.value?.toLowerCase();
+//   const guestsValue = guestsInput.value.trim();
+//   const messageInput = document.getElementById("msg");
+//   const messageValue = messageInput ? messageInput.value.trim() : null;
+//   const isAttending = attendanceValue === "yes";
+
+//   let hasError = false;
+
+//   // ✅ Name required
+//   if (!nameValue) {
+//     errorName.style.display = "block";
+//     hasError = true;
+//   }
+
+//   // ✅ Attendance required
+//   if (!attendanceValue) {
+//     errorAttend.style.display = "block";
+//     hasError = true;
+//   }
+
+//   // ✅ Only require phone + guests if attending YES
+//   if (isAttending) {
+//     if (!phoneValue) {
+//       errorPhone.style.display = "block";
+//       hasError = true;
+//     }
+
+//     if (!guestsValue || parseInt(guestsValue) < 1) {
+//       errorAttend.style.display = "block";
+//       hasError = true;
+//     }
+//   }
+
+//   if (hasError) return;
+
+//   try {
+//     // Optional: disable button while submitting
+//     form.querySelector("button[type='submit']").disabled = true;
+
+//     const payload = {
+//       full_name: nameValue,
+//       attendance: isAttending ? "Yes" : "No",
+//       seats_reserved: isAttending ? guestsValue : null,
+//       phone:isAttending ? phoneValue : null,
+//       message: messageValue || null
+//     };
+
+//     const { data: insertData, error: insertError } = await supabase
+//       .from("rsvps")
+//       .insert(payload);
+
+//     if (insertError) {
+//       throw new Error(insertError.message);
+//     }
+
+//     try{
+//       await supabase.functions.invoke("send-rsvp-email", {
+//         body: payload
+//       });
+//     }catch (e){
+//           console.warn('Email failed (RSVP saved):', e);
+//     }
+
+//     // ✅ Success state
+//     form.reset();
+//     guestsGroup.classList.remove("visible");
+
+//     form.style.opacity = "0";
+//     form.style.pointerEvents = "none";
+
+//     setTimeout(() => {
+//       form.style.display = "none";
+//       thankYou.classList.add("show");
+//     }, 400);
+
+//     thankYou.style.display = "block";
+
+//     if (typeof floatingPetals === "function") {
+//       floatingPetals();
+//     }
+
+//   } catch (err) {
+//     alert("Oops, something feels off. Please try again.");
+//   } finally {
+//     form.querySelector("button[type='submit']").disabled = false;
+//   }
+// });
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  // Reset UI state
+  // Reset UI
   errorName.style.display = "none";
   errorPhone.style.display = "none";
   errorAttend.style.display = "none";
@@ -49,34 +158,29 @@ form.addEventListener("submit", async (e) => {
 
   const nameValue = nameInput.value.trim();
   const phoneValue = phoneInput.value.trim();
-  const attendanceValue = attendance.value?.toLowerCase();
-  const guestsValue = guestsInput.value.trim();
-  const messageInput = document.getElementById("msg");
-  const messageValue = messageInput ? messageInput.value.trim() : null;
-  const isAttending = attendanceValue === "yes";
+  const attendanceValue = attendance.value ? attendance.value.toLowerCase() : "";
+  const guestsValue = guestsInput.value ? parseInt(guestsInput.value, 10) : 0;
+  const messageValue = document.getElementById("msg")?.value.trim() || null;
 
   let hasError = false;
 
-  // ✅ Name required
   if (!nameValue) {
     errorName.style.display = "block";
     hasError = true;
   }
 
-  // ✅ Attendance required
   if (!attendanceValue) {
     errorAttend.style.display = "block";
     hasError = true;
   }
 
-  // ✅ Only require phone + guests if attending YES
-  if (isAttending) {
+  if (attendanceValue === "yes") {
     if (!phoneValue) {
       errorPhone.style.display = "block";
       hasError = true;
     }
 
-    if (!guestsValue || parseInt(guestsValue) < 1) {
+    if (!guestsValue || guestsValue < 1) {
       errorAttend.style.display = "block";
       hasError = true;
     }
@@ -85,59 +189,65 @@ form.addEventListener("submit", async (e) => {
   if (hasError) return;
 
   try {
-    // Optional: disable button while submitting
-    form.querySelector("button[type='submit']").disabled = true;
+    const submitBtn = form.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Sending...";
 
-    const payload = {
-      full_name: nameValue,
-      attendance: isAttending ? "Yes" : "No",
-      seats_reserved: isAttending ? guestsValue : null,
-      phone:isAttending ? phoneValue : null,
-      message: messageValue || null
-    };
-
-    const { data: insertData, error: insertError } = await supabase
+    const { error } = await supabase
       .from("rsvps")
-      .insert(payload);
+      .insert([
+        {
+          name: nameValue,
+          phone: phoneValue || null,
+          attendance: attendanceValue,
+          guests: attendanceValue === "yes" ? guestsValue : 0,
+          message: messageValue
+        }
+      ]);
 
-    if (insertError) {
-      throw new Error(insertError.message);
-    }
+    if (error) throw error;
 
-    try{
-      await supabase.functions.invoke("send-rsvp-email", {
-        body: payload
-      });
-    }catch (e){
-          console.warn('Email failed (RSVP saved):', e);
-    }
-
-    // ✅ Success state
-    form.reset();
-    guestsGroup.classList.remove("visible");
-
-    form.style.opacity = "0";
-    form.style.pointerEvents = "none";
-
-    setTimeout(() => {
-      form.style.display = "none";
-      thankYou.classList.add("show");
-    }, 400);
-
+    form.style.display = "none";
     thankYou.style.display = "block";
-
-    if (typeof floatingPetals === "function") {
-      floatingPetals();
-    }
-
+    triggerPetals();
   } catch (err) {
-    alert("Oops, something feels off. Please try again.");
+    console.error("RSVP Error:", err);
+    alert("Something went wrong. Please try again.");
   } finally {
     form.querySelector("button[type='submit']").disabled = false;
+    form.querySelector("button[type='submit']").innerText =
+      translations[document.documentElement.lang].sendBtn;
   }
 });
-
   
+
+function triggerPetals(count = 25) {
+  const container = document.getElementById("petals-container");
+  if (!container) return;
+
+  for (let i = 0; i < count; i++) {
+    const petal = document.createElement("div");
+    petal.className = "petal";
+
+    const left = Math.random() * 100;
+    const duration = 5 + Math.random() * 5;
+    const delay = Math.random() * 2;
+    const drift = (Math.random() - 0.5) * 100;
+
+    petal.style.left = left + "vw";
+    petal.style.animationDuration = duration + "s";
+    petal.style.animationDelay = delay + "s";
+    petal.style.setProperty("--drift", drift + "px");
+
+    container.appendChild(petal);
+
+    // Auto cleanup
+    setTimeout(() => {
+      petal.remove();
+    }, (duration + delay) * 1000);
+  }
+}
+
 
   function floatingPetals() {
   const container = document.getElementById("petal-container");

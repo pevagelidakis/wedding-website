@@ -39,13 +39,13 @@
 <h2 id="prewedd"></h2>
 <section class="split-section bride-section">
    <div class="ceremony-header">
-  <img src="media/bridal-shoe.png" alt="Wedding Rings">
+  <img src="media/bridal-shoe.png" alt="Wedding Rings" loading="lazy" decoding="async">
   <h3 class="bride-team" id="bride_team"></h3>
   </div>
   
   <div class="split-grid">
     <div class="split-image">
-      <img src="media/Papadopoulos Residence.png" alt="Bride Location">
+      <img src="media/Papadopoulos Residence.png" alt="Bride Location" loading="lazy" decoding="async">
     </div>
 
     <div class="split-content" id="bride_invitation"></div>
@@ -59,13 +59,13 @@
 <!-- ================= TEAM GROOM ================= -->
 <section class="split-section groom-section">
   <div class="ceremony-header">
-  <img src="media/bowtie.png" alt="Wedding Rings">
+  <img src="media/bowtie.png" alt="Wedding Rings" loading="lazy" decoding="async">
   <h3 class="bride-team" id="team_groom"></h3>
   </div>
 
   <div class="split-grid">
     <div class="split-image">
-      <img src="media/IoanniKakridi7.png" alt="Groom Location">
+      <img src="media/IoanniKakridi7.png" alt="Groom Location" loading="lazy" decoding="async">
     </div>
 
     <div class="split-content" id="groom_invitation"></div>
@@ -82,13 +82,13 @@
 <!-- ================= CEREMONY ================= -->
 <section class="split-section church-section">
   <div class="ceremony-header">
-  <img src="media/wedRings.png" alt="Wedding Rings">
+  <img src="media/wedRings.png" alt="Wedding Rings" loading="lazy" decoding="async">
   <h3 class="bride-team" id="ceremony"></h3>
 </div>
 
   <div class="split-grid">
     <div class="split-image">
-      <img src="media/Church of Dormition of Mother of God.jpg" alt="Church Location" style= "aspect-ratio: 3 / 3">
+      <img src="media/Church of Dormition of Mother of God.jpg" alt="Church Location" style= "aspect-ratio: 3 / 3" loading="lazy" decoding="async">
     </div>
 
     <div class="split-content">
@@ -104,13 +104,13 @@
 <!-- ================= VENUE ================= -->
 <section class="split-section venue-section">
   <div class="ceremony-header">
-  <img src="media/champagne-cheers.png" alt="Wedding Rings">
+  <img src="media/champagne-cheers.png" alt="Wedding Rings" loading="lazy" decoding="async">
   <h3 class="bride-team" style="font-size: 5rem" id="venue"></h3>
   </div>
 
   <div class="split-grid">
     <div class="split-image">
-      <img src="media/akritas.jpg" alt="Venue Location" style= "aspect-ratio: 3 / 3">
+      <img src="media/akritas.jpg" alt="Venue Location" style= "aspect-ratio: 3 / 3"loading="lazy" decoding="async">
     </div>
 
     <div class="split-content">
@@ -177,7 +177,7 @@
 
   </form>
 
-  <div id="rsvp-thankyou" class="rsvp-thankyou" id="rsvp_thankyou" style="display:none;"></div>
+  <div  class="rsvp-thankyou" id="rsvp_thankyou" style="display:none;"></div>
 </section>
 
 <div id="petal-container"></div>
@@ -189,11 +189,11 @@
     <div class="flip-card-inner">
       <div class="flip-card-front">
         <div class="fancy-card">
-          <img src="media/SaveTheDate.jpg" alt="Wedding Details Card">
+          <img src="media/SaveTheDate.jpg" alt="Wedding Details Card" loading="lazy" decoding="async">
         </div>
       </div>
       <div class="flip-card-back">
-        <img src="media/wedding-bg.png" alt="Wedding Card Back">
+        <img src="media/wedding-bg.png" alt="Wedding Card Back" loading="lazy" decoding="async">
       </div>
       </div>
     </div>
@@ -263,7 +263,7 @@
 
 
 <footer style="text-align:center; padding:50px 20px; background:#1f1f1f; color:#f5f5f5;" id="footer"></footer>
-
+<div id="petals-container"></div>
 <script>
 const translations = {
   en: {
@@ -569,10 +569,15 @@ function setLanguage(lang) {
 function applyLanguage(lang) {
   document.documentElement.lang = lang;
 
-  Object.keys(translations[lang]).forEach(id => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.innerHTML = translations[lang][id];
+  Object.entries(translations[lang]).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // If it's input or textarea placeholder
+    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+      el.placeholder = value;
+    } else {
+      el.innerHTML = value;
     }
   });
 
