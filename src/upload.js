@@ -263,7 +263,14 @@ uploadBtn.addEventListener("click", async () => {
     const uploadedFiles = await uploadFiles(bucketName);
 
     if (uploadedFiles.length > 0) {
-      await supabase.from("uploads").insert(uploadedFiles);
+      const { error } = await supabase
+        .from("uploads")
+        .insert(uploadedFiles);
+
+      if (error) {
+        console.error("DB Insert Error:", error);
+        throw error;
+      }
     }
 
     status.innerText = "Uploaded successfully 🤍";
@@ -370,8 +377,8 @@ async function uploadFiles(bucketName) {
     if (success) {
       successfulUploads.push({
         file_path: filePath,
-        bucket: bucketName,
-        file_type: file.type
+        file_type: file.type,
+        visibility: bucketName === "public-pics" ? "public" : "private"
       });
     }
 

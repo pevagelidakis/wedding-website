@@ -1076,8 +1076,9 @@ async function loadMedia() {
       .from("public-pics")
       .getPublicUrl(row.file_path);
 
-    createMediaCard(row.file_path, publicUrl.publicUrl, row.file_type);
-  });
+  const type = row.file_type.startsWith("video") ? "video" : "image";
+  createMediaCard(row.file_path, publicUrl.publicUrl, type);
+});
 
   status.innerText = "";
   loading = false;
