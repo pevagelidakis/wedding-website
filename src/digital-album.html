@@ -1085,6 +1085,7 @@ let currentType = "image";
 //   status.innerText = "";
 //   loading = false;
 // }
+
 async function loadMedia(nextPage = false) {
   if (!nextPage) {
     // Reset UI & state
@@ -1103,18 +1104,29 @@ async function loadMedia(nextPage = false) {
     }
 
     // Collect all files
-    const filePromises = items.map(async item => {
-      if (!item.metadata) {
-        // Folder: list inside
-        const { data: folderFiles } = await supabase.storage.from("public-pics").list(item.name, { limit: 1000 });
-        return folderFiles?.filter(f => f.metadata?.size > 0).map(f => `${item.name}/${f.name}`) || [];
-      } else if (item.metadata?.size > 0) {
-        return [item.name]; // Single file
-      }
-      return [];
-    });
+    allFiles = [];
 
-    allFiles = (await Promise.all(filePromises)).flat();
+    // Parallelize folder listing but keep it safe
+    await Promise.all(
+      items.map(async (item) => {
+        if (!item.metadata) {
+          // Folder: list contents
+          try {
+            const { data: folderFiles } = await supabase.storage.from("public-pics").list(item.name, { limit: 1000 });
+            if (folderFiles) {
+              folderFiles.forEach(f => {
+                if (f.metadata?.size > 0) allFiles.push(`${item.name}/${f.name}`);
+              });
+            }
+          } catch (err) {
+            console.error("Error listing folder", item.name, err);
+          }
+        } else if (item.metadata?.size > 0) {
+          allFiles.push(item.name); // Single file
+        }
+      })
+    );
+
     allFiles.sort((a, b) => b.localeCompare(a));
   }
 
@@ -1122,7 +1134,7 @@ async function loadMedia(nextPage = false) {
   const pageFiles = allFiles.slice(lastIndex, lastIndex + PAGE_SIZE);
   lastIndex += PAGE_SIZE;
 
-  if (pageFiles.length === 0) {
+  if (!pageFiles.length) {
     status.innerText = "";
     return;
   }
@@ -1146,6 +1158,7 @@ async function loadMedia(nextPage = false) {
 
   status.innerText = `Loaded ${Math.min(lastIndex, allFiles.length)} / ${allFiles.length}`;
 }
+
 /* ================= CREATE CARD ================= */
 function createMediaCard(fileName, url, type) {
 
