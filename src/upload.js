@@ -377,7 +377,7 @@ async function uploadFiles(bucketName) {
     if (success) {
       successfulUploads.push({
         file_path: filePath,
-        file_type: file.type,
+        file_type: fileObj.type,
         visibility: bucketName === "public-pics" ? "public" : "private"
       });
     }
