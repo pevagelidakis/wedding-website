@@ -879,21 +879,3 @@ form {
 .petal.variant-1 { background-image: url("media/petal1.png"); }
 .petal.variant-2 { background-image: url("media/petal2.png"); }
 .petal.variant-3 { background-image: url("media/petal3.png"); }
-
-
-.digital-album {
-  margin-top: 16px;
-  text-align: center;
-  font-size: 14px;
-  opacity: 0.85;
-}
-
-/* .elegant-link {
-  color: var(--gold);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.elegant-link:hover {
-  text-decoration: underline;
-} */
