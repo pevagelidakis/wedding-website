@@ -337,6 +337,7 @@ video, canvas { width: 100%; display: block; }
     <option value="private" id="optPrivate"></option>
   </select>
 </div>
+<p class="digital_album"></p>
 
 <div class="progress-wrap" id="progressWrap">
   <div class="progress-bar-bg">
@@ -362,6 +363,7 @@ const translations = {
     visibilityLabel: "Content Accessibility",
     optPublic:       "✨ Public Realm (Bring to light! 💡)",
     optPrivate:      "🖤 Classified (For our little eyes only! 👀🫣)",
+    digital_album:   `Enjoy our current digital wedding album <a href="./digital-album.html" class="elegant-link">here<\a> (LIVE🔴)!`,
   },
   gr: {
     header:          "Απαθανάτισε τη Στιγμή! 🤩",
@@ -374,6 +376,7 @@ const translations = {
     visibilityLabel: "Προσβασιμότητα Υλικού",
     optPublic:       "✨ Δημόσια · Όλα στο φως!",
     optPrivate:      "🖤 Απόρρητο (Για τα ματάκια μας μόνο! 👀🫣)",
+    digital_album:   `Απολαύστε το γαμήλιο λεύκμά μας ζωντανά <a href="./digital-album.html" class="elegant-link">εδώ<\a> (LIVE🔴)!`,
   }
 };
 
@@ -393,7 +396,7 @@ function applyLanguage(lang) {
   const targets = [
     "header", "subtitle", "cameraModeBtn", "galleryModeBtn",
     "retakeLbl", "shareLbl", "uploadLbl",
-    "visibilityLabel", "optPublic", "optPrivate"
+    "visibilityLabel", "optPublic", "optPrivate", "digital_album"
   ];
   targets.forEach(id => {
     const el = document.getElementById(id);
