@@ -1,81 +1,100 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+// Pinned to same version as gallery/admin — avoids DataCloneError
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 
-const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
+/* ─── CONFIG ─────────────────────────────────────────────── */
+const SUPABASE_URL      = "https://qgdifervtqgkmvonawza.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA";
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const PUBLIC_BUCKET     = "public-pics";
+const PRIVATE_BUCKET    = "private-pics";
+const MAX_DURATION      = 15000;           // 15s max video
+const MAX_FILE_SIZE     = 25 * 1024 * 1024; // 25MB
 
-
-/* ================= ELEMENTS ================= */
-const modeSelection = document.getElementById("modeSelection");
-const cameraModeBtn = document.getElementById("cameraModeBtn");
+/* ─── DOM ────────────────────────────────────────────────── */
+const modeSelection  = document.getElementById("modeSelection");
+const cameraModeBtn  = document.getElementById("cameraModeBtn");
 const galleryModeBtn = document.getElementById("galleryModeBtn");
-const fileInput = document.getElementById("fileInput");
-const cameraWrapper = document.querySelector(".camera-wrapper");
-const controls = document.querySelector(".controls");
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
+const fileInput      = document.getElementById("fileInput");
+const cameraWrapper  = document.querySelector(".camera-wrapper");
+const controls       = document.querySelector(".controls");
+const videoEl        = document.getElementById("video");
+const canvasEl       = document.getElementById("canvas");
 const galleryPreview = document.getElementById("galleryPreview");
-const recordBtn = document.getElementById("recordBtn");
-const switchBtn = document.getElementById("switchBtn");
-const retakeBtn = document.getElementById("retakeBtn");
-const uploadBtn = document.getElementById("uploadBtn");
-const shareBtn = document.getElementById("shareBtn");
-const status = document.getElementById("status");
+const recordBtn      = document.getElementById("recordBtn");
+const switchBtn      = document.getElementById("switchBtn");
+const retakeBtn      = document.getElementById("retakeBtn");
+const uploadBtn      = document.getElementById("uploadBtn");
+const shareBtn       = document.getElementById("shareBtn");
+const statusEl       = document.getElementById("status");
+const progressWrap   = document.getElementById("progressWrap");
+const progressFill   = document.getElementById("progressFill");
+const progressLabel  = document.getElementById("progressLabel");
+const toastEl        = document.getElementById("toast");
 
-/* ================= STATE ================= */
-let stream = null;
-let currentFacingMode = "environment"; // front or back camera
-let capturedFiles = []; // { blob, type }
-let mediaRecorder = null;
+/* ─── STATE ──────────────────────────────────────────────── */
+const supabase     = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let stream         = null;
+let facingMode     = "environment";
+let capturedFiles  = [];           // [{ blob, type }]
+let mediaRecorder  = null;
 let recordedChunks = [];
-let isRecording = false;
-let holdTimer = null;
+let isRecording    = false;
+let holdTimer      = null;
 
-const MAX_DURATION = 15000; // 15 sec
-const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
-
-/* ================= CAMERA ================= */
-async function startCamera() {
-  stopStream();
-  stream = await navigator.mediaDevices.getUserMedia({
-    video: { facingMode: currentFacingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
-    audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-  });
-  video.srcObject = stream;
-  video.muted = true;
-  video.playsInline = true;
-  await video.play();
+/* ─── TOAST ──────────────────────────────────────────────── */
+let toastTimer;
+function toast(msg, duration = 3000) {
+  clearTimeout(toastTimer);
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  toastTimer = setTimeout(() => toastEl.classList.remove("show"), duration);
 }
 
-function stopStream() {
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
-    stream = null;
+function setStatus(msg) { statusEl.textContent = msg; }
+
+/* ─── CAMERA ─────────────────────────────────────────────── */
+async function startCamera() {
+  stopStream();
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+    });
+    videoEl.srcObject = stream;
+    videoEl.muted     = true;
+    await videoEl.play();
+  } catch (err) {
+    console.error("[camera]", err);
+    setStatus("Camera access denied or unavailable.");
   }
 }
 
-/* ================= MODE SELECTION ================= */
+function stopStream() {
+  stream?.getTracks().forEach(t => t.stop());
+  stream = null;
+}
+
+/* ─── MODE SELECTION ─────────────────────────────────────── */
 cameraModeBtn.addEventListener("click", async () => {
-  modeSelection.style.display = "none";
-  cameraWrapper.style.display = "block";
-  controls.style.display = "flex";
-  galleryPreview.style.display = "none";
+  modeSelection.style.display    = "none";
+  cameraWrapper.style.display    = "block";
+  controls.style.display         = "flex";
+  galleryPreview.style.display   = "none";
+  videoEl.style.display          = "block";
+  canvasEl.style.display         = "none";
   await startCamera();
 });
 
 galleryModeBtn.addEventListener("click", () => fileInput.click());
 
 switchBtn.addEventListener("click", async () => {
-  currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
+  facingMode = facingMode === "environment" ? "user" : "environment";
   await startCamera();
 });
 
-/* ================= TAP / HOLD ================= */
-recordBtn.addEventListener("mousedown", startHold);
-recordBtn.addEventListener("touchstart", startHold);
-recordBtn.addEventListener("mouseup", endHold);
-recordBtn.addEventListener("mouseleave", endHold);
-recordBtn.addEventListener("touchend", endHold);
+/* ─── TAP / HOLD ─────────────────────────────────────────── */
+recordBtn.addEventListener("pointerdown", startHold);
+recordBtn.addEventListener("pointerup",   endHold);
+recordBtn.addEventListener("pointerleave", endHold);
 
 function startHold(e) {
   e.preventDefault();
@@ -85,310 +104,303 @@ function startHold(e) {
 function endHold(e) {
   e.preventDefault();
   clearTimeout(holdTimer);
-
   if (isRecording) stopRecording();
-  else takePhoto();
+  else             takePhoto();
 }
 
-/* ================= PHOTO ================= */
+/* ─── PHOTO ──────────────────────────────────────────────── */
 function takePhoto() {
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext("2d").drawImage(video, 0, 0);
+  canvasEl.width  = videoEl.videoWidth;
+  canvasEl.height = videoEl.videoHeight;
+  canvasEl.getContext("2d").drawImage(videoEl, 0, 0);
 
-  canvas.toBlob(blob => {
+  canvasEl.toBlob(blob => {
+    if (!blob) return;
     capturedFiles.push({ blob, type: "image/jpeg" });
   }, "image/jpeg", 0.85);
 
-  video.style.display = "none";
-  canvas.style.display = "block";
-  galleryPreview.style.display = "none";  // hide gallery preview
-  showPreviewButtons();
+  videoEl.style.display          = "none";
+  canvasEl.style.display         = "block";
+  galleryPreview.style.display   = "none";
+  showActionButtons();
 }
 
-/* ================= VIDEO ================= */
+/* ─── VIDEO ──────────────────────────────────────────────── */
 function startRecording() {
   if (!stream) return;
-
-  isRecording = true;
-  recordBtn.classList.add("recording");
+  isRecording    = true;
   recordedChunks = [];
+  recordBtn.classList.add("recording");
 
-  mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm;codecs=vp8,opus" });
+  // Pick best supported codec
+  const mimeType = ["video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"]
+    .find(t => MediaRecorder.isTypeSupported(t)) || "";
+
+  mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
   mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
   mediaRecorder.onstop = () => {
     const blob = new Blob(recordedChunks, { type: "video/webm" });
     capturedFiles.push({ blob, type: "video/webm" });
 
-    video.srcObject = null;
-    video.src = URL.createObjectURL(blob);
-    video.controls = true;
-    video.muted = false;
-
-    canvas.style.display = "none";
-    video.style.display = "block";
+    videoEl.srcObject  = null;
+    videoEl.src        = URL.createObjectURL(blob);
+    videoEl.controls   = true;
+    videoEl.muted      = false;
+    videoEl.style.display        = "block";
+    canvasEl.style.display       = "none";
     galleryPreview.style.display = "none";
-    showPreviewButtons();
+    showActionButtons();
   };
 
   mediaRecorder.start();
-
-  setTimeout(() => {
-    if (isRecording) stopRecording();
-  }, MAX_DURATION);
+  setTimeout(() => { if (isRecording) stopRecording(); }, MAX_DURATION);
 }
 
 function stopRecording() {
   isRecording = false;
   recordBtn.classList.remove("recording");
-  if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+  if (mediaRecorder?.state !== "inactive") mediaRecorder.stop();
 }
-/* ================= PREVIEW ================= */
-function showPreviewButtons() {
+
+/* ─── ACTION BUTTONS ─────────────────────────────────────── */
+function showActionButtons() {
   recordBtn.style.display = "none";
   switchBtn.style.display = "none";
-  retakeBtn.style.display = "inline-block";
-  uploadBtn.style.display = "inline-block";
-  shareBtn.style.display = "inline-block";
+  [retakeBtn, uploadBtn, shareBtn].forEach(b => b.style.display = "inline-flex");
+
+  // Only show Share on mobile devices that support it
+  shareBtn.style.display = navigator.share ? "inline-flex" : "none";
 }
 
-// Add preview to gallery container
-function showPreview(blob, type) {
+/* ─── GALLERY PREVIEW THUMB ──────────────────────────────── */
+function addPreviewThumb(blob, type) {
   galleryPreview.style.display = "flex";
 
-  const wrapper = document.createElement("div");
-  wrapper.style.position = "relative";
-  wrapper.style.width = "100px";
-  wrapper.style.height = "100px";
-  wrapper.style.borderRadius = "12px";
-  wrapper.style.overflow = "hidden";
-  wrapper.style.marginRight = "8px";
+  const wrapper   = document.createElement("div");
+  wrapper.className = "preview-thumb";
 
-  let element;
-  if (type === "image") {
-    element = document.createElement("img");
-    element.src = URL.createObjectURL(blob);
-  } else {
-    element = document.createElement("video");
-    element.src = URL.createObjectURL(blob);
-    element.muted = true;
-    element.playsInline = true;
-  }
-  element.style.width = "100%";
-  element.style.height = "100%";
-  element.style.objectFit = "cover";
+  const el = type === "image"
+    ? Object.assign(document.createElement("img"),    { src: URL.createObjectURL(blob) })
+    : Object.assign(document.createElement("video"),  { src: URL.createObjectURL(blob), muted: true, playsInline: true });
 
-  const removeBtn = document.createElement("button");
-  removeBtn.innerText = "✕";
-  removeBtn.style.position = "absolute";
-  removeBtn.style.top = "4px";
-  removeBtn.style.right = "4px";
-  removeBtn.style.background = "rgba(0,0,0,0.6)";
-  removeBtn.style.color = "#fff";
-  removeBtn.style.border = "none";
-  removeBtn.style.borderRadius = "50%";
-  removeBtn.style.width = "22px";
-  removeBtn.style.height = "22px";
-  removeBtn.style.cursor = "pointer";
-  removeBtn.onclick = () => {
+  const rm  = document.createElement("button");
+  rm.className   = "preview-remove";
+  rm.textContent = "✕";
+  rm.onclick = () => {
     wrapper.remove();
     capturedFiles = capturedFiles.filter(f => f.blob !== blob);
+    if (!capturedFiles.length) galleryPreview.style.display = "none";
   };
 
-  wrapper.appendChild(element);
-  wrapper.appendChild(removeBtn);
+  wrapper.append(el, rm);
   galleryPreview.appendChild(wrapper);
 }
 
-/* ================= RETAKE ================= */
+/* ─── RETAKE ─────────────────────────────────────────────── */
 retakeBtn.addEventListener("click", async () => {
-  capturedFiles = [];
+  capturedFiles          = [];
   galleryPreview.innerHTML = "";
-  galleryPreview.style.display = "none";  // hide gallery preview
+  galleryPreview.style.display = "none";
 
-  video.style.display = "block";          // show camera view
-  canvas.style.display = "none";          // hide canvas
-  video.controls = false;
-  video.src = "";
-  video.srcObject = null;
+  videoEl.style.display  = "block";
+  canvasEl.style.display = "none";
+  videoEl.controls = false;
+  videoEl.src      = "";
+  videoEl.srcObject = null;
 
-  retakeBtn.style.display = "none";
-  uploadBtn.style.display = "none";
-  shareBtn.style.display = "none";
+  [retakeBtn, uploadBtn, shareBtn].forEach(b => b.style.display = "none");
   recordBtn.style.display = "block";
   switchBtn.style.display = "inline-block";
-  modeSelection.style.display = "flex";
-  cameraWrapper.style.display = "block";  // show camera wrapper
-  controls.style.display = "flex";
-  status.innerText = "";
+  modeSelection.style.display  = "flex";
+  cameraWrapper.style.display  = "block";
+  controls.style.display       = "flex";
+  setStatus("");
 
-  await startCamera();                     // restart camera preview
+  await startCamera();
 });
 
-/* ================= GALLERY FILES ================= */
-fileInput.addEventListener("change", (e) => {
+/* ─── FILE INPUT (gallery mode) ──────────────────────────── */
+fileInput.addEventListener("change", e => {
   const files = Array.from(e.target.files);
   if (!files.length) return;
 
   stopStream();
   capturedFiles = [];
+  galleryPreview.innerHTML = "";
+
   files.forEach(file => {
     capturedFiles.push({ blob: file, type: file.type });
-    showPreview(file, file.type.startsWith("image") ? "image" : "video");
+    addPreviewThumb(file, file.type.startsWith("image") ? "image" : "video");
   });
-  cameraWrapper.style.display = "block";
-  controls.style.display = "flex";
-//   galleryPreview.innerHTML = "";
-  galleryPreview.style.display = "flex";
 
+  cameraWrapper.style.display  = "block";
+  controls.style.display       = "flex";
+  videoEl.style.display        = "none";
+  canvasEl.style.display       = "none";
+  modeSelection.style.display  = "none";
+  showActionButtons();
 
-  modeSelection.style.display = "none";
-  recordBtn.style.display = "none";
-  switchBtn.style.display = "none";
-  showPreviewButtons();
+  // Reset input so the same files can be re-selected if needed
+  fileInput.value = "";
 });
-/* ================= UPLOAD ================= */
+
+/* ─── UPLOAD ─────────────────────────────────────────────── */
 uploadBtn.addEventListener("click", async () => {
   if (!capturedFiles.length) return;
 
-  uploadBtn.disabled = true;
-  status.innerText = "Uploading...";
+  const visibility = document.getElementById("visibility").value;
+  const bucket     = visibility === "public" ? PUBLIC_BUCKET : PRIVATE_BUCKET;
+
+  uploadBtn.disabled  = true;
+  retakeBtn.disabled  = true;
+  shareBtn.disabled   = true;
+  progressWrap.classList.add("visible");
+  setStatus("Uploading...");
 
   try {
-    const visibility = document.getElementById("visibility").value;
-    const bucketName = visibility === "public"
-      ? "public-pics"
-      : "private-pics";
+    const rows = await uploadFiles(bucket, visibility, (done, total) => {
+      progressFill.style.width   = Math.round((done / total) * 100) + "%";
+      progressLabel.textContent  = `${done} / ${total}`;
+    });
 
-    const uploadedFiles = await uploadFiles(bucketName);
-
-    if (uploadedFiles.length > 0) {
-      const { error } = await supabase
-        .from("uploads")
-        .insert(uploadedFiles);
-
-      if (error) {
-        console.error("DB Insert Error:", error);
-        throw error;
+    if (rows.length) {
+      // Insert DB records — also add bucket column so gallery/admin stay in sync
+      const { error: dbErr } = await supabase.from("uploads").insert(
+        rows.map(r => ({ ...r, bucket }))
+      );
+      if (dbErr) {
+        // bucket column may not exist yet — retry without it
+        const msg = dbErr.message || dbErr.code || "";
+        if (msg.includes("bucket") || dbErr.code === "42703") {
+          const { error: retryErr } = await supabase.from("uploads").insert(rows);
+          if (retryErr) throw retryErr;
+        } else {
+          throw dbErr;
+        }
       }
     }
 
-    status.innerText = "Uploaded successfully 🤍";
+    progressWrap.classList.remove("visible");
+    toast(`✓ ${rows.length} file${rows.length !== 1 ? "s" : ""} uploaded 🤍`);
+    setStatus("");
+
+    // Brief pause so the toast is readable, then reset
+    setTimeout(() => window.location.reload(), 1800);
+
   } catch (err) {
-    console.error(err);
-    status.innerText = "Upload failed. Please try again.";
-  } finally {
+    progressWrap.classList.remove("visible");
+    const msg = err?.message || err?.code || String(err);
+    console.error("[upload]", msg);
+    setStatus("Upload failed: " + msg);
+    toast("⚠ Upload failed — see status below", 4000);
     uploadBtn.disabled = false;
-    window.location.reload()
+    retakeBtn.disabled = false;
+    shareBtn.disabled  = false;
   }
 });
 
-
-/* ================= SHARE ================= */
+/* ─── SHARE ──────────────────────────────────────────────── */
 shareBtn.addEventListener("click", async () => {
-  if (!capturedFiles.length) {
-    status.innerText = "No files to share 🤍";
-    return;
-  }
+  if (!capturedFiles.length) return;
 
   try {
-    const filesToShare = capturedFiles.map(fileObj => {
-      const ext = fileObj.type.startsWith("image") ? "jpg" : "webm";
-      return new File([fileObj.blob], `wedding_memory_${Date.now()}.${ext}`, { type: fileObj.type });
+    const filesToShare = capturedFiles.map(f => {
+      const ext = f.type.startsWith("image") ? "jpg" : "webm";
+      return new File([f.blob], `wedding_memory_${Date.now()}.${ext}`, { type: f.type });
     });
 
-    if (navigator.share && navigator.canShare({ files: filesToShare })) {
+    if (navigator.share && navigator.canShare?.({ files: filesToShare })) {
       await navigator.share({
         title: "Wedding Memories 🤍",
-        text: "Captured at the wedding ✨",
+        text:  "Captured at the wedding ✨",
         files: filesToShare
       });
-      status.innerText = "Shared successfully 🤍";
+      toast("Shared successfully 🤍");
     } else {
-      status.innerText = "Sharing not supported on this device, try uploading instead.";
+      toast("Sharing not supported — try uploading instead.");
     }
-
   } catch (err) {
-    console.error(err);
-    status.innerText = "Sharing failed or canceled.";
+    if (err.name !== "AbortError") {
+      console.error("[share]", err);
+      toast("Sharing failed or cancelled.");
+    }
   }
 });
 
-async function compressImage(file, quality = 0.7) {
-  return new Promise((resolve) => {
+/* ─── IMAGE COMPRESSION ──────────────────────────────────── */
+function compressImage(file, quality = 0.78) {
+  return new Promise(resolve => {
     const img = new Image();
-    img.src = URL.createObjectURL(file);
-
     img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      const maxWidth = 1280;
-      const scale = Math.min(1, maxWidth / img.width);
-
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      canvas.toBlob(blob => resolve(blob), "image/jpeg", quality);
+      const MAX_W  = 1280;
+      const scale  = Math.min(1, MAX_W / img.width);
+      const cv     = document.createElement("canvas");
+      cv.width     = img.width  * scale;
+      cv.height    = img.height * scale;
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      cv.toBlob(b => resolve(b || file), "image/jpeg", quality);
     };
+    img.onerror = () => resolve(file); // fallback to original on error
+    img.src = URL.createObjectURL(file);
   });
 }
 
+/* ─── UPLOAD WITH RETRY ──────────────────────────────────── */
 async function uploadWithRetry(bucket, path, file, retries = 3) {
-  let attempt = 0;
-
-  while (attempt < retries) {
+  for (let i = 0; i < retries; i++) {
     const { error } = await supabase.storage
       .from(bucket)
-      .upload(path, file, {
-        contentType: file.type,
-        upsert: false
-      });
+      .upload(path, file, { contentType: file.type, upsert: false });
 
     if (!error) return true;
 
-    attempt++;
-    await new Promise(r => setTimeout(r, 1000 * attempt)); // exponential backoff
-  }
+    const isRetryable = error.statusCode >= 500 || error.message?.includes("network");
+    if (!isRetryable) {
+      console.error("[uploadWithRetry] non-retryable:", error.message);
+      return false;
+    }
 
+    await new Promise(r => setTimeout(r, 800 * (i + 1))); // backoff
+  }
   return false;
 }
 
-async function uploadFiles(bucketName) {
-  const successfulUploads = [];
+/* ─── UPLOAD ALL FILES ───────────────────────────────────── */
+async function uploadFiles(bucket, visibility, onProgress) {
+  const valid = capturedFiles.filter(f => f.blob.size <= MAX_FILE_SIZE);
+  const skipped = capturedFiles.length - valid.length;
+  if (skipped) toast(`⚠ ${skipped} file(s) skipped — over 25 MB limit`);
 
-  const tasks = capturedFiles.map(async (fileObj) => {
+  const rows = [];
+  let done = 0;
 
-    if (fileObj.blob.size > MAX_FILE_SIZE) return null;
-
-    let file = fileObj.blob;
+  await Promise.all(valid.map(async fileObj => {
+    let file = fileObj.blob instanceof File ? fileObj.blob : new File([fileObj.blob], "capture", { type: fileObj.type });
 
     if (fileObj.type.startsWith("image")) {
-      file = await compressImage(file);
+      const compressed = await compressImage(file);
+      file = new File([compressed], file.name, { type: "image/jpeg" });
     }
 
-    const extension = fileObj.type.startsWith("image") ? "jpg" : "webm";
-    const filePath = `memory_${crypto.randomUUID()}.${extension}`;
-
-    const success = await uploadWithRetry(bucketName, filePath, file);
+    const ext      = fileObj.type.startsWith("image") ? "jpg" : "webm";
+    const filePath = `memory_${crypto.randomUUID()}.${ext}`;
+    const success  = await uploadWithRetry(bucket, filePath, file);
 
     if (success) {
-      successfulUploads.push({
-        file_path: filePath,
-        file_type: fileObj.type,
-        visibility: bucketName === "public-pics" ? "public" : "private"
+      rows.push({
+        file_path:  filePath,
+        file_type:  fileObj.type.startsWith("image") ? "image/jpeg" : fileObj.type,
+        visibility
       });
+    } else {
+      console.warn("[uploadFiles] failed for", filePath);
     }
 
-    return success;
-  });
+    onProgress(++done, valid.length);
+  }));
 
-  await Promise.all(tasks);
-  return successfulUploads;
+  return rows;
 }
 
-/* ================= CLEANUP ================= */
+/* ─── CLEANUP ────────────────────────────────────────────── */
 window.addEventListener("beforeunload", stopStream);
-// /* ================= ELEMENTS ================= */
