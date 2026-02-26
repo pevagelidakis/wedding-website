@@ -658,18 +658,20 @@ const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+
 const photoGallery = document.getElementById("photoGallery");
 const videoGallery = document.getElementById("videoGallery");
+const moveBtn = document.getElementById("moveBtn");
 const status = document.getElementById("status");
 
 let selectedFiles = new Set();
 let loadedFiles = new Set();
 
-const PAGE_SIZE = 100;
-let allFiles = [];
+const PAGE_SIZE = 100; // load 100 files per page for 10k+ datasets
 let lastIndex = 0;
+let allFiles = [];
 
-// ================= LOAD WITH LAZY PAGINATION =================
+// ================== LOAD FILES WITH LAZY PAGINATION ==================
 async function loadFiles(nextPage = false) {
   if (!nextPage) {
     photoGallery.innerHTML = "";
@@ -677,58 +679,39 @@ async function loadFiles(nextPage = false) {
     selectedFiles.clear();
     loadedFiles.clear();
     lastIndex = 0;
-    status.innerText = "Loading...";
+    status.innerText = "Loading files...";
     
-    const { data, error } = await supabase.storage
-      .from("public-pics")
-      .list("", { limit: 10000 });
-
-    if (error) {
-      console.error(error);
-      status.innerText = "Error loading files";
-      return;
-    }
-
-    allFiles = (data || [])
-      .filter(f => f.name && f.metadata?.size > 0)
-      .sort((a, b) => b.name.localeCompare(a.name));
+    const { data, error } = await supabase.storage.from("public-pics").list("", { limit: 10000 });
+    if (error) { status.innerText = "Failed to load files"; console.error(error); return; }
+    allFiles = data.filter(f => f.name && f.metadata?.size > 0).sort((a,b)=>b.name.localeCompare(a.name));
   }
 
-  const page = allFiles.slice(lastIndex, lastIndex + PAGE_SIZE);
+  const pageFiles = allFiles.slice(lastIndex, lastIndex + PAGE_SIZE);
   lastIndex += PAGE_SIZE;
 
-  if (!page.length) {
-    status.innerText = "";
-    return;
-  }
+  if (pageFiles.length === 0) { status.innerText = ""; return; }
 
-  const fileNames = page.map(f => f.name);
-
-  // Batch signed URL generation (fast + low API cost)
-  const { data: signedUrls, error: signError } = await supabase.storage
-    .from("public-pics")
-    .createSignedUrls(fileNames, 3600);
-
-  if (signError) {
-    console.error(signError);
-    status.innerText = "Signed URL error";
-    return;
-  }
+  // Batch create signed URLs
+  const fileNames = pageFiles.map(f => f.name);
+  const { data: signedUrls, error: signError } = await supabase.storage.from("public-pics").createSignedUrls(fileNames, 3600);
+  if (signError) { console.error(signError); status.innerText = "Signed URL error"; return; }
 
   signedUrls.forEach(item => {
-    if (!item.signedUrl) return;
+    const fileMeta = pageFiles.find(f => f.name === item.path);
+    if (!item.signedUrl || !fileMeta) return;
 
-    const meta = page.find(f => f.name === item.path);
-    const mimetype = meta?.metadata?.mimetype || "";
-
-    const type = mimetype.startsWith("video") ? "video" : "image";
-    createMediaCard(item.path, item.signedUrl, type);
+    const mimetype = fileMeta.metadata.mimetype || "";
+    if (mimetype.startsWith("video")) {
+      createMediaCard(item.path, item.signedUrl, "video");
+    } else {
+      createMediaCard(item.path, item.signedUrl, "image");
+    }
   });
 
   status.innerText = `Loaded ${Math.min(lastIndex, allFiles.length)} / ${allFiles.length}`;
 }
 
-// ================= MEDIA CARD (DEDUP + TRACKING) =================
+// ================== CREATE MEDIA CARD ==================
 function createMediaCard(fileName, url, type) {
   if (loadedFiles.has(fileName)) return;
   loadedFiles.add(fileName);
@@ -737,20 +720,18 @@ function createMediaCard(fileName, url, type) {
   card.className = "photo-card";
   card.dataset.file = fileName;
 
-  let element;
-
   if (type === "video") {
-    element = document.createElement("div");
-    element.className = "video-thumb";
-    element.innerText = "▶";
+    const videoThumb = document.createElement("div");
+    videoThumb.className = "video-thumb";
+    videoThumb.innerText = "▶";
+    card.appendChild(videoThumb);
   } else {
-    element = document.createElement("img");
-    element.src = url;
-    element.loading = "lazy";
-    element.classList.add("media-item");
+    const img = document.createElement("img");
+    img.src = url;
+    img.loading = "lazy";
+    img.classList.add("media-item");
+    card.appendChild(img);
   }
-
-  card.appendChild(element);
 
   card.addEventListener("click", () => {
     if (selectedFiles.has(fileName)) {
@@ -766,76 +747,63 @@ function createMediaCard(fileName, url, type) {
   else photoGallery.appendChild(card);
 }
 
-// ================= MOVE TO PRIVATE (BATCHED) =================
+// ================== BATCH MOVE TO PRIVATE ==================
 moveBtn.addEventListener("click", async () => {
-  if (!selectedFiles.size) {
-    status.innerText = "No files selected";
-    return;
-  }
-
+  if (selectedFiles.size === 0) { status.innerText = "No files selected"; return; }
   if (!confirm(`Move ${selectedFiles.size} files to private?`)) return;
 
-  status.innerText = "Moving...";
-  const files = Array.from(selectedFiles);
+  status.innerText = "Moving files...";
+  const filesArray = Array.from(selectedFiles);
   const CHUNK = 20;
 
-  for (let i = 0; i < files.length; i += CHUNK) {
-    const chunk = files.slice(i, i + CHUNK);
+  for (let i = 0; i < filesArray.length; i += CHUNK) {
+    const chunk = filesArray.slice(i, i + CHUNK);
 
-    const downloads = await Promise.all(
-      chunk.map(f => supabase.storage.from("public-pics").download(f))
-    );
+    // 1. Download
+    const downloads = await Promise.all(chunk.map(f => supabase.storage.from("public-pics").download(f)));
 
-    const uploads = await Promise.all(
-      downloads.map((res, idx) => {
-        if (!res.data) return null;
-        return supabase.storage
-          .from("private-pics")
-          .upload(chunk[idx], res.data, { upsert: true });
-      })
-    );
+    // 2. Upload
+    const uploads = await Promise.all(downloads.map((res, idx) => {
+      if (!res.data) return null;
+      return supabase.storage.from("private-pics").upload(chunk[idx], res.data, { upsert: true });
+    }));
 
-    await supabase.storage.from("public-pics").remove(chunk);
+    // 3. Delete originals
+    const { error: deleteError } = await supabase.storage.from("public-pics").remove(chunk);
+    if (deleteError) console.error("Delete error:", deleteError);
 
+    // 4. Update DB
     await supabase.from("uploads")
       .update({ bucket: "private-pics", visibility: "private" })
       .in("file_path", chunk);
 
+    // 5. Remove from UI
     chunk.forEach(f => {
       const card = document.querySelector(`.photo-card[data-file="${f}"]`);
       if (card) card.remove();
       selectedFiles.delete(f);
-      loadedFiles.delete(f);
     });
   }
 
-  status.innerText = "Move completed";
+  status.innerText = "Move completed!";
 });
 
-// ================= REALTIME UPDATES =================
+// ================== REAL-TIME UPDATES ==================
 supabase.channel("storage-changes")
-  .on("postgres_changes",
-    {
-      event: "INSERT",
-      schema: "public",
-      table: "uploads",
-      filter: "visibility=eq.public"
-    },
-    payload => {
-      const filePath = payload.new.file_path;
-      if (!loadedFiles.has(filePath)) loadFiles(true);
-    }
-  )
+  .on("postgres_changes", { event: "INSERT", schema: "public", table: "uploads", filter: "visibility=eq.public" }, payload => {
+    const filePath = payload.new.file_path;
+    if (!loadedFiles.has(filePath)) loadFiles(true);
+  })
   .subscribe();
 
-// ================= LAZY SCROLL =================
+// ================== LAZY LOAD ON SCROLL ==================
 window.addEventListener("scroll", () => {
   if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
     loadFiles(true);
   }
 });
 
-// INITIAL
+// INITIAL LOAD
 loadFiles();
 </script>
 
