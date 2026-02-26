@@ -1177,22 +1177,55 @@ window.addEventListener("scroll", () => {
 });
 
 /* ================= REALTIME ================= */
-supabase.channel("uploads-insert")
+// supabase.channel("uploads-insert")
+//   .on("postgres_changes", {
+//     event: "INSERT",
+//     schema: "public",
+//     table: "uploads",
+//     filter: "visibility=eq.public"
+//   }, () => {
+//     // Soft refresh from top
+//     lastCreatedAt = null;
+//     photoGallery.innerHTML = "";
+//     videoGallery.innerHTML = "";
+//     finished = false;
+//     loadMedia();
+//   })
+//   .subscribe();
+supabase.channel("uploads-changes")
   .on("postgres_changes", {
-    event: "INSERT",
+    event: "*", // listen to INSERT, UPDATE, DELETE
     schema: "public",
-    table: "uploads",
-    filter: "visibility=eq.public"
-  }, () => {
-    // Soft refresh from top
-    lastCreatedAt = null;
-    photoGallery.innerHTML = "";
-    videoGallery.innerHTML = "";
-    finished = false;
-    loadMedia();
+    table: "uploads"
+  }, payload => {
+
+    const row = payload.new || payload.old;
+    if (!row) return;
+
+    const filePath = row.file_path;
+
+    // If row is not public → remove from album
+    if (payload.eventType === "UPDATE" && row.visibility !== "public") {
+      removeCard(filePath);
+      return;
+    }
+
+    // If deleted → remove
+    if (payload.eventType === "DELETE") {
+      removeCard(filePath);
+      return;
+    }
+
+    // If inserted and public → load
+    if (payload.eventType === "INSERT" && row.visibility === "public") {
+      loadMedia(true);
+    }
   })
   .subscribe();
-
+function removeCard(filePath) {
+  const card = document.querySelector(`.photo-card[data-file="${filePath}"]`);
+  if (card) card.remove();
+}
 /* ================= INITIAL LOAD ================= */
 loadMedia();
 </script>
