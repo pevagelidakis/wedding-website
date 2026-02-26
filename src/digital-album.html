@@ -1087,73 +1087,72 @@ let currentType = "image";
 // }
 
 async function loadMedia(nextPage = false) {
+
   if (!nextPage) {
-    // Reset UI & state
     photoGallery.innerHTML = "";
     videoGallery.innerHTML = "";
     loadedFiles.clear();
     lastIndex = 0;
+    allFiles = [];
     status.innerText = "Loading files...";
+  }
 
-    // List all top-level items
-    const { data: items, error } = await supabase.storage.from("public-pics").list("", { limit: 10000 });
+  // Load file list only on first page
+  if (allFiles.length === 0) {
+    const { data, error } = await supabase.storage
+      .from("public-pics")
+      .list("", { limit: 10000 });
+
     if (error) {
-      status.innerText = "Failed to load files";
       console.error(error);
+      status.innerText = "Failed to load files";
       return;
     }
 
-    // Collect all files
-    allFiles = [];
+    if (!data || data.length === 0) {
+      status.innerText = "No files found.";
+      return;
+    }
 
-    // Parallelize folder listing but keep it safe
-    await Promise.all(
-      items.map(async (item) => {
-        if (!item.metadata) {
-          // Folder: list contents
-          try {
-            const { data: folderFiles } = await supabase.storage.from("public-pics").list(item.name, { limit: 1000 });
-            if (folderFiles) {
-              folderFiles.forEach(f => {
-                if (f.metadata?.size > 0) allFiles.push(`${item.name}/${f.name}`);
-              });
-            }
-          } catch (err) {
-            console.error("Error listing folder", item.name, err);
-          }
-        } else if (item.metadata?.size > 0) {
-          allFiles.push(item.name); // Single file
-        }
-      })
-    );
-
-    allFiles.sort((a, b) => b.localeCompare(a));
+    // Filter only valid files (size > 0)
+    allFiles = data
+      .filter(item => item.metadata?.size > 0)
+      .map(item => item.name)
+      .sort((a, b) => b.localeCompare(a));
   }
 
-  // Pagination
+  // Pagination slice
   const pageFiles = allFiles.slice(lastIndex, lastIndex + PAGE_SIZE);
   lastIndex += PAGE_SIZE;
 
-  if (!pageFiles.length) {
+  if (pageFiles.length === 0) {
     status.innerText = "";
     return;
   }
 
-  // Generate signed URLs
-  const { data: signedUrls, error: urlError } = await supabase.storage.from("public-pics").createSignedUrls(pageFiles, 3600);
-  if (urlError) {
-    console.error("Failed to create signed URLs:", urlError);
+  // Batch signed URLs (fast)
+  const { data: signedUrls, error: signError } = await supabase.storage
+    .from("public-pics")
+    .createSignedUrls(pageFiles, 3600);
+
+  if (signError) {
+    console.error(signError);
+    status.innerText = "Signed URL error";
     return;
   }
 
-  // Render media cards
-  signedUrls.forEach(({ path, signedUrl }) => {
-    if (!signedUrl || loadedFiles.has(path)) return;
-    loadedFiles.add(path);
+  // Render cards
+  signedUrls.forEach(item => {
+    if (!item.signedUrl || loadedFiles.has(item.path)) return;
 
-    const lower = path.toLowerCase();
-    const type = lower.endsWith(".mp4") || lower.endsWith(".webm") || lower.endsWith(".mov") ? "video" : "image";
-    createMediaCard(path, signedUrl, type);
+    loadedFiles.add(item.path);
+
+    const lower = item.path.toLowerCase();
+    const type = (lower.endsWith(".mp4") || lower.endsWith(".webm") || lower.endsWith(".mov"))
+      ? "video"
+      : "image";
+
+    createMediaCard(item.path, item.signedUrl, type);
   });
 
   status.innerText = `Loaded ${Math.min(lastIndex, allFiles.length)} / ${allFiles.length}`;
