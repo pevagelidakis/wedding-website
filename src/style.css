@@ -693,6 +693,9 @@ form {
   align-items: center;
   display: flex;
   justify-content: center;   /* horizontal center */
+  max-width: 900px;   /* 👈 controls narrowness */
+  width: 90%;         /* responsive */
+  margin: 60px auto;  /* center horizontally */
   background: 
     linear-gradient(rgba(255,250,245,0.4), rgba(255,250,245,0.4)),
     url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80")
