@@ -476,7 +476,7 @@ supabase
 </div>
 </body>
 </html> -->
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8" />
@@ -485,9 +485,9 @@ supabase
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="icon" type="image/png" href="./media/us-married_copy.png">
+<link rel="icon" type="image/png" href="./media/us-married_copy.png"> -->
 
-<style>
+<!-- <style>
 :root{
   --gold:#d4af37;
   --ivory:#f8f6f1;
@@ -696,18 +696,18 @@ h1{
   cursor:pointer;
   color:white;
 }
-</style>
-</head>
+</style> -->
+<!-- </head> -->
 
-<body>
+<!-- <body>
 <header>
   <div class="language-switch">
     <button onclick="setLanguage('en')" id="btn-en">EN</button>
     <button onclick="setLanguage('gr')" id="btn-gr">GR</button>
   </div>
-</header>
+</header> -->
 
-<h1 id="header"></h1>
+<!-- <h1 id="header"></h1>
 <div class="subtitle" id="subtitle"></div>
 
 <h2 id="photos_header"></h2>
@@ -716,10 +716,10 @@ h1{
 <h2 id="videos_header"></h2>
 <div id="videoGallery" class="gallery"></div>
 
-<p id="status"></p>
+<p id="status"></p> -->
 
 <!-- FULLSCREEN MODAL -->
-<div id="mediaModal" class="modal">
+<!-- <div id="mediaModal" class="modal">
   <span id="closeModal" class="close-btn">✕</span>
 
   <div class="modal-content">
@@ -738,9 +738,9 @@ h1{
       <span class="btn-text" id="share"></span>
     </button>
   </div>
-</div>
+</div> -->
 
-<script>
+<!-- <script>
 const translations = {
   en: {
     header: "Wedding Memories 🤍",
@@ -796,9 +796,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("language") || "en";
   applyLanguage(savedLang);
 });
-</script>
+</script> -->
 
-<script type="module">
+<!-- <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const SUPABASE_URL = "https://qgdifervtqgkmvonawza.supabase.co";
@@ -1008,7 +1008,7 @@ window.addEventListener("scroll", ()=>{
 
 // INITIAL LOAD
 loadMedia(); 
-</script>
+</script> -->
 <!-- <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
@@ -1313,5 +1313,678 @@ function removeCard(filePath) {
 /* ================= INITIAL LOAD ================= */
 loadMedia();
 </script> -->
+
+<!-- </body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wedding Memories</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="icon" type="image/png" href="./media/us-married_copy.png">
+
+<style>
+:root{
+  --gold:#d4af37;
+  --ivory:#f8f6f1;
+}
+html { height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  color: var(--ivory);
+  padding: 40px 20px;
+  background:
+    linear-gradient(rgba(0,0,0,.80), rgba(0,0,0,.90)),
+    url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2000&auto=format&fit=crop');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+header { position: absolute; top: 0; width: 100%; }
+
+.language-switch { position: absolute; top: 20px; right: 20px; }
+.language-switch button {
+  background: transparent;
+  border: 1px solid gold;
+  color: gold;
+  padding: 5px 10px;
+  margin-left: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all .2s;
+}
+.language-switch button:hover { background: gold; color: black; }
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+h2 {
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+  font-size: 22px;
+  opacity: .8;
+  margin: 40px 0 20px;
+}
+.subtitle { text-align: center; opacity: .7; margin-bottom: 40px; }
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 18px;
+  max-width: 1200px;
+  margin: 0 auto 60px auto;
+  padding: 0 20px;
+}
+
+.photo-card {
+  position: relative;
+  border-radius: 25px;
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  transition: all .4s ease;
+  cursor: pointer;
+  /* Ensure height is defined by content */
+  aspect-ratio: 3 / 4;
+}
+
+.photo-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 25px 80px rgba(212,175,55,.3);
+}
+
+.photo-card img,
+.photo-card video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Smooth removal animation */
+.photo-card.removing {
+  animation: fadeOut .4s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes fadeOut { to { opacity: 0; transform: scale(0.95); } }
+
+.fade-in {
+  animation: fadeIn .6s ease forwards;
+  opacity: 0;
+}
+@keyframes fadeIn { to { opacity: 1; } }
+
+#status {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  opacity: .6;
+}
+
+.section-empty {
+  text-align: center;
+  opacity: .4;
+  font-size: 14px;
+  grid-column: 1 / -1;
+  padding: 20px 0;
+}
+
+/* ================= MODAL ================= */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  max-width: 90%;
+  max-height: 80vh;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 80px rgba(0,0,0,.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content img,
+.modal-content video {
+  max-width: 100%;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+.modal-actions {
+  position: absolute;
+  bottom: 40px;
+  display: flex;
+  gap: 20px;
+}
+
+.modal-btn {
+  padding: 12px 20px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  background: var(--gold);
+  color: #000;
+  font-weight: 600;
+  transition: opacity .2s;
+}
+.modal-btn:hover { opacity: .85; }
+
+.close-btn {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+  z-index: 10;
+  line-height: 1;
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="language-switch">
+    <button onclick="setLanguage('en')" id="btn-en">EN</button>
+    <button onclick="setLanguage('gr')" id="btn-gr">GR</button>
+  </div>
+</header>
+
+<h1 id="header"></h1>
+<div class="subtitle" id="subtitle"></div>
+
+<h2 id="photos_header"></h2>
+<div id="photoGallery" class="gallery"></div>
+
+<h2 id="videos_header"></h2>
+<div id="videoGallery" class="gallery"></div>
+
+<p id="status"></p>
+
+<!-- FULLSCREEN MODAL -->
+<div id="mediaModal" class="modal">
+  <span id="closeModal" class="close-btn">✕</span>
+  <div class="modal-content"></div>
+  <div class="modal-actions">
+    <button id="downloadBtn" class="modal-btn">
+      <i class="fa-solid fa-download"></i>
+      <span class="btn-text" id="downloadLabel"></span>
+    </button>
+    <button id="shareBtn" class="modal-btn" style="display:none;">
+      <i class="fa-solid fa-share-nodes"></i>
+      <span class="btn-text" id="shareLabel"></span>
+    </button>
+  </div>
+</div>
+
+<!-- ================= i18n ================= -->
+<script>
+const translations = {
+  en: {
+    header: "Wedding Memories 🤍",
+    subtitle: "The Art of Us • The Highlight Reels • Thank you for being part of our story!",
+    photos_header: "Photos",
+    videos_header: "Videos",
+    status_loading: "Loading...",
+    status_loaded: (n, total) => `Loaded ${n} / ${total}`,
+    status_done: "",
+    download: "Download",
+    share: "Share"
+  },
+  gr: {
+    header: "Γαμήλιες Αναμνήσεις 🤍",
+    subtitle: "Η Τέχνη του «Μαζί» • Οι Κορυφαίες Στιγμές • Ευχαριστούμε που είστε κομμάτι της ιστορίας μας!",
+    photos_header: "Φωτογραφίες",
+    videos_header: "Βίντεο",
+    status_loading: "Φόρτωση...",
+    status_loaded: (n, total) => `Φορτώθηκαν ${n} / ${total}`,
+    status_done: "",
+    download: "Κατέβασμα",
+    share: "Κοινοποίηση"
+  }
+};
+
+let currentLang = "en";
+
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem("language", lang);
+  applyLanguage(lang);
+}
+
+function applyLanguage(lang) {
+  const t = translations[lang] || translations.en;
+  document.documentElement.lang = lang;
+  document.getElementById("header").textContent          = t.header;
+  document.getElementById("subtitle").textContent        = t.subtitle;
+  document.getElementById("photos_header").textContent   = t.photos_header;
+  document.getElementById("videos_header").textContent   = t.videos_header;
+  document.getElementById("downloadLabel").textContent   = t.download;
+  document.getElementById("shareLabel").textContent      = t.share;
+  document.getElementById("btn-en").style.opacity        = lang === "en" ? "1" : "0.5";
+  document.getElementById("btn-gr").style.opacity        = lang === "gr" ? "1" : "0.5";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const saved = localStorage.getItem("language") || "en";
+  setLanguage(saved);
+});
+
+function t(key, ...args) {
+  const entry = translations[currentLang]?.[key] ?? translations.en[key];
+  return typeof entry === "function" ? entry(...args) : entry ?? "";
+}
+</script>
+
+<!-- ================= MAIN APP ================= -->
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+
+/* ─── CONFIG ─────────────────────────────────────────────── */
+const SUPABASE_URL      = "https://qgdifervtqgkmvonawza.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZGlmZXJ2dHFna212b25hd3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MTU2MDUsImV4cCI6MjA4NjM5MTYwNX0.v_Kf0OWU1F8DC3ThOPaYNne8b6a1EjPpOpGAb4HAvpA";
+const PUBLIC_BUCKET     = "public-pics";
+const PAGE_SIZE         = 100;
+
+/* ─── STATE ──────────────────────────────────────────────── */
+const supabase      = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const photoGallery  = document.getElementById("photoGallery");
+const videoGallery  = document.getElementById("videoGallery");
+const statusEl      = document.getElementById("status");
+const modal         = document.getElementById("mediaModal");
+const modalContent  = modal.querySelector(".modal-content");
+
+let allFiles     = [];   // full sorted file list from DB
+let loadedFiles  = new Set(); // file_path strings already rendered
+let lastIndex    = 0;
+let isLoading    = false;
+
+let currentURL      = null;
+let currentFileName = null;
+let currentType     = "image";
+
+/* ─── HELPERS ────────────────────────────────────────────── */
+function isMobile() {
+  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function isVideo(path) {
+  return /\.(mp4|webm|mov)$/i.test(path);
+}
+
+function setStatus(msg) {
+  statusEl.textContent = msg;
+}
+
+/* --- SCHEMA PROBE ---
+   Check once at startup whether the `bucket` column exists.
+   Cached so every subsequent query uses the right shape.
+-------------------------------------------------- */
+let hasBucketColumn = null;
+
+async function probeBucketColumn() {
+  if (hasBucketColumn !== null) return;
+  try {
+    const { error } = await supabase
+      .from("uploads")
+      .select("bucket")
+      .limit(1)
+      .maybeSingle();
+    // PostgREST code "42703" = undefined_column
+    hasBucketColumn = !error || error.code !== "42703";
+  } catch (_) {
+    hasBucketColumn = false;
+  }
+  console.log("[schema] bucket column " + (hasBucketColumn ? "found" : "not found - using visibility-only filter"));
+}
+
+/* --- SOURCE OF TRUTH: uploads table ---
+   Always queries the DB, never lists storage directly.
+   If bucket column exists we filter by it so files moved to
+   private-pics vanish the instant their DB row is updated.
+-------------------------------------------------- */
+async function fetchPublicFilePaths() {
+  await probeBucketColumn();
+
+  let query = supabase
+    .from("uploads")
+    .select("file_path, file_type, created_at")
+    .eq("visibility", "public")
+    .order("created_at", { ascending: false });
+
+  if (hasBucketColumn) {
+    query = query.eq("bucket", PUBLIC_BUCKET);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    const msg = error.message || error.code || error.hint || "unknown error";
+    console.error("[fetchPublicFilePaths] " + msg);
+    setStatus("Could not load photos - check console for details.");
+    return [];
+  }
+
+  return data ?? [];
+}
+
+/* ─── INITIAL LOAD ───────────────────────────────────────── */
+async function initialLoad() {
+  setStatus(t("status_loading"));
+  loadedFiles.clear();
+  photoGallery.innerHTML = "";
+  videoGallery.innerHTML = "";
+  lastIndex = 0;
+
+  const rows = await fetchPublicFilePaths();
+
+  if (!rows.length) {
+    setStatus(t("status_done"));
+    return;
+  }
+
+  // Store file paths for paginated rendering
+  allFiles = rows.map(r => ({
+    path:     r.file_path,
+    fileType: r.file_type ?? null
+  }));
+
+  await renderNextPage();
+}
+
+/* ─── PAGINATED RENDERING ────────────────────────────────── */
+async function renderNextPage() {
+  if (isLoading || lastIndex >= allFiles.length) return;
+  isLoading = true;
+
+  const slice     = allFiles.slice(lastIndex, lastIndex + PAGE_SIZE);
+  const paths     = slice.map(f => f.path);
+  lastIndex      += PAGE_SIZE;
+
+  // Batch-create signed URLs (1 API call for the whole page)
+  const { data: signed, error } = await supabase.storage
+    .from(PUBLIC_BUCKET)
+    .createSignedUrls(paths, 3600);
+
+  if (error) {
+    console.error("[createSignedUrls]", error);
+    isLoading = false;
+    return;
+  }
+
+  signed.forEach((item, i) => {
+    if (!item.signedUrl || loadedFiles.has(item.path)) return;
+
+    // Determine type: prefer DB file_type, fallback to extension
+    const dbType   = slice[i]?.fileType ?? "";
+    const type     = dbType.startsWith("video") || isVideo(item.path) ? "video" : "image";
+
+    createMediaCard(item.path, item.signedUrl, type);
+  });
+
+  setStatus(
+    lastIndex < allFiles.length
+      ? t("status_loaded", Math.min(lastIndex, allFiles.length), allFiles.length)
+      : t("status_done")
+  );
+
+  isLoading = false;
+}
+
+/* ─── REMOVE CARD (called on visibility/bucket change) ──── */
+function removeCard(filePath) {
+  const card = document.querySelector(`.photo-card[data-file-path="${CSS.escape(filePath)}"]`);
+  if (!card) return;
+
+  card.classList.add("removing");
+
+  // If this card is currently open in the modal, close it
+  if (currentFileName === filePath) {
+    closeModal();
+  }
+
+  card.addEventListener("animationend", () => {
+    card.remove();
+    loadedFiles.delete(filePath);
+
+    // Remove from allFiles list so it isn't re-fetched in next page
+    allFiles = allFiles.filter(f => f.path !== filePath);
+  }, { once: true });
+}
+
+/* ─── MODAL ──────────────────────────────────────────────── */
+function openModal(url, filePath, type) {
+  currentURL      = url;
+  currentFileName = filePath;
+  currentType     = type;
+
+  modalContent.innerHTML = "";
+
+  if (type === "video") {
+    const video       = document.createElement("video");
+    video.src         = url;
+    video.controls    = true;
+    video.autoplay    = true;
+    video.playsInline = true;
+    modalContent.appendChild(video);
+  } else {
+    const img = document.createElement("img");
+    img.src   = url;
+    modalContent.appendChild(img);
+  }
+
+  document.getElementById("shareBtn").style.display =
+    (isMobile() && navigator.canShare) ? "inline-block" : "none";
+
+  modal.style.display = "flex";
+}
+
+function closeModal() {
+  const video = modalContent.querySelector("video");
+  if (video) video.pause();
+  modal.style.display = "none";
+}
+
+document.getElementById("closeModal").addEventListener("click", closeModal);
+
+modal.addEventListener("click", e => {
+  if (e.target === modal) closeModal();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+});
+
+/* ─── DOWNLOAD ───────────────────────────────────────────── */
+document.getElementById("downloadBtn").addEventListener("click", async () => {
+  if (!currentURL) return;
+  try {
+    const response = await fetch(currentURL);
+    const blob     = await response.blob();
+    const filename = currentFileName.split("/").pop();
+
+    if (isMobile()) {
+      window.open(URL.createObjectURL(blob), "_blank");
+    } else {
+      const a      = document.createElement("a");
+      a.href       = URL.createObjectURL(blob);
+      a.download   = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+  } catch (err) {
+    console.error("Download failed:", err);
+  }
+});
+
+/* ─── SHARE ──────────────────────────────────────────────── */
+document.getElementById("shareBtn").addEventListener("click", async () => {
+  if (!currentURL || !isMobile()) return;
+  try {
+    const response = await fetch(currentURL);
+    const blob     = await response.blob();
+    const filename = currentFileName.split("/").pop();
+    const file     = new File([blob], filename, { type: blob.type });
+
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({
+        title: "Wedding Memory 🤍",
+        text:  "Beautiful moment from the wedding ✨",
+        files: [file]
+      });
+    } else {
+      alert("Sharing not supported on this device.");
+    }
+  } catch (err) {
+    console.error("Share failed:", err);
+  }
+});
+
+/* ─── INFINITE SCROLL ────────────────────────────────────── */
+window.addEventListener("scroll", () => {
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
+    renderNextPage();
+  }
+});
+
+/* --- REALTIME SUBSCRIPTION ---
+   Handles all uploads table changes:
+   INSERT  + public  + public-pics bucket  -> prepend card
+   UPDATE  -> not public OR wrong bucket   -> remove card
+   UPDATE  -> back to public               -> prepend card
+   DELETE                                  -> remove card
+-------------------------------------------------- */
+supabase
+  .channel("uploads-realtime")
+  .on(
+    "postgres_changes",
+    { event: "*", schema: "public", table: "uploads" },
+    async (payload) => {
+      try {
+        const { eventType, new: newRow, old: oldRow } = payload;
+
+        if (eventType === "DELETE") {
+          removeCard(oldRow.file_path);
+          return;
+        }
+
+        const filePath    = newRow.file_path;
+        const isPublic    = newRow.visibility === "public";
+        const inPubBucket = !hasBucketColumn || newRow.bucket === PUBLIC_BUCKET;
+        const shouldShow  = isPublic && inPubBucket;
+
+        if (eventType === "UPDATE") {
+          if (!shouldShow) {
+            removeCard(filePath);
+          } else if (!loadedFiles.has(filePath)) {
+            await prependSingleFile(filePath, newRow.file_type);
+          }
+          return;
+        }
+
+        if (eventType === "INSERT" && shouldShow && !loadedFiles.has(filePath)) {
+          await prependSingleFile(filePath, newRow.file_type);
+        }
+      } catch (err) {
+        // Swallow internal realtime errors (e.g. DataCloneError from channel internals)
+        console.warn("[Realtime] handler error:", err && err.message || err);
+      }
+    }
+  )
+  .subscribe((status, err) => {
+    if (status === "SUBSCRIBED") {
+      console.log("[Realtime] Subscribed to uploads changes");
+    } else if (err) {
+      console.warn("[Realtime] Subscription issue:", err && err.message || status);
+    }
+  });
+
+/* ─── PREPEND A SINGLE NEW FILE ──────────────────────────── */
+async function prependSingleFile(filePath, dbFileType) {
+  const { data, error } = await supabase.storage
+    .from(PUBLIC_BUCKET)
+    .createSignedUrl(filePath, 3600);
+
+  if (error || !data?.signedUrl) {
+    console.warn("[prependSingleFile] Could not get signed URL for", filePath);
+    return;
+  }
+
+  const type = (dbFileType ?? "").startsWith("video") || isVideo(filePath) ? "video" : "image";
+  const card = buildCard(filePath, data.signedUrl, type);
+
+  // Prepend to top of the correct gallery
+  const gallery = type === "video" ? videoGallery : photoGallery;
+  gallery.prepend(card);
+
+  loadedFiles.add(filePath);
+  allFiles.unshift({ path: filePath, fileType: dbFileType ?? null });
+}
+
+/* ─── BUILD CARD (no side effects, returns element) ─────── */
+function buildCard(filePath, url, type) {
+  const card            = document.createElement("div");
+  card.className        = "photo-card fade-in";
+  card.dataset.filePath = filePath;
+
+  if (type === "video") {
+    const video       = document.createElement("video");
+    video.src         = url;
+    video.preload     = "metadata";
+    video.muted       = true;
+    video.loop        = true;
+    video.playsInline = true;
+    card.appendChild(video);
+  } else {
+    const img    = document.createElement("img");
+    img.src      = url;
+    img.loading  = "lazy";
+    img.decoding = "async";
+    card.appendChild(img);
+  }
+
+  card.addEventListener("click", () => openModal(url, filePath, type));
+  return card;
+}
+
+/* ─── CREATE CARD (delegates to buildCard, appends to gallery) ── */
+function createMediaCard(filePath, url, type) {
+  if (loadedFiles.has(filePath)) return;
+  loadedFiles.add(filePath);
+  const card = buildCard(filePath, url, type);
+  if (type === "video") videoGallery.appendChild(card);
+  else                  photoGallery.appendChild(card);
+}
+
+/* ─── KICK OFF ───────────────────────────────────────────── */
+initialLoad();
+</script>
 </body>
 </html>
