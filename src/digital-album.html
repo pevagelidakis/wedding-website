@@ -1037,55 +1037,115 @@ let currentFileName = null;
 let currentType = "image";
 
 /* ================= LOAD MEDIA (DB PAGINATION) ================= */
-async function loadMedia() {
-  if (loading || finished) return;
-  loading = true;
+// async function loadMedia() {
+//   if (loading || finished) return;
+//   loading = true;
 
-  status.innerText = "Loading...";
+//   status.innerText = "Loading...";
 
-  let query = supabase
-    .from("uploads")
-    .select("file_path, file_type, created_at")
-    .eq("visibility", "public")
-    .order("created_at", { ascending: false })
-    .limit(PAGE_SIZE);
+//   let query = supabase
+//     .from("uploads")
+//     .select("file_path, file_type, created_at")
+//     .eq("visibility", "public")
+//     .order("created_at", { ascending: false })
+//     .limit(PAGE_SIZE);
 
-  if (lastCreatedAt) {
-    query = query.lt("created_at", lastCreatedAt);
+//   if (lastCreatedAt) {
+//     query = query.lt("created_at", lastCreatedAt);
+//   }
+
+//   const { data, error } = await query;
+
+//   if (error) {
+//     console.error(error);
+//     status.innerText = "Failed to load.";
+//     loading = false;
+//     return;
+//   }
+
+//   if (!data.length) {
+//     finished = true;
+//     status.innerText = "";
+//     loading = false;
+//     return;
+//   }
+
+//   lastCreatedAt = data[data.length - 1].created_at;
+
+//   data.forEach(row => {
+//     const { data: publicUrl } = supabase
+//       .storage
+//       .from("public-pics")
+//       .getPublicUrl(row.file_path);
+
+//   const type = row.file_type.startsWith("video") ? "video" : "image";
+//   createMediaCard(row.file_path, publicUrl.publicUrl, type);
+// });
+
+//   status.innerText = "";
+//   loading = false;
+// }
+async function loadMedia(nextPage = false) {
+  if (!nextPage) {
+    // Reset UI & state
+    photoGallery.innerHTML = "";
+    videoGallery.innerHTML = "";
+    loadedFiles.clear();
+    lastIndex = 0;
+    status.innerText = "Loading files...";
+
+    // List all top-level items
+    const { data: items, error } = await supabase.storage.from("public-pics").list("", { limit: 10000 });
+    if (error) {
+      status.innerText = "Failed to load files";
+      console.error(error);
+      return;
+    }
+
+    // Collect all files
+    const filePromises = items.map(async item => {
+      if (!item.metadata) {
+        // Folder: list inside
+        const { data: folderFiles } = await supabase.storage.from("public-pics").list(item.name, { limit: 1000 });
+        return folderFiles?.filter(f => f.metadata?.size > 0).map(f => `${item.name}/${f.name}`) || [];
+      } else if (item.metadata?.size > 0) {
+        return [item.name]; // Single file
+      }
+      return [];
+    });
+
+    allFiles = (await Promise.all(filePromises)).flat();
+    allFiles.sort((a, b) => b.localeCompare(a));
   }
 
-  const { data, error } = await query;
+  // Pagination
+  const pageFiles = allFiles.slice(lastIndex, lastIndex + PAGE_SIZE);
+  lastIndex += PAGE_SIZE;
 
-  if (error) {
-    console.error(error);
-    status.innerText = "Failed to load.";
-    loading = false;
-    return;
-  }
-
-  if (!data.length) {
-    finished = true;
+  if (pageFiles.length === 0) {
     status.innerText = "";
-    loading = false;
     return;
   }
 
-  lastCreatedAt = data[data.length - 1].created_at;
+  // Generate signed URLs
+  const { data: signedUrls, error: urlError } = await supabase.storage.from("public-pics").createSignedUrls(pageFiles, 3600);
+  if (urlError) {
+    console.error("Failed to create signed URLs:", urlError);
+    return;
+  }
 
-  data.forEach(row => {
-    const { data: publicUrl } = supabase
-      .storage
-      .from("public-pics")
-      .getPublicUrl(row.file_path);
+  // Render media cards
+  signedUrls.forEach(({ path, signedUrl }) => {
+    if (!signedUrl || loadedFiles.has(path)) return;
+    loadedFiles.add(path);
 
-  const type = row.file_type.startsWith("video") ? "video" : "image";
-  createMediaCard(row.file_path, publicUrl.publicUrl, type);
-});
+    const lower = path.toLowerCase();
+    const type = lower.endsWith(".mp4") || lower.endsWith(".webm") || lower.endsWith(".mov") ? "video" : "image";
+    createMediaCard(path, signedUrl, type);
+  });
 
-  status.innerText = "";
-  loading = false;
+  status.innerText = `Loaded ${Math.min(lastIndex, allFiles.length)} / ${allFiles.length}`;
 }
-
 /* ================= CREATE CARD ================= */
 function createMediaCard(fileName, url, type) {
 
@@ -1230,7 +1290,7 @@ supabase.channel("uploads-changes")
     }
   })
   .subscribe();
-  
+
 function removeCard(filePath) {
   const card = document.querySelector(`.photo-card[data-file="${filePath}"]`);
   if (card) {
