@@ -1057,6 +1057,13 @@ form {
   font-size: 14px;
   letter-spacing: 1px;
   color: rgba(255,255,255,0.7);
+  border-radius: 16px;
+}
+
+.fancy-footer-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .fancy-footer .soft {
