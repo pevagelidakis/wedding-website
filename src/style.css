@@ -1061,7 +1061,7 @@ form {
   background: #1f1f1f;
   max-width: 900px;        /* matches your other sections */
   width: calc(100% - 40px); /* breathing room on mobile */
-  margin: 80px auto 40px;  /* centers it + bottom gap */
+  /* margin: 80px auto 40px;  centers it + bottom gap */
   padding: 30px 20px;
   font-family: 'Playfair Display', serif;
   font-size: 14px;
