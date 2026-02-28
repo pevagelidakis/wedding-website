@@ -1046,12 +1046,11 @@ form {
 }
 
 .fancy-footer {
-  align-items: center;
-  justify-content: center;
   text-align: center;
-  background:#1f1f1f;
-  width: 100%;
-  margin-top: 80px;
+  background: #1f1f1f;
+  max-width: 900px;        /* matches your other sections */
+  width: calc(100% - 40px); /* breathing room on mobile */
+  margin: 80px auto 40px;  /* centers it + bottom gap */
   padding: 30px 20px;
   font-family: 'Playfair Display', serif;
   font-size: 14px;
@@ -1060,11 +1059,6 @@ form {
   border-radius: 16px;
 }
 
-.fancy-footer-inner {
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
 
 .fancy-footer .soft {
   font-style: italic;
