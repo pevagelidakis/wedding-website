@@ -6,7 +6,10 @@
 <title>Panos & Marianna | Wedding</title>
 
 <!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&family=Alex+Brush&display=swap&family=GFS+Didot&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&family=Alex+Brush&family=GFS+Didot&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="icon" type="image/png" href="./media/us-married_copy.png">
@@ -26,9 +29,242 @@
 </div>
 
 </header>
+<style>
+.calculator-section {
+    padding: 80px 20px;
+    background: 
+      linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+      url("media/travel.jpg") center / cover no-repeat;
+    position: relative;
+    border-radius: 30px;
+    overflow: hidden;
+  }
 
-  <!-- <h2 id="withGreatJoy"></h2>
-  <section class="invitation" id="invitation"></section> -->
+  .calculator-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    border-radius: 30px;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+
+  }
+
+  .calculator {
+    max-width: 750px;
+    width: 100%;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 50px 40px;
+    border-radius: 30px;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+      0 30px 80px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 0 0 1px rgba(212, 175, 55, 0.2);
+    position: relative;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+  }
+
+  .calculator::before {
+    content: '✈';
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 60px;
+    background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+    border: 3px solid rgba(30, 30, 30, 1);
+  }
+
+  .calculator h2 {
+    color: #d4af37;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 0 0 15px 0;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+  }
+
+  .calculator-subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    margin-bottom: 40px;
+    font-style: italic;
+  }
+
+  .calculator label {
+    display: block;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    margin: 25px 0 12px 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.3px;
+  }
+
+  .calculator select,
+  .calculator input[type="number"] {
+    width: 100%;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 15px;
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .calculator select:focus,
+  .calculator input[type="number"]:focus {
+    outline: none;
+    border-color: #d4af37;
+    font-family: 'Playfair Display', serif;
+    background: rgba(212, 175, 55, 0.08);
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+  }
+
+  .calculator select {
+    cursor: pointer;
+    font-family: 'Playfair Display', serif;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 20px;
+    padding-right: 45px;
+  }
+
+  .calculator select option {
+    background: #2a2a2a;
+    color: #fff;
+    padding: 10px;
+  }
+
+  .calculator input[type="number"]::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .calculator p {
+    color: rgba(212, 175, 55, 0.8);
+    font-size: 0.9rem;
+    margin: 10px 0;
+    padding-left: 5px;
+    line-height: 1.6;
+    font-family: 'Playfair Display', serif;
+
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .result {
+    margin-top: 35px;
+    padding: 30px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border: 2px solid rgba(212, 175, 55, 0.4);
+    font-size: 1.1rem;
+    color: #f4d03f;
+    text-align: center;
+    box-shadow: inset 0 2px 10px rgba(212, 175, 55, 0.1);
+    animation: fadeInUp 0.5s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+  }
+
+  .result:hover::before {
+    left: 100%;
+  }
+
+  .result strong {
+    color: #d4af37;
+    font-size: 2rem;
+    display: block;
+    margin: 15px 0;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Input section styling */
+  .input-section {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 25px;
+    border-radius: 15px;
+    margin-top: 20px;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .calculator-section {
+      padding: 60px 15px;
+    }
+
+    .calculator {
+      padding: 40px 25px;
+    }
+
+    .calculator h2 {
+      font-size: 2rem;
+    }
+
+    .calculator::before {
+      width: 70px;
+      height: 70px;
+      font-size: 40px;
+      top: -25px;
+    }
+
+    .result strong {
+      font-size: 1.6rem;
+    }
+  }
+</style>
+<h2 id="withGreatJoy"></h2>
+<section class="invitation" id="invitation"></section>
 
 <!-- ================= TEAM BRIDE ================= -->
 <h2 id="prewedd"></h2>
@@ -70,7 +306,7 @@
     <iframe src="https://www.google.com/maps?q=40.2938059,21.7966601&z=16&output=embed"></iframe>
   </div>
 </section>
-</section>
+<!-- </section> -->
 
 
 <h2 id="ceremony_afterparty"></h2>
@@ -118,7 +354,8 @@
   </div>
 </section>
 
-<section class="vacations" id="vacations"></section>
+<!-- <section class="vacations" id="vacations"></section> -->
+
 
 <section class="rsvp-section" id="rsvp">
   <h2 class="rsvp-title" id="rsvpTitle"></h2>
@@ -175,29 +412,54 @@
   <div  class="rsvp-thankyou" id="rsvp_thankyou" style="display:none;"></div>
 </section>
 
-<div id="petal-container"></div>
+<h2 id="travelling"></h2>
+<section class="calculator-section">
+  <div class="calculator">
+    <h2 id="road2Koz">Travel Cost Estimator</h2>
+    <p class="calculator-subtitle" id="calculator_subtitle">Plan your journey to Kozani with confidence</p>
 
+    <label id="where2fly">Where will you fly to?</label>
+    <select id="flightDestination">
+      <option value="" id="airport">Select airport</option>
+      <option value="thessaloniki" id="skg">✈️ Thessaloniki (SKG)</option>
+      <option value="athens" id="ath">✈️ Athens (ATH)</option>
+    </select>
 
-<h2 id="SaveTheDate">Save The Date</h2>
-<section class="fancy-card-section">
-  <div class="flip-card" id="weddingCard" style="justify-content: center;">
-    <div class="flip-card-inner">
-      <div class="flip-card-front">
-        <div class="fancy-card">
-          <img src="media/SaveTheDate.jpg" alt="Wedding Details Card" loading="lazy" decoding="async">
-        </div>
-      </div>
-      <div class="flip-card-back">
-        <img src="media/wedding-bg.png" alt="Wedding Card Back" loading="lazy" decoding="async">
-      </div>
-      </div>
+    <div id="transportSection" class="hidden">
+      <label id="trans">How will you travel to Kozani?</label>
+      <select id="transportMethod">
+        <option value="" id="transport">Select transport</option>
+        <option value="car" id="car">🚗 By Car</option>
+        <option value="bus" id="bus">🚌 By Bus</option>
+      </select>
+    </div>
+
+    <!-- CAR OPTIONS -->
+    <div id="carOptions" class="hidden input-section">
+      <label id="consumption">Fuel Consumption (L/100km)</label>
+      <input type="number" id="fuelConsumption" value="7.5" step="0.1" min="1">
+      
+      <label id="price">Current Fuel Price per Liter (€)</label>
+      <input type="number" id="fuelPrice" value="1.9" step="0.01" min="0.5">
+    </div>
+
+    <div class="result" id="result">
+      <span id="placeholder">Select your travel options to see estimated costs and guidance</span>
     </div>
   </div>
 </section>
 
+<div id="petal-container"></div>
+
 <section class="desktop-message" id="desktop_message"></section>
 
-<footer style="text-align:center; padding:50px 20px; background:#1f1f1f; color:#f5f5f5;" id="footer"></footer>
+<h2 id="SaveTheDate">Save The Date</h2>
+<section class="fancy-card-section" style="justify-content: center;">
+  <div class="fancy-card">
+    <img src="media/SaveTheDate.jpg" alt="Wedding Details Card" loading="lazy" decoding="async">
+  </div>
+</section>
+<footer class="fancy-footer" style="text-align:center; padding:50px 20px; background:#1f1f1f; color:#f5f5f5;" id="footer"></footer>
 <div id="petals-container"></div>
 <script>
 const translations = {
@@ -206,23 +468,8 @@ const translations = {
     withGreatJoy: "With Great Joy",
     prewedd:"Pre-wedding Preparation",
     invitation:`
-    <a href="media/Wedding Invitation.pdf"  class = "quote-link">
-      <blockquote class="wedding-quote">
-        With hearts full of love, <b style="color:var(--accent);">Panagiotis and Marianna</b>, together with their families,
-        <b style="color:var(--accent);">the Evangelidaki and Papadopoulos families</b>,
-        and with the loving support of their dear bridesmaids, <b style="color:var(--accent);">Ismini Simantiraki and Anna Mpotsi</b>, and their honored best men,
-        <b style="color:var(--accent);">Anastasios Litsas</b>, <b style="color:var(--accent);">Ioannis Koutsourakis</b>, and <b style="color:var(--accent);">Dimitrios Dimitriou</b>,
-        warmly invite you to join them in celebrating their marriage and the beginning of their life together.<br>
-        The wedding ceremony will take place on <b style="color:var(--accent);">Saturday, June 27th</b>, at <b style="color:var(--accent);">6:30 PM</b>, at the 
-        <b style="color:var(--accent);">Holy Church of the Dormition of the Mother of God</b> in <b style="color:var(--accent);">Vatero Village, Kozani</b>. 
-        Following the ceremony, a reception will be held at <b style="color:var(--accent);">Akritas Venue</b> in <b style="color:var(--accent);">Alonakia Village, Kozani</b>,
-        where they would be delighted to continue the celebration with you.
-        <!-- Kindly confirm your presence by **June 15th** by contacting **+30 697 611 6961**. -->
-        Your presence will be a true honor and will make this special day even more meaningful 
-        as they begin their journey <i>together, always</i>.
-      </blockquote>
-    </a>
-  <footer style ="text-align: center;">You still have questions? See below for more clarifications!</footer>
+    <img src="media/wedding-bg-english.png" alt="Wedding invitation in English" loading="lazy" decoding="async">
+    <footer style ="text-align: center;">You still have questions? See below for more clarifications!</footer>
   
       `,
     bride_team:`Team <span style="color:gold; ">Bride</span>`,
@@ -262,37 +509,20 @@ const translations = {
         (<a href="https://maps.app.goo.gl/tedw3MTLmbYG9Wz26" class="elegant-link" style="color: gold;"><b>see map</b></a>).<br><br>
         <b>Saturday, June 27, 2026 · 20:30</b>
     `,
-    vacations:`
-    <h2>Road to Kozani</h2>
-  <p>
-    Traveling to Kozani is straightforward, offering several convenient options. By air, you can fly from your nearest airport,
-    such as Heraklion or Chania, to Thessaloniki (SKG). From there, you may rent a car, book a taxi or Uber, or take the
-    <b>01X</b> or <b>01N</b> bus lines to the Central Bus Station “Macedonia.” Bus tickets can be purchased at the Organization of
-    Urban Transportation of Thessaloniki (OASTH/ΟΑΣΘ) kiosks or directly on the bus using the onboard ticket machine.
-    Each ticket costs €2 per person, payable by credit card, without the need to interact with the driver.
-    <br>
-    From the “Macedonia” Central Bus Station, you can continue your journey to Kozani by bus. 
-    Services depart hourly until 22:00, with an average travel time of approximately two hours, 
-    delivering you to Kozani’s Central Bus Station, from where your hotel or apartment is easily accessible. 
-    Don't forget to inform the travel agent if you are unemployed, person with special needs, or member of family with more than 3 children. 
-    We also suggest you to book a ticket with return for more discount (the departure time can always change). <br>
-    <a href="https://ktelmacedonia.gr/en/home/list/" class="elegant-link" style="color:var(--accent)">Here</a> is the tranportation agency platform for more information. 
-    <br>
-    If you prefer to drive, keep in mind that traveling via Thessaloniki involves passing through toll stations at Malgara and Polymylos(€1.15 and €2.35),
-    which should be factored into your estimated costs. For Thessaloniki's traffic state you can take information from 
-    <a href="https://flyover.imet.gr/" class="elegant-link" style="color:var(--accent)">this website</a>
-    <br> 
-    An alternative route is through Athens, recommended for travelers using their own car. Following the New Egnatia Road to Thessaloniki, 
-    you will encounter toll stations at Afidnes (€3.90), Thiva (€4.55), Tragana (€4.55), Agia Triada (€2.10), Lianokladi (€2.05), Sofades (€3.70), 
-    Trikala (€3.25), Kalampaka (€0.95), and Siatista (€2.40). This journey spans roughly 444 km, takes about five hours, and is estimated to 
-    cost €86.75 for a vehicle consuming 7.5 L/100 km, including approximately €27.45 given in toll fees.
-    <br>
-    A really helpful website for estimating the cost can be found <a href="https://vriskoapostasi.gr/en/search" class="elegant-link" style="color:var(--accent)">here</a>
-  </p>
-   <p>
-    Adventurous travelers may prefer a road trip: taking the ferry from Crete to the mainland and then driving north to Kozani (~6–7 hours) allows you to soak in the Greek countryside along the way. Each travel option offers its own charm, ensuring your journey to Kozani is as memorable as the destination itself.
-  </p> 
-  `,
+    travelling:"Road to Kozani",
+    road2Koz:"Travel Cost Estimator",
+    calculator_subtitle:"Plan your journey to Kozani with confidence",
+    where2fly:"Where will you start from?",
+    airport:"Select airport",
+    skg:"✈️ Thessaloniki (SKG)",
+    ath:"✈️ Athens (ΑΤΗ)",
+    trans:"How will you travel to Kozani?",
+    transport:"Select transport",
+    car:"🚗 By Car",
+    bus:"🚌 By Bus",
+    consumption:"Fuel Consumption (L/100km)",
+    price:"Current Fuel Price per Liter (€)",
+    placeholder:"Select your travel options to see estimated costs and guidance",
     rsvpTitle: "Kindly Respond",
     rsvp_intro:`
     We would be honored to celebrate this special day with you.<br>
@@ -335,6 +565,7 @@ const translations = {
     footer:`
     <p>We look forward to celebrating with you</p>
     <p style="color:var(--accent);">Panagiotis & Marianna</p>
+    <p>© 2026 • All Rights Reserved <br> Crafted with 🤍 by the Groom <span class="soft">(soon to be)</span></p>
     `,
     names: "Panagiotis & Marianna"
   },
@@ -343,23 +574,8 @@ const translations = {
     withGreatJoy: "Με Μεγάλη Χαρά",
     prewedd:"Γαμήλιες Προετοιμασίες",
     invitation:`
-    <a href="media/Wedding Invitation.pdf"  class = "quote-link">
-      <blockquote class="wedding-quote" style="font-family: 'GFS Didot', serif;">
-        Με τις καρδιές μας γεμάτες αγάπη, εμείς και οι οικογένειές μας,
-        <b style="color:var(--accent);">γένος Ευαγγελιδάκη και Παπαδοπούλου</b>,
-        τιμώμενοι με την αγάπη και στήριξη των κουμπάρων <b style="color:var(--accent);">Ισμήνη Σημαντηράκη</b>, 
-        <b style="color:var(--accent);">Άννα Μπότση</b>, <b style="color:var(--accent);">Αναστάση Λίτσα</b>, 
-        <b style="color:var(--accent);">Ιωάννη Κουτσουράκη</b>, και <b style="color:var(--accent);">Δημήτριου Δημητρίου</b>,
-        σας προσκαλούμε με ιδιαίτερη χαρά να γιορτάσουμε το ιερό δέσιμό μας και την αρχή της κοινής μας ζωής.
-        <br>
-        Το μυστήριο θα τελεστεί το <b style="color:var(--accent);">Σάββατο 27 Ιουνίου 2026</b>,
-        στις <b style="color:var(--accent);">18:30</b> στον 
-        <b style="color:var(--accent);">Ιερό Ναό Κοίμησης της Θεοτόκου</b> στο <b style="color:var(--accent);">Βατερό Κοζάνης</b>.<br>
-        Μετά την στέψη θα γιορτάσουμε το ευτυχές αυτό γεγονός στο κέντρο <b style="color:var(--accent);">Ακρίτας</b> στα <b style="color:var(--accent);">Αλωνάκια Κοζάνης</b>. <br>
-        Η παρουσία σας θα αποτελέσει ιδιαίτερη τιμή καθώς ξεκινάμε το ταξίδι μας <i>μαζί, για πάντα</i>.
-      </blockquote>
-    </a>
-  <footer style ="text-align: center;">Υπάρχουν ακόμα αναπάντητα ερωτήματα; Δείτε παρακάτω για περισσότερες λεπτομέρειες!</footer>
+    <img src="media/wedding-bg.png" alt="Wedding Invitation in Greek" loading="lazy" decoding="async">
+    <footer style ="text-align: center;">Υπάρχουν ακόμα αναπάντητα ερωτήματα; Δείτε παρακάτω για περισσότερες λεπτομέρειες!</footer>
       `,
     bride_team:`<span style="color:gold; font-family: 'GFS Didot', serif;">Νυφο</span><span style="color:white;font-family: 'GFS Didot', serif;">παρέα</span>`,
     bride_invitation:`
@@ -402,51 +618,20 @@ const translations = {
         (<a href="https://maps.app.goo.gl/tedw3MTLmbYG9Wz26" class="elegant-link" style="color: gold;"><b>δείτε τον χάρτη</b></a>).<br><br>
         <b>Σάββατο, 27 Ιουνίου 2026 · 20:30</b>
     `,
-    vacations:`
-    <h2>Προς Κοζάνη</h2>
-  <p>
-    Η μετάβαση στην Κοζάνη είναι ιδιαίτερα εύκολη, καθώς προσφέρονται αρκετές άνετες και πρακτικές επιλογές.
-     Αεροπορικώς, μπορείτε να ταξιδέψετε από το πλησιέστερο αεροδρόμιό σας, όπως το Ηράκλειο ή τα Χανιά, 
-     προς τη Θεσσαλονίκη (SKG). Από εκεί, έχετε τη δυνατότητα να ενοικιάσετε αυτοκίνητο, να καλέσετε ταξί ή Uber, 
-     ή να χρησιμοποιήσετε τις λεωφορειακές γραμμές <b>01X</b> ή <b>01N</b> με προορισμό τον Κεντρικό Σταθμό 
-     Υπεραστικών Λεωφορείων «Μακεδονία».
-     Τα εισιτήρια των αστικών λεωφορείων διατίθενται στα εκδοτήρια του Οργανισμού Αστικών Συγκοινωνιών Θεσσαλονίκης (ΟΑΣΘ) 
-     ή μπορούν να εκδοθούν απευθείας εντός του λεωφορείου μέσω του αυτόματου μηχανήματος. 
-     Το κόστος ανέρχεται σε 2€ ανά άτομο και η πληρωμή πραγματοποιείται με χρεωστική ή πιστωτική κάρτα, 
-     χωρίς να απαιτείται συναλλαγή με τον οδηγό.
-     <br>
-     Από τον Κεντρικό Σταθμό «Μακεδονία» μπορείτε να συνεχίσετε το ταξίδι σας προς την Κοζάνη με υπεραστικό λεωφορείο.
-      Τα δρομολόγια εκτελούνται ανά ώρα έως τις 22:00, με μέση διάρκεια διαδρομής περίπου δύο ώρες. 
-      Η άφιξη πραγματοποιείται στον Κεντρικό Σταθμό Κοζάνης, από όπου η πρόσβαση στο ξενοδοχείο 
-      ή το κατάλυμά σας είναι ιδιαίτερα εύκολη.
-      Παρακαλούμε να ενημερώσετε το πρακτορείο σε περίπτωση που είστε άνεργος/η, άτομο με αναπηρία ή μέλος πολύτεκνης οικογένειας, 
-      ώστε να επωφεληθείτε από τυχούσες εκπτώσεις. Συνιστούμε επίσης την έκδοση εισιτηρίου με επιστροφή, 
-      για επιπλέον οικονομικό όφελος (η ώρα αναχώρησης μπορεί πάντοτε να τροποποιηθεί).
-      Για περισσότερες πληροφορίες, μπορείτε να επισκεφθείτε την 
-      <a href="https://ktelmacedonia.gr/en/home/list/" class="elegant-link" style="color:var(--accent)">ηλεκτρονική πλατφόρμα του πρακτορείου μεταφορών</a>.
-      <br>
-      Εάν προτιμάτε να μετακινηθείτε οδικώς μέσω Θεσσαλονίκης, λάβετε υπόψη ότι θα συναντήσετε σταθμούς διοδίων στα Μάλγαρα 
-      (€1,15) και στον Πολύμυλο (€2,35), ποσά τα οποία καλό είναι να συμπεριλάβετε στον προϋπολογισμό σας. Για ενημέρωση 
-      σχετικά με την κυκλοφοριακή κατάσταση στη Θεσσαλονίκη, μπορείτε να συμβουλευτείτε την 
-      <a href="https://flyover.imet.gr/" class="elegant-link" style="color:var(--accent)">αντίστοιχη ιστοσελίδα</a>.
-      <br>
-      Εναλλακτικά, προτείνεται η διαδρομή μέσω Αθηνών, ιδανική για όσους ταξιδεύουν με ιδιωτικό όχημα. Ακολουθώντας τον 
-      αυτοκινητόδρομο προς Θεσσαλονίκη, θα συναντήσετε σταθμούς διοδίων στις Αφίδνες (€3,90), τη Θήβα (€4,55), 
-      τα Τραγάνα (€4,55), την Αγία Τριάδα (€2,10), το Λιανοκλάδι (€2,05), τους Σοφάδες (€3,70), τα Τρίκαλα (€3,25), 
-      την Καλαμπάκα (€0,95) και τη Σιάτιστα (€2,40). Η διαδρομή εκτείνεται σε περίπου 444 χιλιόμετρα, διαρκεί περίπου πέντε 
-      ώρες και εκτιμάται ότι κοστίζει περί τα €86,75 για όχημα με κατανάλωση 7,5 λίτρα/100 χλμ., συμπεριλαμβανομένης της χρέωσης 
-      περίπου €27,45 σε διόδια.
-      <br>
-      Μία ιδιαίτερα χρήσιμη ιστοσελίδα για τον υπολογισμό του συνολικού κόστους διαδρομής είναι διαθέσιμη <a href="https://vriskoapostasi.gr/en/search" class="elegant-link" style="color:var(--accent)">εδώ</a>
-  </p>.
-    <p>
-      Για τους πιο περιπετειώδεις, μια οδική εκδρομή αποτελεί μια γοητευτική επιλογή: ταξιδεύοντας ακτοπλοϊκώς από την Κρήτη 
-      προς την ηπειρωτική Ελλάδα και συνεχίζοντας οδικώς προς την Κοζάνη (περίπου 6–7 ώρες), 
-      θα έχετε την ευκαιρία να απολαύσετε τη μαγεία της ελληνικής υπαίθρου.
-      Κάθε τρόπος μετακίνησης έχει τη δική του χάρη, διασφαλίζοντας ότι το ταξίδι σας προς την 
-      Κοζάνη θα είναι εξίσου όμορφο και αξέχαστο με τον ίδιο τον προορισμό.
-  </p> 
-  `,
+    travelling:"Προς Κοζάνη",
+    road2Koz:"Εκτίμηση Κόστους Διαδρομής",
+    calculator_subtitle:"Οργανώστε το ταξίδι σας στην Κοζάνη με άνεση",
+    where2fly:"Απο πού θα ξεκινήσετε?",
+    airport:"Επιλέξτε Αεροδρόμιο",
+    skg:"✈️ Θεσσαλονίκη (SKG)",
+    ath:"✈️ Αθήνα (ΑΤΗ)",
+    trans:"Πως θα ταξιδέψετε προς Κοζάνη από εκεί?",
+    transport:"Επιλέξτε μέσο μεταφοράς",
+    car:"🚗 Με αμάξι",
+    bus:"🚌 Με λεωφορείο",
+    consumption:"Μέση Κατανάλωση αυτοκινήτου (L/100km)",
+    price:"Τρέχουσα μέση τιμή καυσίμου ανά Λίτρο (€)",
+    placeholder:"Επιλέξτε το ταξίδι σας για να δειτε μία εκτίμηση κόστους αλλά και να σας συμβουλέψουμε.",
     rsvpTitle: `<span style="font-family: 'GFS Didot', serif;">Παρακαλούμε ενημερώστε μας</span>`,
     rsvp_intro:`
     Θα ήταν τιμή μας να γιορτάσουμε την ξεχωριστή αυτή ημέρα μαζί σας!<br> 
@@ -527,10 +712,262 @@ document.addEventListener("DOMContentLoaded", () => {
   applyLanguage(savedLang);
 });
 
-const card = document.getElementById("weddingCard");
-card.addEventListener("click", function () {
-  this.classList.toggle("flipped");
+////////////////////////////////////////////////////////////////////////////////////////
+//  COST CALCULATION
+///////////////////////////////////////////////////////////////////////////////////////
+const flightDestination = document.getElementById("flightDestination");
+const transportMethod = document.getElementById("transportMethod");
+const transportSection = document.getElementById("transportSection");
+const carOptions = document.getElementById("carOptions");
+const result = document.getElementById("result");
+
+flightDestination.addEventListener("change", () => {
+  const lang = localStorage.getItem("language") || "gr";
+  if (flightDestination.value) {
+    transportSection.classList.remove("hidden");
+    transportMethod.value = "";
+    carOptions.classList.add("hidden");
+    result.innerHTML = translations[lang].calc_default_message;
+  } else {
+    transportSection.classList.add("hidden");
+    carOptions.classList.add("hidden");
+    result.innerHTML = translations[lang].calc_default_message;
+  }
 });
+
+transportMethod.addEventListener("change", () => {
+  if (transportMethod.value === "car") {
+    carOptions.classList.remove("hidden");
+  } else {
+    carOptions.classList.add("hidden");
+  }
+  calculateAndDisplay();
+});
+
+document.getElementById("fuelConsumption").addEventListener("input", calculateAndDisplay);
+document.getElementById("fuelPrice").addEventListener("input", calculateAndDisplay);
+
+function calculateAndDisplay() {
+  const flight = flightDestination.value;
+  const transport = transportMethod.value;
+  const lang = localStorage.getItem("language") || "gr";
+  
+  if (!flight || !transport) {
+    return;
+  }
+
+  let resultHTML = "";
+  let totalCost = 0;
+
+  // THESSALONIKI + CAR
+  if (flight === "thessaloniki" && transport === "car") {
+    const consumption = parseFloat(document.getElementById("fuelConsumption").value) || 7.5;
+    const fuelPrice = parseFloat(document.getElementById("fuelPrice").value) || 1.9;
+    const distance = 120; // Thessaloniki to Kozani approximately
+    const fuelCost = (distance / 100) * consumption * fuelPrice;
+    const tollsMalgara = 1.15;
+    const tollsPolymylos = 2.35;
+    const totalTolls = tollsMalgara + tollsPolymylos;
+    totalCost = fuelCost + totalTolls;
+
+    if (lang === "en") {
+      resultHTML = `
+        <strong>€${totalCost.toFixed(2)}</strong>
+        <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+          <b style="color: #f4d03f;">🚗 Driving from Thessaloniki to Kozani</b><br><br>
+          If you prefer to drive from Thessaloniki, keep in mind that you'll pass through toll stations at 
+          <b>Malgara (€${tollsMalgara.toFixed(2)})</b> and <b>Polymylos (€${tollsPolymylos.toFixed(2)})</b>, 
+          totaling <b>€${totalTolls.toFixed(2)}</b> in toll fees.
+          <br><br>
+          The journey covers approximately <b>${distance} km</b> and with your fuel consumption of 
+          <b>${consumption} L/100km</b> at current fuel prices of <b>€${fuelPrice}/L</b>, 
+          you'll spend approximately <b>€${fuelCost.toFixed(2)}</b> on fuel.
+          <br><br>
+          For Thessaloniki's traffic conditions, check 
+          <a href="https://flyover.imet.gr/" class="elegant-link" style="color: #d4af37;">this website</a>.
+        </p>
+      `;
+    } else {
+      resultHTML = `
+        <strong>${totalCost.toFixed(2)}€</strong>
+        <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+          <b style="color: #f4d03f;">🚗 Οδική μετάβαση από Θεσσαλονίκη προς Κοζάνη</b><br><br>
+          Εάν προτιμάτε να οδηγήσετε από τη Θεσσαλονίκη, λάβετε υπόψη ότι θα διέλθετε από σταθμούς διοδίων στα 
+          <b>Μάλγαρα (${tollsMalgara.toFixed(2)}€)</b> και στον <b>Πολύμυλο (${tollsPolymylos.toFixed(2)}€)</b>, 
+          με συνολικό κόστος διοδίων <b>${totalTolls.toFixed(2)}€</b>.
+          <br><br>
+          Η διαδρομή καλύπτει περίπου <b>${distance} χλμ</b> και με την κατανάλωση καυσίμου σας 
+          <b>${consumption} L/100χλμ</b> στην τρέχουσα τιμή <b>${fuelPrice}€/L</b>, 
+          θα δαπανήσετε περίπου <b>${fuelCost.toFixed(2)}€</b> για καύσιμα.
+          <br><br>
+          Για την κυκλοφοριακή κατάσταση στη Θεσσαλονίκη, ελέγξτε 
+          <a href="https://flyover.imet.gr/" class="elegant-link" style="color: #d4af37;">αυτόν τον ιστότοπο</a>.
+        </p>
+      `;
+    }
+  }
+
+  // ATHENS + CAR
+  if (flight === "athens" && transport === "car") {
+    const consumption = parseFloat(document.getElementById("fuelConsumption").value) || 7.5;
+    const fuelPrice = parseFloat(document.getElementById("fuelPrice").value) || 1.9;
+    const distance = 444;
+    const fuelCost = (distance / 100) * consumption * fuelPrice;
+    const totalTolls = 30;
+    totalCost = fuelCost + totalTolls;
+
+    if (lang === "en") {
+      resultHTML = `
+        <p><strong>€${totalCost.toFixed(2)}</strong> or €${totalCost.toFixed(2)-2.55} if you are not coming from the airport</p>
+        <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+          <b style="color: #f4d03f;">🚗 Driving from Athens to Kozani</b><br><br>
+          An alternative route through Athens is recommended for travelers using their own car. 
+          Following the New Egnatia Road to Thessaloniki, you'll encounter toll stations at 
+          <b>Attiki Odos (€2.55)</b> if your starting point is the Eleftherios Venizelos Airport,
+          <b>Afidnes (€3.90)</b>, <b>Thiva (€4.55)</b>, <b>Tragana (€4.55)</b>, <b>Agia Triada (€2.10)</b>, 
+          <b>Lianokladi (€2.05)</b>, <b>Sofades (€3.70)</b>, <b>Trikala (€3.25)</b>, 
+          <b>Kalampaka (€0.95)</b>, and <b>Siatista (€2.40)</b>.
+          <br><br>
+          This journey spans roughly <b>${distance} km</b>, takes about <b>five hours</b>, and includes 
+          approximately <b>€${totalTolls.toFixed(2)}</b> in toll fees.
+          <br><br>
+          With your fuel consumption of <b>${consumption} L/100km</b> at <b>€${fuelPrice}/L</b>, 
+          fuel costs will be approximately <b>€${fuelCost}</b> or €${totalCost.toFixed(2)-2.55} if you are not coming from the airport.
+          <br><br>
+          A helpful cost estimation tool: 
+          <a href="https://vriskoapostasi.gr/en/search" class="elegant-link" style="color: #d4af37;">vriskoapostasi.gr</a><br>
+          The amount is for payment with cash. In some stations there are lower charges if you pay electronically (e-pass, e-way etc). 
+          Ask toll companies for better prices for a lot of same routes in a month.
+        </p>
+      `;
+    } else {
+      resultHTML = `
+        <p><strong>${totalCost.toFixed(2)}€</strong> ή ${totalCost.toFixed(2)-2.55}€ αν δεν έρχεστε από το αεροδρόμιο</p>
+        <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+          <b style="color: #f4d03f;">🚗 Οδική μετάβαση από Αθήνα προς Κοζάνη</b><br><br>
+          Εναλλακτικά, προτείνεται η διαδρομή μέσω Αθηνών, ιδανική για όσους ταξιδεύουν με ιδιωτικό όχημα. 
+          Ακολουθώντας τον αυτοκινητόδρομο προς Θεσσαλονίκη, θα συναντήσετε σταθμούς διοδίων σε
+          Αττική Οδό (2.55€) εφόσον ξεκινάτε από το αεροδρόμιο, 
+          <b>Αφίδνες (3.90€)</b>, <b>Θήβα (4.55€)</b>, <b>Τραγάνα (4.55€)</b>, <b>Αγία Τριάδα (2.10€)</b>, 
+          <b>Λιανοκλάδι (2.05€)</b>, <b>Σοφάδες (3.70€)</b>, <b>Τρίκαλα (3.25€)</b>, 
+          <b>Καλαμπάκα (0.95€)</b>, και <b>Σιάτιστα (2.40€)</b>.
+          <br><br>
+          Η διαδρομή εκτείνεται σε περίπου <b>${distance} χλμ</b>, διαρκεί περίπου <b>πέντε ώρες</b>, και 
+          περιλαμβάνει περίπου <b>${totalTolls.toFixed(2)}€</b> σε διόδια.
+          <br><br>
+          Με κατανάλωση καυσίμου <b>${consumption} L/100χλμ</b> στην τιμή <b>${fuelPrice}€/L</b>, 
+          το κόστος καυσίμων θα είναι περίπου <b>${fuelCost}€</b> ή ${totalCost.toFixed(2)-2.55}€ αν δεν έρχεστε από το αεροδρόμιο.
+          <br><br>
+          Χρήσιμο εργαλείο υπολογισμού κόστους: 
+          <a href="https://vriskoapostasi.gr/en/search" class="elegant-link" style="color: #d4af37;">vriskoapostasi.gr</a><br>
+          Το ποσό αφορά πληρωμή με μετρητά. Ενδεχομένως, να υπάρχει σε κάποιους σταθμούς, χαμηλότερη χρέωση σε περίπτωση 
+          πληρωμής ηλεκτρονικά (e-pass, e-way κλπ). Ρωτήστε τις εταιρείες εκμετάλλευσης των αυτοκινητόδρομων, 
+          για οικονομικότερα πακέτα σε περίπτωση πολλών ίδιων διαδρομών το μήνα.
+        </p>
+      `;
+    }
+  }
+
+  // THESSALONIKI + BUS
+  if (flight === "thessaloniki" && transport === "bus") {
+    const cityBus = 2.00;
+    const intercityBus = 13.50; // Approximate cost Thessaloniki to Kozani
+    totalCost = cityBus + intercityBus;
+
+    if (lang === "en") {
+      resultHTML = `
+        <strong>€${totalCost.toFixed(2)}</strong>
+        <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+          <b style="color: #f4d03f;">🚌 Taking the Bus from Thessaloniki</b><br><br>
+          From Thessaloniki Airport, take the <b>01X</b> or <b>01N</b> bus lines to the Central Bus Station "Macedonia." 
+          Bus tickets can be purchased at OASTH (ΟΑΣΘ) kiosks or directly on the bus using the onboard ticket machine. 
+          Each ticket costs <b>€${cityBus.toFixed(2)}</b> per person, payable by credit card.
+          <br><br>
+          From the "Macedonia" Central Bus Station, you can continue your journey to Kozani by intercity bus. 
+          Services depart <b>hourly until 22:00</b>, with an average travel time of approximately <b>two hours</b>, 
+          costing approximately <b>€${intercityBus.toFixed(2)}</b>.
+          <br><br>
+          <b style="color: #f4d03f;">💡 Important:</b> Don't forget to inform the travel agent if you are 
+          <b>unemployed</b>, a <b>person with special needs</b>, or a <b>member of a family with more than 3 children</b> 
+          to receive available discounts. We also suggest booking a return ticket for additional savings!
+          <br><br>
+          Transportation agency: 
+          <a href="https://ktelmacedonia.gr/en/home/list/" class="elegant-link" style="color: #d4af37;">KTEL Macedonia</a>
+        </p>
+      `;
+    } else {
+      resultHTML = `
+        <strong>${totalCost.toFixed(2)}€</strong>
+        <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+          <b style="color: #f4d03f;">🚌 Μετάβαση με Λεωφορείο από Θεσσαλονίκη</b><br><br>
+          Από το αεροδρόμιο Θεσσαλονίκης, πάρτε τις γραμμές λεωφορείων <b>01X</b> ή <b>01N</b> για τον Κεντρικό Σταθμό Λεωφορείων «Μακεδονία». 
+          Τα εισιτήρια μπορούν να αγοραστούν από τα περίπτερα του ΟΑΣΘ ή απευθείας στο λεωφορείο μέσω του αυτόματου μηχανήματος. 
+          Κάθε εισιτήριο κοστίζει <b>${cityBus.toFixed(2)}€</b> ανά άτομο και πληρώνεται με κάρτα.
+          <br><br>
+          Από τον Κεντρικό Σταθμό «Μακεδονία», μπορείτε να συνεχίσετε το ταξίδι σας προς την Κοζάνη με υπεραστικό λεωφορείο. 
+          Τα δρομολόγια εκτελούνται <b>ανά ώρα έως τις 22:00</b>, με μέση διάρκεια διαδρομής περίπου <b>δύο ώρες</b>, 
+          και κοστίζουν περίπου <b>${intercityBus.toFixed(2)}€</b>.
+          <br><br>
+          <b style="color: #f4d03f;">💡 Σημαντικό:</b> Μην ξεχάσετε να ενημερώσετε τον πράκτορα εάν είστε 
+          <b>άνεργος/η</b>, <b>άτομο με αναπηρία</b>, ή <b>μέλος πολύτεκνης οικογένειας</b> 
+          για να λάβετε διαθέσιμες εκπτώσεις. Συνιστούμε επίσης την κράτηση εισιτηρίου με επιστροφή για επιπλέον οικονομία!
+          <br><br>
+          Πρακτορείο μεταφορών: 
+          <a href="https://ktelmacedonia.gr/en/home/list/" class="elegant-link" style="color: #d4af37;">ΚΤΕΛ Μακεδονίας</a>
+        </p>
+      `;
+    }
+  }
+
+  // ATHENS + BUS
+  if (flight === "athens" && transport === "bus") {
+    const metroAirport = 9.00; // Athens Airport to city center
+    const intercityBus = 42.00; // Athens to Kozani approximate
+    totalCost = metroAirport + intercityBus;
+
+    if (lang === "en") {
+      resultHTML = `
+        <strong>€${totalCost.toFixed(2)}</strong>
+        <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+          <b style="color: #f4d03f;">🚌 Taking the Bus from Athens</b><br><br>
+          From Athens Airport, take the <b>Metro (Line 3)</b> or <b>Express Bus X93</b> to reach the city's 
+          intercity bus stations. The metro ticket costs approximately <b>€${metroAirport.toFixed(2)}</b>.
+          <br><br>
+          From Athens' Liosion Bus Station (KTEL), you can take an intercity bus directly to Kozani. 
+          The journey takes approximately <b>6-7 hours</b> and costs around <b>€${intercityBus.toFixed(2)}</b>.
+          <br><br>
+          <b style="color: #f4d03f;">💡 Important:</b> Don't forget to inform the travel agent if you are 
+          <b>unemployed</b>, a <b>person with special needs</b>, or a <b>member of a family with more than 3 children</b> 
+          to receive available discounts. We also suggest booking a return ticket for additional savings!
+          <br><br>
+          For schedules and bookings, visit: 
+          <a href="https://www.ktelkozanis.gr" class="elegant-link" style="color: #d4af37;">KTEL Kozanis</a>
+        </p>
+      `;
+    } else {
+      resultHTML = `
+        <strong>€${totalCost.toFixed(2)}</strong>
+        <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+          <b style="color: #f4d03f;">🚌 Μετάβαση με Λεωφορείο από Αθήνα</b><br><br>
+          Από το αεροδρόμιο Αθηνών, πάρτε το <b>Μετρό (Γραμμή 3)</b> ή το <b>Εxpress Bus X93</b> για να φτάσετε στους 
+          σταθμούς υπεραστικών λεωφορείων της πόλης. Το εισιτήριο του μετρό κοστίζει περίπου <b>${metroAirport.toFixed(2)}€</b>.
+          <br><br>
+          Από τον Σταθμό Λιοσίων (ΚΤΕΛ) στην Αθήνα, μπορείτε να πάρετε υπεραστικό λεωφορείο απευθείας για Κοζάνη. 
+          Το ταξίδι διαρκεί περίπου <b>6-7 ώρες</b> και κοστίζει γύρω στα <b>${intercityBus.toFixed(2)}€</b>.
+          <br><br>
+          <b style="color: #f4d03f;">💡 Σημαντικό:</b> Μην ξεχάσετε να ενημερώσετε τον πράκτορα εάν είστε 
+          <b>άνεργος/η</b>, <b>άτομο με αναπηρία</b>, ή <b>μέλος πολύτεκνης οικογένειας</b> 
+          για να λάβετε διαθέσιμες εκπτώσεις. Συνιστούμε επίσης την κράτηση εισιτηρίου με επιστροφή για επιπλέον οικονομία!
+          <br><br>
+          Για δρομολόγια και κρατήσεις, επισκεφθείτε: 
+          <a href="https://www.ktelkozanis.gr" class="elegant-link" style="color: #d4af37;">ΚΤΕΛ Κοζάνης</a>
+        </p>
+      `;
+    }
+  }
+
+  result.innerHTML = resultHTML;
+}
 </script>
 <script type="module" src="main.js" defer></script>
 </body>
