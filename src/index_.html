@@ -26,29 +26,226 @@
 </div>
 
 </header>
-<style>
-  .calculator{
-  max-width:650px;
-  width:100%;
-  background:var(--bg);
-  padding:30px;
-  border-radius:20px;
-  backdrop-filter: blur(10px);
-  box-shadow:0 20px 60px rgba(0,0,0,.6);
-}
+<style>.calculator-section {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.95) 0%, rgba(50, 40, 40, 0.95) 100%);
+    position: relative;
+    overflow: hidden;
+  }
 
-.hidden{
-  display:none;
-}
+  .calculator-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
 
-.result{
-  margin-top:30px;
-  padding:20px;
-  border-radius:14px;
-  background:rgba(212,175,55,.1);
-  border:1px solid rgba(212,175,55,.4);
-  font-size:18px;
-}
+  .calculator {
+    max-width: 750px;
+    width: 100%;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 50px 40px;
+    border-radius: 30px;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+      0 30px 80px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 0 0 1px rgba(212, 175, 55, 0.2);
+    position: relative;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+  }
+
+  .calculator::before {
+    content: '✈';
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 60px;
+    background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+    border: 3px solid rgba(30, 30, 30, 1);
+  }
+
+  .calculator h2 {
+    color: #d4af37;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 0 0 15px 0;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+  }
+
+  .calculator-subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    margin-bottom: 40px;
+    font-style: italic;
+  }
+
+  .calculator label {
+    display: block;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    margin: 25px 0 12px 0;
+    font-size: 1.05rem;
+    letter-spacing: 0.3px;
+  }
+
+  .calculator select,
+  .calculator input[type="number"] {
+    width: 100%;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 15px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .calculator select:focus,
+  .calculator input[type="number"]:focus {
+    outline: none;
+    border-color: #d4af37;
+    background: rgba(212, 175, 55, 0.08);
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+  }
+
+  .calculator select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 20px;
+    padding-right: 45px;
+  }
+
+  .calculator select option {
+    background: #2a2a2a;
+    color: #fff;
+    padding: 10px;
+  }
+
+  .calculator input[type="number"]::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .calculator p {
+    color: rgba(212, 175, 55, 0.8);
+    font-size: 0.9rem;
+    margin: 10px 0;
+    padding-left: 5px;
+    line-height: 1.6;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .result {
+    margin-top: 35px;
+    padding: 30px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border: 2px solid rgba(212, 175, 55, 0.4);
+    font-size: 1.1rem;
+    color: #f4d03f;
+    text-align: center;
+    box-shadow: inset 0 2px 10px rgba(212, 175, 55, 0.1);
+    animation: fadeInUp 0.5s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+  }
+
+  .result:hover::before {
+    left: 100%;
+  }
+
+  .result strong {
+    color: #d4af37;
+    font-size: 2rem;
+    display: block;
+    margin: 15px 0;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Input section styling */
+  .input-section {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 25px;
+    border-radius: 15px;
+    margin-top: 20px;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .calculator-section {
+      padding: 60px 15px;
+    }
+
+    .calculator {
+      padding: 40px 25px;
+    }
+
+    .calculator h2 {
+      font-size: 2rem;
+    }
+
+    .calculator::before {
+      width: 70px;
+      height: 70px;
+      font-size: 40px;
+      top: -25px;
+    }
+
+    .result strong {
+      font-size: 1.6rem;
+    }
+  }
 </style>
 <h2 id="SaveTheDate">Save The Date</h2>
 <section class="fancy-card-section">
@@ -66,8 +263,8 @@
     </div>
   </div>
 </section>
-  <!-- <h2 id="withGreatJoy"></h2>
-  <section class="invitation" id="invitation"></section> -->
+  <h2 id="withGreatJoy"></h2>
+  <section class="invitation" id="invitation"></section>
 
 <!-- ================= TEAM BRIDE ================= -->
 <h2 id="prewedd"></h2>
@@ -158,72 +355,75 @@
 </section>
 
 <!-- <section class="vacations" id="vacations"></section> -->
-<div class="calculator">
-  <h2>Travel Cost Estimator to Kozani</h2>
+<section class="calculator-section">
+  <div class="calculator">
+    <h2>Travel Cost Estimator</h2>
+    <p class="calculator-subtitle">Plan your journey to Kozani with confidence</p>
 
-  <label>Main Travel Method</label>
-  <select id="method">
-    <option value="">Select option</option>
-    <option value="air">✈️ Flight via Thessaloniki</option>
-    <option value="car_thess">🚗 Car via Thessaloniki</option>
-    <option value="car_athens">🚗 Car via Athens</option>
-    <option value="ferry">⛴ Ferry + Car (Crete)</option>
-  </select>
+    <label>Main Travel Method</label>
+    <select id="method">
+      <option value="">Select your travel option</option>
+      <option value="air">✈️ Flight via Thessaloniki</option>
+      <option value="car_thess">🚗 Car via Thessaloniki</option>
+      <option value="car_athens">🚗 Car via Athens</option>
+      <option value="ferry">⛴ Ferry + Car (Crete)</option>
+    </select>
 
-  <!-- AIR -->
-  <div id="airSection" class="hidden">
-    <label>Bus Ticket (Thessaloniki → Macedonia Station)</label>
-    <input type="number" id="busTicket" value="2" min="0">
+    <!-- AIR -->
+    <div id="airSection" class="hidden input-section">
+      <label>Bus Ticket (Thessaloniki → Macedonia Station) €</label>
+      <input type="number" id="busTicket" value="2" min="0">
 
-    <label>Bus Thessaloniki → Kozani</label>
-    <input type="number" id="ktelTicket" placeholder="Enter ticket cost (€)">
+      <label>Bus Thessaloniki → Kozani €</label>
+      <input type="number" id="ktelTicket" placeholder="Enter ticket cost">
+    </div>
+
+    <!-- CAR THESS -->
+    <div id="carThessSection" class="hidden input-section">
+      <label>Fuel Price per Liter (€)</label>
+      <input type="number" id="fuelPrice1" value="1.9" step="0.01">
+
+      <label>Fuel Consumption (L/100km)</label>
+      <input type="number" id="consumption1" value="7.5" step="0.1">
+
+      <label>Total Distance (km)</label>
+      <input type="number" id="distance1" placeholder="Enter total distance">
+
+      <p>📍 Tolls: Malgara (€1.15) + Polymylos (€2.35)</p>
+    </div>
+
+    <!-- CAR ATHENS -->
+    <div id="carAthensSection" class="hidden input-section">
+      <label>Fuel Price per Liter (€)</label>
+      <input type="number" id="fuelPrice2" value="1.9" step="0.01">
+
+      <label>Fuel Consumption (L/100km)</label>
+      <input type="number" id="consumption2" value="7.5" step="0.1">
+
+      <p>📍 Total Distance: 444 km</p>
+      <p>💰 Total Tolls: €27.45</p>
+    </div>
+
+    <!-- FERRY -->
+    <div id="ferrySection" class="hidden input-section">
+      <label>Ferry Cost (€)</label>
+      <input type="number" id="ferryCost" placeholder="Enter ferry cost">
+
+      <label>Fuel Price per Liter (€)</label>
+      <input type="number" id="fuelPrice3" value="1.9" step="0.01">
+
+      <label>Fuel Consumption (L/100km)</label>
+      <input type="number" id="consumption3" value="7.5" step="0.1">
+
+      <label>Driving Distance After Ferry (km)</label>
+      <input type="number" id="distance3" placeholder="Enter distance">
+    </div>
+
+    <div class="result" id="result">
+      Select your travel method to see estimated costs
+    </div>
   </div>
-
-  <!-- CAR THESS -->
-  <div id="carThessSection" class="hidden">
-    <label>Fuel Price per Liter (€)</label>
-    <input type="number" id="fuelPrice1" value="1.9" step="0.01">
-
-    <label>Fuel Consumption (L/100km)</label>
-    <input type="number" id="consumption1" value="7.5">
-
-    <label>Total Distance (km)</label>
-    <input type="number" id="distance1" placeholder="Enter total km">
-
-    <p>Tolls: Malgara (€1.15) + Polymylos (€2.35)</p>
-  </div>
-
-  <!-- CAR ATHENS -->
-  <div id="carAthensSection" class="hidden">
-    <label>Fuel Price per Liter (€)</label>
-    <input type="number" id="fuelPrice2" value="1.9" step="0.01">
-
-    <label>Fuel Consumption (L/100km)</label>
-    <input type="number" id="consumption2" value="7.5">
-
-    <p>Total Distance: 444 km</p>
-    <p>Total Tolls: €27.45</p>
-  </div>
-
-  <!-- FERRY -->
-  <div id="ferrySection" class="hidden">
-    <label>Ferry Cost (€)</label>
-    <input type="number" id="ferryCost">
-
-    <label>Fuel Price per Liter (€)</label>
-    <input type="number" id="fuelPrice3" value="1.9" step="0.01">
-
-    <label>Fuel Consumption (L/100km)</label>
-    <input type="number" id="consumption3" value="7.5">
-
-    <label>Driving Distance After Ferry (km)</label>
-    <input type="number" id="distance3">
-  </div>
-
-  <div class="result" id="result">
-    Estimated cost will appear here.
-  </div>
-</div>
+</section>
 
 <section class="rsvp-section" id="rsvp">
   <h2 class="rsvp-title" id="rsvpTitle"></h2>
@@ -628,7 +828,7 @@ const result = document.getElementById("result");
 method.addEventListener("change", updateView);
 
 function updateView(){
-  document.querySelectorAll(".hidden, #airSection, #carThessSection, #carAthensSection, #ferrySection")
+  document.querySelectorAll("#airSection, #carThessSection, #carAthensSection, #ferrySection")
     .forEach(el => el.classList.add("hidden"));
 
   if(method.value === "air")
@@ -653,38 +853,40 @@ function calculate(){
   let total = 0;
 
   if(method.value === "air"){
-    const bus = parseFloat(busTicket.value) || 0;
-    const ktel = parseFloat(ktelTicket.value) || 0;
+    const bus = parseFloat(document.getElementById("busTicket").value) || 0;
+    const ktel = parseFloat(document.getElementById("ktelTicket").value) || 0;
     total = bus + ktel;
   }
 
   if(method.value === "car_thess"){
-    const fuel = fuelPrice1.value;
-    const cons = consumption1.value;
-    const dist = distance1.value;
+    const fuel = parseFloat(document.getElementById("fuelPrice1").value) || 0;
+    const cons = parseFloat(document.getElementById("consumption1").value) || 0;
+    const dist = parseFloat(document.getElementById("distance1").value) || 0;
     const fuelCost = (dist / 100) * cons * fuel;
     total = fuelCost + 1.15 + 2.35;
   }
 
   if(method.value === "car_athens"){
-    const fuel = fuelPrice2.value;
-    const cons = consumption2.value;
+    const fuel = parseFloat(document.getElementById("fuelPrice2").value) || 0;
+    const cons = parseFloat(document.getElementById("consumption2").value) || 0;
     const fuelCost = (444 / 100) * cons * fuel;
     total = fuelCost + 27.45;
   }
 
   if(method.value === "ferry"){
-    const ferry = parseFloat(ferryCost.value) || 0;
-    const fuel = fuelPrice3.value;
-    const cons = consumption3.value;
-    const dist = distance3.value;
+    const ferry = parseFloat(document.getElementById("ferryCost").value) || 0;
+    const fuel = parseFloat(document.getElementById("fuelPrice3").value) || 0;
+    const cons = parseFloat(document.getElementById("consumption3").value) || 0;
+    const dist = parseFloat(document.getElementById("distance3").value) || 0;
     const fuelCost = (dist / 100) * cons * fuel;
     total = ferry + fuelCost;
   }
 
-  result.innerHTML = total > 0
-    ? `Estimated Total Cost: <strong>€${total.toFixed(2)}</strong>`
-    : "Estimated cost will appear here.";
+  if(total > 0){
+    result.innerHTML = `<strong>€${total.toFixed(2)}</strong><br><small style="opacity: 0.7; font-size: 0.9rem;">Estimated total travel cost</small>`;
+  } else {
+    result.innerHTML = "Select your travel method to see estimated costs";
+  }
 }
 </script>
 <script type="module" src="main.js" defer></script>

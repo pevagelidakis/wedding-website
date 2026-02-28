@@ -306,7 +306,7 @@ p {
   padding: 70px 30px 90px;
   background:
     linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),
-    url("media/papyrus-bg.jpg") top / cover no-repeat;
+    url("media/inv-bg.jpg") top / cover no-repeat;
   border-radius: 16px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
