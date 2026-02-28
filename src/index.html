@@ -17,7 +17,33 @@
 </head>
 
 <body>
+<style>
+  .fancy-footer {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background:#1f1f1f;
+  width: 100%;
+  margin-top: 80px;
+  padding: 30px 20px;
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.7);
+  border-radius: 16px;
+}
 
+.fancy-footer-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.fancy-footer .soft {
+  font-style: italic;
+  opacity: 0.6;
+}
+</style>
 <header>
   <div>
     <h1 id="names"></h1>
@@ -329,13 +355,9 @@ const translations = {
       You can pitch in enriching our digital album only via your mobile devices <a href="./upload.html" class="elegant-link">here</a>. 😍
     </p>`,
     footer:`
-       <div class="fancy-footer-inner">
-        We look forward to celebrating with you! <br>
-        <span style="color:var(--accent);">Panagiotis & Marianna</span> <br><br>
-        
-        © 2026 • All Rights Reserved <br> 
-        Crafted with 🤍 by the Groom <span class="soft">(soon to be)</span>
-        </div>
+    <p>We look forward to celebrating with you!</p>
+    <p style="color:var(--accent);">Panagiotis & Marianna</p>
+    <p> © 2026 • Crafted with 🤍 by the Groom <span class="soft">(soon to be)</span></p>
     `,
     names: "Panagiotis & Marianna"
   },
@@ -442,13 +464,9 @@ const translations = {
       Μπορείτε να συνεισφέρετε στον εμπλουτισμό του ψηφιακού γαμήλιου λευκώματός μας μέσω της κινητής συσκευής σας <a href="./upload.html" class="elegant-link">εδώ</a>😍.
     </p>`,
     footer:`
-    <div class="fancy-footer-inner">
-      <span style="color:var(--ivory)>;"Ανυπομονούμε να γιορτάσουμε όλοι μαζί την αρχή του «μαζί για πάντα»!</span> <br>
-      <span style="color:var(--accent);">Παναγιώτης & Μαριάννα</span> <br><br>
-      
-      <span style="color:var(--ivory)>Copyright © 2026 <br> 
-      Δημιουργήθηκε με όλη μου την 🤍 από τον Γαμπρό <span class="soft">(σύντομα και επισήμως!)</span>
-    </div>
+    <p>Ανυπομονούμε να γιορτάσουμε όλοι μαζί την αρχή του «μαζί για πάντα»!</p>
+    <p style="color:var(--accent);">Παναγιώτης & Μαριάννα</p>
+    <p>© 2026 • Δημιουργήθηκε με 🤍 από τον Γαμπρό <span class="soft">(σύντομα και επισήμως!)</span></p>
     `,
     wedding_memories:"Αναμνήσεις από το γάμο μας 🤍",
     names: "Παναγιώτης & Μαριάννα"
