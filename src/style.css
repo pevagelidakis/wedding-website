@@ -1045,6 +1045,17 @@ form {
   }
 }
 
+.footer {
+  align-items: center;
+  justify-content: center;
+  /* text-align: center; */
+  background:#1f1f1f;
+  width: 100%;
+  margin-top: 80px;
+  padding: 30px 20px;
+  border-radius: 16px;
+}
+
 .fancy-footer {
   text-align: center;
   background: #1f1f1f;
@@ -1056,7 +1067,7 @@ form {
   font-size: 14px;
   letter-spacing: 1px;
   color: rgba(255,255,255,0.7);
-  border-radius: 16px;
+  /* border-radius: 16px; */
 }
 
 
