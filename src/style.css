@@ -1045,32 +1045,43 @@ form {
   }
 }
 
+
 .footer {
-  align-items: center;
-  justify-content: center;
+  margin-top: 100px;
+  padding: 60px 20px 40px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(212,175,55,0.3);
+  color: rgba(255,255,255,0.75);
   text-align: center;
-  background:#1f1f1f;
-  width: 100%;
-  margin-top: 80px;
-  padding: 30px 20px;
 }
 
-.fancy-footer {
-  text-align: center;
-  background: #1f1f1f;
-  /* max-width: 900px;        matches your other sections */
-  width: calc(100% - 40px); /* breathing room on mobile */
-  /* margin: 80px auto 40px;  centers it + bottom gap */
-  padding: 30px 20px;
+.footer-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.footer-names h3 {
   font-family: 'Playfair Display', serif;
-  font-size: 14px;
-  letter-spacing: 1px;
-  color: rgba(255,255,255,0.7);
-  /* border-radius: 16px; */
+  font-size: 26px;
+  margin-bottom: 8px;
+  color: gold;
 }
 
+.footer-names .date {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 30px;
+}
 
-.fancy-footer .soft {
+.footer-credit {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.7;
+}
+
+.footer-credit .soft {
   font-style: italic;
   opacity: 0.6;
 }
