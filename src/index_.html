@@ -819,7 +819,7 @@ function calculateAndDisplay() {
 
     if (lang === "en") {
       resultHTML = `
-        <p><strong>€${totalCost}</strong> or €${totalCost-2.55} if you are not coming from the airport</p>
+        <p><strong>€${totalCost.toFixed(2)}</strong> or €${totalCost.toFixed(2)-2.55} if you are not coming from the airport</p>
         <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
           <b style="color: #f4d03f;">🚗 Driving from Athens to Kozani</b><br><br>
           An alternative route through Athens is recommended for travelers using their own car. 
@@ -833,7 +833,7 @@ function calculateAndDisplay() {
           approximately <b>€${totalTolls.toFixed(2)}</b> in toll fees.
           <br><br>
           With your fuel consumption of <b>${consumption} L/100km</b> at <b>€${fuelPrice}/L</b>, 
-          fuel costs will be approximately <b>€${fuelCost}</b> or €${totalCost-2.55} if you are not coming from the airport.
+          fuel costs will be approximately <b>€${fuelCost}</b> or €${totalCost.toFixed(2)-2.55} if you are not coming from the airport.
           <br><br>
           A helpful cost estimation tool: 
           <a href="https://vriskoapostasi.gr/en/search" class="elegant-link" style="color: #d4af37;">vriskoapostasi.gr</a><br>
@@ -843,7 +843,7 @@ function calculateAndDisplay() {
       `;
     } else {
       resultHTML = `
-        <p><strong>${totalCost}€</strong> ή ${totalCost-2.55}€ αν δεν έρχεστε από το αεροδρόμιο</p>
+        <p><strong>${totalCost.toFixed(2)}€</strong> ή ${totalCost.toFixed(2)-2.55}€ αν δεν έρχεστε από το αεροδρόμιο</p>
         <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
           <b style="color: #f4d03f;">🚗 Οδική μετάβαση από Αθήνα προς Κοζάνη</b><br><br>
           Εναλλακτικά, προτείνεται η διαδρομή μέσω Αθηνών, ιδανική για όσους ταξιδεύουν με ιδιωτικό όχημα. 
@@ -857,7 +857,7 @@ function calculateAndDisplay() {
           περιλαμβάνει περίπου <b>${totalTolls.toFixed(2)}€</b> σε διόδια.
           <br><br>
           Με κατανάλωση καυσίμου <b>${consumption} L/100χλμ</b> στην τιμή <b>${fuelPrice}€/L</b>, 
-          το κόστος καυσίμων θα είναι περίπου <b>${fuelCost}€</b> ή ${totalCost-2.55}€ αν δεν έρχεστε από το αεροδρόμιο.
+          το κόστος καυσίμων θα είναι περίπου <b>${fuelCost}€</b> ή ${totalCost.toFixed(2)-2.55}€ αν δεν έρχεστε από το αεροδρόμιο.
           <br><br>
           Χρήσιμο εργαλείο υπολογισμού κόστους: 
           <a href="https://vriskoapostasi.gr/en/search" class="elegant-link" style="color: #d4af37;">vriskoapostasi.gr</a><br>
