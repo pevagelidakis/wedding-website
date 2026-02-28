@@ -263,9 +263,12 @@ const translations = {
     ceremony_afterparty:"Ceremony & After-Party",
     ceremony:`<b>Wedding <span>Ceremony</span></b>`,
     ceremony_text:`
-      Join us as we unite our hearts and souls in love.
-      A day of joy, laughter, and cherished moments awaits,
-      where two families become one and dreams begin their forever.
+      Join us as we unite our hearts and souls in the sacred bond of love.
+      A day filled with joy, laughter, and cherished moments awaits,
+      where two families become one,
+      and under the blessing of our Lord,
+      our love is transformed into the steadfast foundation
+      of our new life together.
       The ceremony is going to take place at <b>Church of Dormition of Mother of God, Vatero Village, Kozani, ZC 50 150.</b>
       (<a href="https://maps.app.goo.gl/Uy5WDnUkCmhxUVYV6" class="elegant-link" style="color: gold;"><b>see map</b></a>).<br><br>
       <b>Saturday, June 27, 2026 · 18:30</b>
@@ -351,7 +354,7 @@ const translations = {
     bride_invitation:`
      <p>
         Υπέροχη νυφο-ομάδα μου 🤍<br><br>
-        Ελάτε να ετοιμαστούμε μαζί, να μοιραστούμε γέλια, δάκρυα χαράς,και όλη μου την αγάπη προς εσάς πριν τον πατήσω 
+        Ελάτε να ετοιμαστούμε μαζί, να μοιραστούμε γέλια, δάκρυα χαράς και όλη μου την αγάπη προς εσάς πριν τον πατήσω 
         (ή μήπως δεν τον πατήσω; Θα δω το βλέμμα του στο «ἡ δὲ γυνὴ ἵνα φοβῆται τὸν ἄνδρα.» 😏).
         Ας συναντηθούμε στην οικία του πατέρα μου <b>Παπαδόπουλου, στην Καλαμιά Κοζάνης</b>
         (<a href="https://maps.app.goo.gl/v933EsJNPbPAyzrv8" class="elegant-link"><b>συμβουλευτείτε το χάρτη</b></a>).<br><br>
@@ -369,9 +372,13 @@ const translations = {
     ceremony_afterparty:" Στέψη & Δεξίωση",
     ceremony:`<b style="font-family: 'GFS Didot', serif;">Γαμήλια <span>Τελετή</span></b>`,
     ceremony_text:`
-      Ελάτε να ενώσουμε τις καρδιές με αγάπη.
-      Μια ημέρα γεμάτη χαρά, γέλια και πολύτιμες στιγμές σας περιμένει,
-      εκεί όπου δύο οικογένειες γίνονται μία και τα όνειρα αρχίζουν το δικό τους «για πάντα».
+      Ελάτε να ενώσουμε τις καρδιές και τις ψυχές μας
+      στον ιερό δεσμό της αγάπης.
+      Μια ημέρα γεμάτη χαρά, γέλια και πολύτιμες στιγμές μάς περιμένει,
+      όπου δύο οικογένειες γίνονται μία,
+      και κάτω από την ευλογία του Κυρίου μας,
+      η αγάπη μας μεταμορφώνεται στο σταθερό θεμέλιο
+      της καινούργιας μας κοινής ζωής.
 
       Η τελετή θα πραγματοποιηθεί στον
       <b>Ιερό Ναό Κοιμήσεως της Θεοτόκου, Βατερό Κοζάνης, Τ.Κ. 50 150</b>
@@ -383,7 +390,7 @@ const translations = {
     venue_text:`
         Μετά τους όρκους μας, σας προσκαλούμε να γιορτάσουμε μαζί μια βραδιά γεμάτη χαρά και εορτασμό.  
         Ας μοιραστούμε γέλια, εκλεκτό φαγητό και χορό, υψώνοντας τα ποτήρια μας στην αγάπη,  
-        τη φιλία και την αρχή του «για πάντα» μας μαζί.  
+        τη φιλία και την αρχή του «για πάντα μαζί».  
         Ο εορτασμός θα πραγματοποιηθεί στο <b>Ακρίτας Venue, Αλωνάκια Κοζάνης, Τ.Κ. 50150</b>  
         (<a href="https://maps.app.goo.gl/tedw3MTLmbYG9Wz26" class="elegant-link" style="color: gold;"><b>δείτε τον χάρτη</b></a>).<br><br>
         <b>Σάββατο, 27 Ιουνίου 2026 · 20:30</b>
@@ -641,7 +648,7 @@ function calculateAndDisplay() {
   // THESSALONIKI + BUS
   if (flight === "thessaloniki" && transport === "bus") {
     const cityBus = 2.00;
-    const intercityBus = 13.50; // Approximate cost Thessaloniki to Kozani
+    const intercityBus = 12.60; // Approximate cost Thessaloniki to Kozani
     totalCost = cityBus + intercityBus;
 
     if (lang === "en") {
@@ -654,7 +661,7 @@ function calculateAndDisplay() {
           Each ticket costs <b>€${cityBus.toFixed(2)}</b> per person, payable by credit card.
           <br><br>
           From the "Macedonia" Central Bus Station, you can continue your journey to Kozani by intercity bus. 
-          Services depart <b>hourly until 22:00</b>, with an average travel time of approximately <b>two hours</b>, 
+          Services depart <b>hourly until 22:00</b>, with an average travel time of approximately <b>one hour and forty minutes</b> (even if it passes through Veroia town), 
           costing approximately <b>€${intercityBus.toFixed(2)}</b>.
           <br><br>
           <b style="color: #f4d03f;">💡 Important:</b> Don't forget to inform the travel agent if you are 
@@ -675,7 +682,7 @@ function calculateAndDisplay() {
           Κάθε εισιτήριο κοστίζει <b>${cityBus.toFixed(2)}€</b> ανά άτομο και πληρώνεται με κάρτα.
           <br><br>
           Από τον Κεντρικό Σταθμό «Μακεδονία», μπορείτε να συνεχίσετε το ταξίδι σας προς την Κοζάνη με υπεραστικό λεωφορείο. 
-          Τα δρομολόγια εκτελούνται <b>ανά ώρα έως τις 22:00</b>, με μέση διάρκεια διαδρομής περίπου <b>δύο ώρες</b>, 
+          Τα δρομολόγια εκτελούνται <b>ανά ώρα έως τις 22:00</b>, με μέση διάρκεια διαδρομής περίπου <b>μία ώρα και σαράντα λεπτά</b> (περνώντας και από Βέροια), 
           και κοστίζουν περίπου <b>${intercityBus.toFixed(2)}€</b>.
           <br><br>
           <b style="color: #f4d03f;">💡 Σημαντικό:</b> Μην ξεχάσετε να ενημερώσετε τον πράκτορα εάν είστε 
