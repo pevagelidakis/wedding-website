@@ -1049,7 +1049,7 @@ form {
 .footer {
   margin-top: 100px;
   padding: 60px 20px 40px;
-  background: black;
+  background: rgba(0,0,0,0.8);
   backdrop-filter: blur(8px);
   /* border-top: 1px solid rgba(212,175,55,0.3); */
   color: rgba(255,255,255,0.75);
@@ -1064,11 +1064,11 @@ form {
   width: 100%;
 }
 
-.footer-names p{
+.footer-names {
   font-family: 'Playfair Display', serif;
   font-size: 26px;
   margin-bottom: 8px;
-  color: gold;
+  color: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);;
 }
 
 .date {
