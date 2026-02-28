@@ -1055,12 +1055,12 @@ form {
   color: rgba(255,255,255,0.75);
   text-align: center;
   width: 100%;
-  box-sizing: border-box;  /* prevents overflow */
+  box-sizing: border-box;
 }
 
 .footer-content {
   max-width: 900px;
-  margin: 0 auto;          /* this is what actually centers it */
+  margin: 0 auto;
   width: 100%;
 }
 
