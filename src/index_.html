@@ -456,7 +456,7 @@
     <img src="media/SaveTheDate.jpg" alt="Wedding Details Card" loading="lazy" decoding="async">
   </div>
 </section>
-<footer style="text-align:center; padding:50px 20px; background:#1f1f1f; color:#f5f5f5;" id="footer"></footer>
+<footer class="fancy-footer" style="text-align:center; padding:50px 20px; background:#1f1f1f; color:#f5f5f5;" id="footer"></footer>
 <div id="petals-container"></div>
 <script>
 const translations = {
@@ -562,6 +562,7 @@ const translations = {
     footer:`
     <p>We look forward to celebrating with you</p>
     <p style="color:var(--accent);">Panagiotis & Marianna</p>
+    <p>© 2026 • All Rights Reserved <br> Crafted with 🤍 by the Groom <span class="soft">(soon to be)</span></p>
     `,
     names: "Panagiotis & Marianna"
   },
@@ -707,11 +708,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("language") || "gr";
   applyLanguage(savedLang);
 });
-
-// const card = document.getElementById("weddingCard");
-// card.addEventListener("click", function () {
-//   this.classList.toggle("flipped");
-// });
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //  COST CALCULATION
