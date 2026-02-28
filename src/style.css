@@ -1049,7 +1049,7 @@ form {
 .footer {
   margin-top: 100px;
   padding: 60px 20px 40px;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.9);
   backdrop-filter: blur(8px);
   border-top: 1px solid rgba(212,175,55,0.3);
   color: rgba(255,255,255,0.75);
