@@ -1068,7 +1068,7 @@ form {
   font-family: 'Playfair Display', serif;
   font-size: 26px;
   margin-bottom: 8px;
-  color: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);;
+  color: #d4af37;
 }
 
 .date {
