@@ -1048,18 +1048,17 @@ form {
 .footer {
   align-items: center;
   justify-content: center;
-  /* text-align: center; */
+  text-align: center;
   background:#1f1f1f;
   width: 100%;
   margin-top: 80px;
   padding: 30px 20px;
-  border-radius: 16px;
 }
 
 .fancy-footer {
   text-align: center;
   background: #1f1f1f;
-  max-width: 900px;        /* matches your other sections */
+  /* max-width: 900px;        matches your other sections */
   width: calc(100% - 40px); /* breathing room on mobile */
   /* margin: 80px auto 40px;  centers it + bottom gap */
   padding: 30px 20px;
