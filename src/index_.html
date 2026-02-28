@@ -26,7 +26,8 @@
 </div>
 
 </header>
-<style>.calculator-section {
+<style>
+.calculator-section {
     padding: 80px 20px;
     background: linear-gradient(135deg, rgba(30, 30, 30, 0.95) 0%, rgba(50, 40, 40, 0.95) 100%);
     position: relative;
@@ -263,8 +264,8 @@
     </div>
   </div>
 </section>
-  <h2 id="withGreatJoy"></h2>
-  <section class="invitation" id="invitation"></section>
+<h2 id="withGreatJoy"></h2>
+<section class="invitation" id="invitation"></section>
 
 <!-- ================= TEAM BRIDE ================= -->
 <h2 id="prewedd"></h2>
@@ -360,67 +361,33 @@
     <h2>Travel Cost Estimator</h2>
     <p class="calculator-subtitle">Plan your journey to Kozani with confidence</p>
 
-    <label>Main Travel Method</label>
-    <select id="method">
-      <option value="">Select your travel option</option>
-      <option value="air">✈️ Flight via Thessaloniki</option>
-      <option value="car_thess">🚗 Car via Thessaloniki</option>
-      <option value="car_athens">🚗 Car via Athens</option>
-      <option value="ferry">⛴ Ferry + Car (Crete)</option>
+    <label>Where will you fly to?</label>
+    <select id="flightDestination">
+      <option value="">Select airport</option>
+      <option value="thessaloniki">✈️ Thessaloniki (SKG)</option>
+      <option value="athens">✈️ Athens (ATH)</option>
     </select>
 
-    <!-- AIR -->
-    <div id="airSection" class="hidden input-section">
-      <label>Bus Ticket (Thessaloniki → Macedonia Station) €</label>
-      <input type="number" id="busTicket" value="2" min="0">
-
-      <label>Bus Thessaloniki → Kozani €</label>
-      <input type="number" id="ktelTicket" placeholder="Enter ticket cost">
+    <div id="transportSection" class="hidden">
+      <label>How will you travel to Kozani?</label>
+      <select id="transportMethod">
+        <option value="">Select transport</option>
+        <option value="car">🚗 By Car</option>
+        <option value="bus">🚌 By Bus</option>
+      </select>
     </div>
 
-    <!-- CAR THESS -->
-    <div id="carThessSection" class="hidden input-section">
-      <label>Fuel Price per Liter (€)</label>
-      <input type="number" id="fuelPrice1" value="1.9" step="0.01">
-
+    <!-- CAR OPTIONS -->
+    <div id="carOptions" class="hidden input-section">
       <label>Fuel Consumption (L/100km)</label>
-      <input type="number" id="consumption1" value="7.5" step="0.1">
-
-      <label>Total Distance (km)</label>
-      <input type="number" id="distance1" placeholder="Enter total distance">
-
-      <p>📍 Tolls: Malgara (€1.15) + Polymylos (€2.35)</p>
-    </div>
-
-    <!-- CAR ATHENS -->
-    <div id="carAthensSection" class="hidden input-section">
-      <label>Fuel Price per Liter (€)</label>
-      <input type="number" id="fuelPrice2" value="1.9" step="0.01">
-
-      <label>Fuel Consumption (L/100km)</label>
-      <input type="number" id="consumption2" value="7.5" step="0.1">
-
-      <p>📍 Total Distance: 444 km</p>
-      <p>💰 Total Tolls: €27.45</p>
-    </div>
-
-    <!-- FERRY -->
-    <div id="ferrySection" class="hidden input-section">
-      <label>Ferry Cost (€)</label>
-      <input type="number" id="ferryCost" placeholder="Enter ferry cost">
-
-      <label>Fuel Price per Liter (€)</label>
-      <input type="number" id="fuelPrice3" value="1.9" step="0.01">
-
-      <label>Fuel Consumption (L/100km)</label>
-      <input type="number" id="consumption3" value="7.5" step="0.1">
-
-      <label>Driving Distance After Ferry (km)</label>
-      <input type="number" id="distance3" placeholder="Enter distance">
+      <input type="number" id="fuelConsumption" value="7.5" step="0.1" min="1">
+      
+      <label>Current Fuel Price per Liter (€)</label>
+      <input type="number" id="fuelPrice" value="1.9" step="0.01" min="0.5">
     </div>
 
     <div class="result" id="result">
-      Select your travel method to see estimated costs
+      Select your travel options to see estimated costs and guidance
     </div>
   </div>
 </section>
@@ -822,71 +789,163 @@ card.addEventListener("click", function () {
 ////////////////////////////////////////////////////////////////////////////////////////
 //  COST CALCULATION
 ///////////////////////////////////////////////////////////////////////////////////////
-const method = document.getElementById("method");
+const flightDestination = document.getElementById("flightDestination");
+const transportMethod = document.getElementById("transportMethod");
+const transportSection = document.getElementById("transportSection");
+const carOptions = document.getElementById("carOptions");
 const result = document.getElementById("result");
 
-method.addEventListener("change", updateView);
-
-function updateView(){
-  document.querySelectorAll("#airSection, #carThessSection, #carAthensSection, #ferrySection")
-    .forEach(el => el.classList.add("hidden"));
-
-  if(method.value === "air")
-    document.getElementById("airSection").classList.remove("hidden");
-
-  if(method.value === "car_thess")
-    document.getElementById("carThessSection").classList.remove("hidden");
-
-  if(method.value === "car_athens")
-    document.getElementById("carAthensSection").classList.remove("hidden");
-
-  if(method.value === "ferry")
-    document.getElementById("ferrySection").classList.remove("hidden");
-
-  calculate();
-}
-
-document.querySelectorAll("input, select")
-  .forEach(el => el.addEventListener("input", calculate));
-
-function calculate(){
-  let total = 0;
-
-  if(method.value === "air"){
-    const bus = parseFloat(document.getElementById("busTicket").value) || 0;
-    const ktel = parseFloat(document.getElementById("ktelTicket").value) || 0;
-    total = bus + ktel;
-  }
-
-  if(method.value === "car_thess"){
-    const fuel = parseFloat(document.getElementById("fuelPrice1").value) || 0;
-    const cons = parseFloat(document.getElementById("consumption1").value) || 0;
-    const dist = parseFloat(document.getElementById("distance1").value) || 0;
-    const fuelCost = (dist / 100) * cons * fuel;
-    total = fuelCost + 1.15 + 2.35;
-  }
-
-  if(method.value === "car_athens"){
-    const fuel = parseFloat(document.getElementById("fuelPrice2").value) || 0;
-    const cons = parseFloat(document.getElementById("consumption2").value) || 0;
-    const fuelCost = (444 / 100) * cons * fuel;
-    total = fuelCost + 27.45;
-  }
-
-  if(method.value === "ferry"){
-    const ferry = parseFloat(document.getElementById("ferryCost").value) || 0;
-    const fuel = parseFloat(document.getElementById("fuelPrice3").value) || 0;
-    const cons = parseFloat(document.getElementById("consumption3").value) || 0;
-    const dist = parseFloat(document.getElementById("distance3").value) || 0;
-    const fuelCost = (dist / 100) * cons * fuel;
-    total = ferry + fuelCost;
-  }
-
-  if(total > 0){
-    result.innerHTML = `<strong>€${total.toFixed(2)}</strong><br><small style="opacity: 0.7; font-size: 0.9rem;">Estimated total travel cost</small>`;
+flightDestination.addEventListener("change", () => {
+  if (flightDestination.value) {
+    transportSection.classList.remove("hidden");
+    transportMethod.value = "";
+    carOptions.classList.add("hidden");
+    result.innerHTML = "Select your travel options to see estimated costs and guidance";
   } else {
-    result.innerHTML = "Select your travel method to see estimated costs";
+    transportSection.classList.add("hidden");
+    carOptions.classList.add("hidden");
+    result.innerHTML = "Select your travel options to see estimated costs and guidance";
   }
+});
+
+transportMethod.addEventListener("change", () => {
+  if (transportMethod.value === "car") {
+    carOptions.classList.remove("hidden");
+  } else {
+    carOptions.classList.add("hidden");
+  }
+  calculateAndDisplay();
+});
+
+document.getElementById("fuelConsumption").addEventListener("input", calculateAndDisplay);
+document.getElementById("fuelPrice").addEventListener("input", calculateAndDisplay);
+
+function calculateAndDisplay() {
+  const flight = flightDestination.value;
+  const transport = transportMethod.value;
+  
+  if (!flight || !transport) {
+    return;
+  }
+
+  let resultHTML = "";
+  let totalCost = 0;
+
+  // THESSALONIKI + CAR
+  if (flight === "thessaloniki" && transport === "car") {
+    const consumption = parseFloat(document.getElementById("fuelConsumption").value) || 7.5;
+    const fuelPrice = parseFloat(document.getElementById("fuelPrice").value) || 1.9;
+    const distance = 120; // Thessaloniki to Kozani approximately
+    const fuelCost = (distance / 100) * consumption * fuelPrice;
+    const tollsMalgara = 1.15;
+    const tollsPolymylos = 2.35;
+    const totalTolls = tollsMalgara + tollsPolymylos;
+    totalCost = fuelCost + totalTolls;
+
+    resultHTML = `
+      <strong>€${totalCost.toFixed(2)}</strong>
+      <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+        <b style="color: #f4d03f;">🚗 Driving from Thessaloniki to Kozani</b><br><br>
+        If you prefer to drive from Thessaloniki, keep in mind that you'll pass through toll stations at 
+        <b>Malgara (€${tollsMalgara.toFixed(2)})</b> and <b>Polymylos (€${tollsPolymylos.toFixed(2)})</b>, 
+        totaling <b>€${totalTolls.toFixed(2)}</b> in toll fees.
+        <br><br>
+        The journey covers approximately <b>${distance} km</b> and with your fuel consumption of 
+        <b>${consumption} L/100km</b> at current fuel prices of <b>€${fuelPrice}/L</b>, 
+        you'll spend approximately <b>€${fuelCost.toFixed(2)}</b> on fuel.
+        <br><br>
+        For Thessaloniki's traffic conditions, check 
+        <a href="https://flyover.imet.gr/" class="elegant-link" style="color: #d4af37;">this website</a>.
+      </p>
+    `;
+  }
+
+  // ATHENS + CAR
+  if (flight === "athens" && transport === "car") {
+    const consumption = parseFloat(document.getElementById("fuelConsumption").value) || 7.5;
+    const fuelPrice = parseFloat(document.getElementById("fuelPrice").value) || 1.9;
+    const distance = 444;
+    const fuelCost = (distance / 100) * consumption * fuelPrice;
+    const totalTolls = 27.45;
+    totalCost = fuelCost + totalTolls;
+
+    resultHTML = `
+      <strong>€${totalCost.toFixed(2)}</strong>
+      <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+        <b style="color: #f4d03f;">🚗 Driving from Athens to Kozani</b><br><br>
+        An alternative route through Athens is recommended for travelers using their own car. 
+        Following the New Egnatia Road to Thessaloniki, you'll encounter toll stations at 
+        <b>Afidnes (€3.90)</b>, <b>Thiva (€4.55)</b>, <b>Tragana (€4.55)</b>, <b>Agia Triada (€2.10)</b>, 
+        <b>Lianokladi (€2.05)</b>, <b>Sofades (€3.70)</b>, <b>Trikala (€3.25)</b>, 
+        <b>Kalampaka (€0.95)</b>, and <b>Siatista (€2.40)</b>.
+        <br><br>
+        This journey spans roughly <b>${distance} km</b>, takes about <b>five hours</b>, and includes 
+        approximately <b>€${totalTolls.toFixed(2)}</b> in toll fees.
+        <br><br>
+        With your fuel consumption of <b>${consumption} L/100km</b> at <b>€${fuelPrice}/L</b>, 
+        fuel costs will be approximately <b>€${fuelCost.toFixed(2)}</b>.
+        <br><br>
+        A helpful cost estimation tool: 
+        <a href="https://vriskoapostasi.gr/en/search" class="elegant-link" style="color: #d4af37;">vriskoapostasi.gr</a>
+      </p>
+    `;
+  }
+
+  // THESSALONIKI + BUS
+  if (flight === "thessaloniki" && transport === "bus") {
+    const cityBus = 2.00;
+    const intercityBus = 13.50; // Approximate cost Thessaloniki to Kozani
+    totalCost = cityBus + intercityBus;
+
+    resultHTML = `
+      <strong>€${totalCost.toFixed(2)}</strong>
+      <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+        <b style="color: #f4d03f;">🚌 Taking the Bus from Thessaloniki</b><br><br>
+        From Thessaloniki Airport, take the <b>01X</b> or <b>01N</b> bus lines to the Central Bus Station "Macedonia." 
+        Bus tickets can be purchased at OASTH (ΟΑΣΘ) kiosks or directly on the bus using the onboard ticket machine. 
+        Each ticket costs <b>€${cityBus.toFixed(2)}</b> per person, payable by credit card.
+        <br><br>
+        From the "Macedonia" Central Bus Station, you can continue your journey to Kozani by intercity bus. 
+        Services depart <b>hourly until 22:00</b>, with an average travel time of approximately <b>two hours</b>, 
+        costing approximately <b>€${intercityBus.toFixed(2)}</b>.
+        <br><br>
+        <b style="color: #f4d03f;">💡 Important:</b> Don't forget to inform the travel agent if you are 
+        <b>unemployed</b>, a <b>person with special needs</b>, or a <b>member of a family with more than 3 children</b> 
+        to receive available discounts. We also suggest booking a return ticket for additional savings!
+        <br><br>
+        Transportation agency: 
+        <a href="https://ktelmacedonia.gr/en/home/list/" class="elegant-link" style="color: #d4af37;">KTEL Macedonia</a>
+      </p>
+    `;
+  }
+
+  // ATHENS + BUS
+  if (flight === "athens" && transport === "bus") {
+    const metroAirport = 9.00; // Athens Airport to city center
+    const intercityBus = 42.00; // Athens to Kozani approximate
+    totalCost = metroAirport + intercityBus;
+
+    resultHTML = `
+      <strong>€${totalCost.toFixed(2)}</strong>
+      <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
+        <b style="color: #f4d03f;">🚌 Taking the Bus from Athens</b><br><br>
+        From Athens Airport, take the <b>Metro (Line 3)</b> or <b>Express Bus X93</b> to reach the city's 
+        intercity bus stations. The metro ticket costs approximately <b>€${metroAirport.toFixed(2)}</b>.
+        <br><br>
+        From Athens' Liosion Bus Station (KTEL), you can take an intercity bus directly to Kozani. 
+        The journey takes approximately <b>6-7 hours</b> and costs around <b>€${intercityBus.toFixed(2)}</b>.
+        <br><br>
+        <b style="color: #f4d03f;">💡 Important:</b> Don't forget to inform the travel agent if you are 
+        <b>unemployed</b>, a <b>person with special needs</b>, or a <b>member of a family with more than 3 children</b> 
+        to receive available discounts. We also suggest booking a return ticket for additional savings!
+        <br><br>
+        For schedules and bookings, visit: 
+        <a href="https://www.ktelkozanis.gr" class="elegant-link" style="color: #d4af37;">KTEL Kozanis</a>
+      </p>
+    `;
+  }
+
+  result.innerHTML = resultHTML;
 }
 </script>
 <script type="module" src="main.js" defer></script>
