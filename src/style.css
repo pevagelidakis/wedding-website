@@ -301,14 +301,24 @@ p {
 }
 
 .invitation {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 70px 30px 90px;
-  background:
-    linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),
-    url("media/inv-bg.jpg") top / cover no-repeat;
+  padding: 0;  /* ← Removed padding */
+  background: transparent;  /* ← Removed background overlay */
+  overflow: hidden;
+}
+
+.invitation img {
+  width: 100%;
+  height: auto;
+  display: block;
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.invitation footer {
+  padding: 30px 20px;
+  background: rgba(255,255,255,0.9);
+  margin-top: -5px;  /* ← Slightly overlaps image */
+  border-radius: 0 0 16px 16px;
 }
 
 .split-section + .vacations{
