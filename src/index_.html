@@ -48,6 +48,7 @@
       radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
     pointer-events: none;
     border-radius: 30px;
+    border: 1px solid rgba(212, 175, 55, 0.15);
 
   }
 
@@ -362,31 +363,31 @@
 <!-- <section class="vacations" id="vacations"></section> -->
 <section class="calculator-section">
   <div class="calculator">
-    <h2>Travel Cost Estimator</h2>
-    <p class="calculator-subtitle">Plan your journey to Kozani with confidence</p>
+    <h2 id="road2Koz">Travel Cost Estimator</h2>
+    <p class="calculator-subtitle" id="calculator_subtitle">Plan your journey to Kozani with confidence</p>
 
-    <label>Where will you fly to?</label>
+    <label id="where2fly">Where will you fly to?</label>
     <select id="flightDestination">
-      <option value="">Select airport</option>
-      <option value="thessaloniki">✈️ Thessaloniki (SKG)</option>
-      <option value="athens">✈️ Athens (ATH)</option>
+      <option value="" id="airport">Select airport</option>
+      <option value="thessaloniki" id="skg">✈️ Thessaloniki (SKG)</option>
+      <option value="athens" id="ath">✈️ Athens (ATH)</option>
     </select>
 
     <div id="transportSection" class="hidden">
-      <label>How will you travel to Kozani?</label>
+      <label id="trans">How will you travel to Kozani?</label>
       <select id="transportMethod">
-        <option value="">Select transport</option>
-        <option value="car">🚗 By Car</option>
-        <option value="bus">🚌 By Bus</option>
+        <option value="" id="transport">Select transport</option>
+        <option value="car" id="car">🚗 By Car</option>
+        <option value="bus" id="bus">🚌 By Bus</option>
       </select>
     </div>
 
     <!-- CAR OPTIONS -->
     <div id="carOptions" class="hidden input-section">
-      <label>Fuel Consumption (L/100km)</label>
+      <label id="consumption">Fuel Consumption (L/100km)</label>
       <input type="number" id="fuelConsumption" value="7.5" step="0.1" min="1">
       
-      <label>Current Fuel Price per Liter (€)</label>
+      <label id="price">Current Fuel Price per Liter (€)</label>
       <input type="number" id="fuelPrice" value="1.9" step="0.01" min="0.5">
     </div>
 
@@ -520,6 +521,18 @@ const translations = {
         (<a href="https://maps.app.goo.gl/tedw3MTLmbYG9Wz26" class="elegant-link" style="color: gold;"><b>see map</b></a>).<br><br>
         <b>Saturday, June 27, 2026 · 20:30</b>
     `,
+    road2Koz:"Travel Cost Estimator",
+    calculator_subtitle:"Plan your journey to Kozani with confidence",
+    where2fly:"Where will you start from?",
+    airport:"Select airport",
+    skg:"✈️ Thessaloniki (SKG)",
+    ath:"✈️ Athens (ΑΤΗ)",
+    trans:"How will you travel to Kozani?",
+    transport:"Select transport",
+    car:"🚗 By Car",
+    bus:"🚌 By Bus",
+    consumption:"Fuel Consumption (L/100km)",
+    price:"Current Fuel Price per Liter (€)",
     vacations:`
     <h2>Road to Kozani</h2>
   <p>
@@ -660,6 +673,18 @@ const translations = {
         (<a href="https://maps.app.goo.gl/tedw3MTLmbYG9Wz26" class="elegant-link" style="color: gold;"><b>δείτε τον χάρτη</b></a>).<br><br>
         <b>Σάββατο, 27 Ιουνίου 2026 · 20:30</b>
     `,
+    road2Koz:"Εκτίμηση Κόστους Διαδρομής",
+    calculator_subtitle:"Οργανώστε το ταξίδι σας στην Κοζάνη με άνεση",
+    where2fly:"Απο πού θα ξεκινήσετε?",
+    airport:"Επιλέξτε Αεροδρόμιο",
+    skg:"✈️ Θεσσαλονίκη (SKG)",
+    ath:"✈️ Αθήνα (ΑΤΗ)",
+    trans:"Πως θα ταξιδέψετε προς Κοζάνη από εκεί?",
+    transport:"Επιλέξτε μέσο μεταφοράς",
+    car:"🚗 Με αμάξι",
+    bus:"🚌 Με λεωφορείο",
+    consumption:"Μέση Κατανάλωση αυτοκινήτου (L/100km)",
+    price:"Τρέχουσα μέση τιμή καυσίμου ανά Λίτρο (€)",
     vacations:`
     <h2>Προς Κοζάνη</h2>
   <p>
@@ -867,16 +892,16 @@ function calculateAndDisplay() {
       `;
     } else {
       resultHTML = `
-        <strong>€${totalCost.toFixed(2)}</strong>
+        <strong>${totalCost.toFixed(2)}€</strong>
         <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
           <b style="color: #f4d03f;">🚗 Οδική μετάβαση από Θεσσαλονίκη προς Κοζάνη</b><br><br>
           Εάν προτιμάτε να οδηγήσετε από τη Θεσσαλονίκη, λάβετε υπόψη ότι θα διέλθετε από σταθμούς διοδίων στα 
-          <b>Μάλγαρα (€${tollsMalgara.toFixed(2)})</b> και στον <b>Πολύμυλο (€${tollsPolymylos.toFixed(2)})</b>, 
-          με συνολικό κόστος διοδίων <b>€${totalTolls.toFixed(2)}</b>.
+          <b>Μάλγαρα (${tollsMalgara.toFixed(2)}€)</b> και στον <b>Πολύμυλο (${tollsPolymylos.toFixed(2)}€)</b>, 
+          με συνολικό κόστος διοδίων <b>${totalTolls.toFixed(2)}€</b>.
           <br><br>
           Η διαδρομή καλύπτει περίπου <b>${distance} χλμ</b> και με την κατανάλωση καυσίμου σας 
-          <b>${consumption} L/100χλμ</b> στην τρέχουσα τιμή <b>€${fuelPrice}/L</b>, 
-          θα δαπανήσετε περίπου <b>€${fuelCost.toFixed(2)}</b> για καύσιμα.
+          <b>${consumption} L/100χλμ</b> στην τρέχουσα τιμή <b>${fuelPrice}€/L</b>, 
+          θα δαπανήσετε περίπου <b>${fuelCost.toFixed(2)}€</b> για καύσιμα.
           <br><br>
           Για την κυκλοφοριακή κατάσταση στη Θεσσαλονίκη, ελέγξτε 
           <a href="https://flyover.imet.gr/" class="elegant-link" style="color: #d4af37;">αυτόν τον ιστότοπο</a>.
@@ -896,21 +921,21 @@ function calculateAndDisplay() {
 
     if (lang === "en") {
       resultHTML = `
-        <p><strong>${totalCost}€</strong> or ${totalCost-2.55}€ if you are not coming from the airport</p>
+        <p><strong>€${totalCost}</strong> or €${totalCost-2.55} if you are not coming from the airport</p>
         <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
           <b style="color: #f4d03f;">🚗 Driving from Athens to Kozani</b><br><br>
           An alternative route through Athens is recommended for travelers using their own car. 
           Following the New Egnatia Road to Thessaloniki, you'll encounter toll stations at 
-          <b>Attiki Odos (2.55€)</b> if your starting point is the Eleftherios Venizelos Airport,
-          <b>Afidnes (3.90€)</b>, <b>Thiva (4.55€)</b>, <b>Tragana (4.55€)</b>, <b>Agia Triada (2.10€)</b>, 
-          <b>Lianokladi (2.05€)</b>, <b>Sofades (3.70€)</b>, <b>Trikala (3.25€)</b>, 
-          <b>Kalampaka (0.95€)</b>, and <b>Siatista (2.40€)</b>.
+          <b>Attiki Odos (€2.55)</b> if your starting point is the Eleftherios Venizelos Airport,
+          <b>Afidnes (€3.90)</b>, <b>Thiva (€4.55)</b>, <b>Tragana (€4.55)</b>, <b>Agia Triada (€2.10)</b>, 
+          <b>Lianokladi (€2.05)</b>, <b>Sofades (€3.70)</b>, <b>Trikala (€3.25)</b>, 
+          <b>Kalampaka (€0.95)</b>, and <b>Siatista (€2.40)</b>.
           <br><br>
           This journey spans roughly <b>${distance} km</b>, takes about <b>five hours</b>, and includes 
-          approximately <b>${totalTolls.toFixed(2)}€</b> in toll fees.
+          approximately <b>€${totalTolls.toFixed(2)}</b> in toll fees.
           <br><br>
-          With your fuel consumption of <b>${consumption} L/100km</b> at <b>${fuelPrice}€/L</b>, 
-          fuel costs will be approximately <b>${fuelCost}€</b> or ${totalCost-2.55}€ if you are not coming from the airport.
+          With your fuel consumption of <b>${consumption} L/100km</b> at <b>€${fuelPrice}/L</b>, 
+          fuel costs will be approximately <b>€${fuelCost}</b> or €${totalCost-2.55} if you are not coming from the airport.
           <br><br>
           A helpful cost estimation tool: 
           <a href="https://vriskoapostasi.gr/en/search" class="elegant-link" style="color: #d4af37;">vriskoapostasi.gr</a><br>
@@ -959,11 +984,11 @@ function calculateAndDisplay() {
           <b style="color: #f4d03f;">🚌 Taking the Bus from Thessaloniki</b><br><br>
           From Thessaloniki Airport, take the <b>01X</b> or <b>01N</b> bus lines to the Central Bus Station "Macedonia." 
           Bus tickets can be purchased at OASTH (ΟΑΣΘ) kiosks or directly on the bus using the onboard ticket machine. 
-          Each ticket costs <b>${cityBus.toFixed(2)}€</b> per person, payable by credit card.
+          Each ticket costs <b>€${cityBus.toFixed(2)}</b> per person, payable by credit card.
           <br><br>
           From the "Macedonia" Central Bus Station, you can continue your journey to Kozani by intercity bus. 
           Services depart <b>hourly until 22:00</b>, with an average travel time of approximately <b>two hours</b>, 
-          costing approximately <b>${intercityBus.toFixed(2)}€</b>.
+          costing approximately <b>€${intercityBus.toFixed(2)}</b>.
           <br><br>
           <b style="color: #f4d03f;">💡 Important:</b> Don't forget to inform the travel agent if you are 
           <b>unemployed</b>, a <b>person with special needs</b>, or a <b>member of a family with more than 3 children</b> 
@@ -1009,10 +1034,10 @@ function calculateAndDisplay() {
         <p style="margin-top: 20px; text-align: left; line-height: 1.8; color: rgba(255,255,255,0.85);">
           <b style="color: #f4d03f;">🚌 Taking the Bus from Athens</b><br><br>
           From Athens Airport, take the <b>Metro (Line 3)</b> or <b>Express Bus X93</b> to reach the city's 
-          intercity bus stations. The metro ticket costs approximately <b>€${metroAirport.toFixed(2)}€</b>.
+          intercity bus stations. The metro ticket costs approximately <b>€${metroAirport.toFixed(2)}</b>.
           <br><br>
           From Athens' Liosion Bus Station (KTEL), you can take an intercity bus directly to Kozani. 
-          The journey takes approximately <b>6-7 hours</b> and costs around <b>${intercityBus.toFixed(2)}€</b>.
+          The journey takes approximately <b>6-7 hours</b> and costs around <b>€${intercityBus.toFixed(2)}</b>.
           <br><br>
           <b style="color: #f4d03f;">💡 Important:</b> Don't forget to inform the travel agent if you are 
           <b>unemployed</b>, a <b>person with special needs</b>, or a <b>member of a family with more than 3 children</b> 
