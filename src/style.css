@@ -1049,9 +1049,9 @@ form {
 .footer {
   margin-top: 100px;
   padding: 60px 20px 40px;
-  background: rgba(0,0,0,0.9);
+  background: black;
   backdrop-filter: blur(8px);
-  border-top: 1px solid rgba(212,175,55,0.3);
+  /* border-top: 1px solid rgba(212,175,55,0.3); */
   color: rgba(255,255,255,0.75);
   text-align: center;
   width: 100%;
@@ -1064,14 +1064,14 @@ form {
   width: 100%;
 }
 
-.footer-names h3 {
+.footer-names p{
   font-family: 'Playfair Display', serif;
   font-size: 26px;
   margin-bottom: 8px;
   color: gold;
 }
 
-.footer-names .date {
+.date {
   font-size: 14px;
   opacity: 0.7;
   margin-bottom: 30px;
