@@ -1054,10 +1054,13 @@ form {
   border-top: 1px solid rgba(212,175,55,0.3);
   color: rgba(255,255,255,0.75);
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-items: center;
 }
 
 .footer-content {
-  max-width: 900px;
+  /* max-width: 900px; */
   margin: 0 auto;
 }
 
