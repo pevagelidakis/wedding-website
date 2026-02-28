@@ -882,6 +882,11 @@ form {
   text-align: center;
 }
 
+.photos-album-msg{
+  font-size: 1.05rem;
+}
+
+
 /* @media (max-width: 768px) {
   .desktop-message {
     display: none;
