@@ -26,7 +26,46 @@
 </div>
 
 </header>
+<style>
+  .calculator{
+  max-width:650px;
+  width:100%;
+  background:var(--bg);
+  padding:30px;
+  border-radius:20px;
+  backdrop-filter: blur(10px);
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
 
+.hidden{
+  display:none;
+}
+
+.result{
+  margin-top:30px;
+  padding:20px;
+  border-radius:14px;
+  background:rgba(212,175,55,.1);
+  border:1px solid rgba(212,175,55,.4);
+  font-size:18px;
+}
+</style>
+<h2 id="SaveTheDate">Save The Date</h2>
+<section class="fancy-card-section">
+  <div class="flip-card" id="weddingCard" style="justify-content: center;">
+    <div class="flip-card-inner">
+      <div class="flip-card-front">
+        <div class="fancy-card">
+          <img src="media/SaveTheDate.jpg" alt="Wedding Details Card" loading="lazy" decoding="async">
+        </div>
+      </div>
+      <div class="flip-card-back">
+        <img src="media/wedding-bg.png" alt="Wedding Card Back" loading="lazy" decoding="async">
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
   <!-- <h2 id="withGreatJoy"></h2>
   <section class="invitation" id="invitation"></section> -->
 
@@ -118,7 +157,73 @@
   </div>
 </section>
 
-<section class="vacations" id="vacations"></section>
+<!-- <section class="vacations" id="vacations"></section> -->
+<div class="calculator">
+  <h2>Travel Cost Estimator to Kozani</h2>
+
+  <label>Main Travel Method</label>
+  <select id="method">
+    <option value="">Select option</option>
+    <option value="air">✈️ Flight via Thessaloniki</option>
+    <option value="car_thess">🚗 Car via Thessaloniki</option>
+    <option value="car_athens">🚗 Car via Athens</option>
+    <option value="ferry">⛴ Ferry + Car (Crete)</option>
+  </select>
+
+  <!-- AIR -->
+  <div id="airSection" class="hidden">
+    <label>Bus Ticket (Thessaloniki → Macedonia Station)</label>
+    <input type="number" id="busTicket" value="2" min="0">
+
+    <label>Bus Thessaloniki → Kozani</label>
+    <input type="number" id="ktelTicket" placeholder="Enter ticket cost (€)">
+  </div>
+
+  <!-- CAR THESS -->
+  <div id="carThessSection" class="hidden">
+    <label>Fuel Price per Liter (€)</label>
+    <input type="number" id="fuelPrice1" value="1.9" step="0.01">
+
+    <label>Fuel Consumption (L/100km)</label>
+    <input type="number" id="consumption1" value="7.5">
+
+    <label>Total Distance (km)</label>
+    <input type="number" id="distance1" placeholder="Enter total km">
+
+    <p>Tolls: Malgara (€1.15) + Polymylos (€2.35)</p>
+  </div>
+
+  <!-- CAR ATHENS -->
+  <div id="carAthensSection" class="hidden">
+    <label>Fuel Price per Liter (€)</label>
+    <input type="number" id="fuelPrice2" value="1.9" step="0.01">
+
+    <label>Fuel Consumption (L/100km)</label>
+    <input type="number" id="consumption2" value="7.5">
+
+    <p>Total Distance: 444 km</p>
+    <p>Total Tolls: €27.45</p>
+  </div>
+
+  <!-- FERRY -->
+  <div id="ferrySection" class="hidden">
+    <label>Ferry Cost (€)</label>
+    <input type="number" id="ferryCost">
+
+    <label>Fuel Price per Liter (€)</label>
+    <input type="number" id="fuelPrice3" value="1.9" step="0.01">
+
+    <label>Fuel Consumption (L/100km)</label>
+    <input type="number" id="consumption3" value="7.5">
+
+    <label>Driving Distance After Ferry (km)</label>
+    <input type="number" id="distance3">
+  </div>
+
+  <div class="result" id="result">
+    Estimated cost will appear here.
+  </div>
+</div>
 
 <section class="rsvp-section" id="rsvp">
   <h2 class="rsvp-title" id="rsvpTitle"></h2>
@@ -176,24 +281,6 @@
 </section>
 
 <div id="petal-container"></div>
-
-
-<h2 id="SaveTheDate">Save The Date</h2>
-<section class="fancy-card-section">
-  <div class="flip-card" id="weddingCard" style="justify-content: center;">
-    <div class="flip-card-inner">
-      <div class="flip-card-front">
-        <div class="fancy-card">
-          <img src="media/SaveTheDate.jpg" alt="Wedding Details Card" loading="lazy" decoding="async">
-        </div>
-      </div>
-      <div class="flip-card-back">
-        <img src="media/wedding-bg.png" alt="Wedding Card Back" loading="lazy" decoding="async">
-      </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="desktop-message" id="desktop_message"></section>
 
@@ -531,6 +618,74 @@ const card = document.getElementById("weddingCard");
 card.addEventListener("click", function () {
   this.classList.toggle("flipped");
 });
+
+////////////////////////////////////////////////////////////////////////////////////////
+//  COST CALCULATION
+///////////////////////////////////////////////////////////////////////////////////////
+const method = document.getElementById("method");
+const result = document.getElementById("result");
+
+method.addEventListener("change", updateView);
+
+function updateView(){
+  document.querySelectorAll(".hidden, #airSection, #carThessSection, #carAthensSection, #ferrySection")
+    .forEach(el => el.classList.add("hidden"));
+
+  if(method.value === "air")
+    document.getElementById("airSection").classList.remove("hidden");
+
+  if(method.value === "car_thess")
+    document.getElementById("carThessSection").classList.remove("hidden");
+
+  if(method.value === "car_athens")
+    document.getElementById("carAthensSection").classList.remove("hidden");
+
+  if(method.value === "ferry")
+    document.getElementById("ferrySection").classList.remove("hidden");
+
+  calculate();
+}
+
+document.querySelectorAll("input, select")
+  .forEach(el => el.addEventListener("input", calculate));
+
+function calculate(){
+  let total = 0;
+
+  if(method.value === "air"){
+    const bus = parseFloat(busTicket.value) || 0;
+    const ktel = parseFloat(ktelTicket.value) || 0;
+    total = bus + ktel;
+  }
+
+  if(method.value === "car_thess"){
+    const fuel = fuelPrice1.value;
+    const cons = consumption1.value;
+    const dist = distance1.value;
+    const fuelCost = (dist / 100) * cons * fuel;
+    total = fuelCost + 1.15 + 2.35;
+  }
+
+  if(method.value === "car_athens"){
+    const fuel = fuelPrice2.value;
+    const cons = consumption2.value;
+    const fuelCost = (444 / 100) * cons * fuel;
+    total = fuelCost + 27.45;
+  }
+
+  if(method.value === "ferry"){
+    const ferry = parseFloat(ferryCost.value) || 0;
+    const fuel = fuelPrice3.value;
+    const cons = consumption3.value;
+    const dist = distance3.value;
+    const fuelCost = (dist / 100) * cons * fuel;
+    total = ferry + fuelCost;
+  }
+
+  result.innerHTML = total > 0
+    ? `Estimated Total Cost: <strong>€${total.toFixed(2)}</strong>`
+    : "Estimated cost will appear here.";
+}
 </script>
 <script type="module" src="main.js" defer></script>
 </body>
