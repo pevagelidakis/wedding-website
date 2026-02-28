@@ -457,7 +457,7 @@
     </div>
 
     <div class="result" id="result">
-      Select your travel options to see estimated costs and guidance
+      <span id="placeholder">Select your travel options to see estimated costs and guidance</span>
     </div>
   </div>
 </section>
@@ -544,37 +544,7 @@ const translations = {
     bus:"🚌 By Bus",
     consumption:"Fuel Consumption (L/100km)",
     price:"Current Fuel Price per Liter (€)",
-    vacations:`
-    <h2>Road to Kozani</h2>
-  <p>
-    Traveling to Kozani is straightforward, offering several convenient options. By air, you can fly from your nearest airport,
-    such as Heraklion or Chania, to Thessaloniki (SKG). From there, you may rent a car, book a taxi or Uber, or take the
-    <b>01X</b> or <b>01N</b> bus lines to the Central Bus Station “Macedonia.” Bus tickets can be purchased at the Organization of
-    Urban Transportation of Thessaloniki (OASTH/ΟΑΣΘ) kiosks or directly on the bus using the onboard ticket machine.
-    Each ticket costs €2 per person, payable by credit card, without the need to interact with the driver.
-    <br>
-    From the “Macedonia” Central Bus Station, you can continue your journey to Kozani by bus. 
-    Services depart hourly until 22:00, with an average travel time of approximately two hours, 
-    delivering you to Kozani’s Central Bus Station, from where your hotel or apartment is easily accessible. 
-    Don't forget to inform the travel agent if you are unemployed, person with special needs, or member of family with more than 3 children. 
-    We also suggest you to book a ticket with return for more discount (the departure time can always change). <br>
-    <a href="https://ktelmacedonia.gr/en/home/list/" class="elegant-link" style="color:var(--accent)">Here</a> is the tranportation agency platform for more information. 
-    <br>
-    If you prefer to drive, keep in mind that traveling via Thessaloniki involves passing through toll stations at Malgara and Polymylos(€1.15 and €2.35),
-    which should be factored into your estimated costs. For Thessaloniki's traffic state you can take information from 
-    <a href="https://flyover.imet.gr/" class="elegant-link" style="color:var(--accent)">this website</a>
-    <br> 
-    An alternative route is through Athens, recommended for travelers using their own car. Following the New Egnatia Road to Thessaloniki, 
-    you will encounter toll stations at Afidnes (€3.90), Thiva (€4.55), Tragana (€4.55), Agia Triada (€2.10), Lianokladi (€2.05), Sofades (€3.70), 
-    Trikala (€3.25), Kalampaka (€0.95), and Siatista (€2.40). This journey spans roughly 444 km, takes about five hours, and is estimated to 
-    cost €86.75 for a vehicle consuming 7.5 L/100 km, including approximately €27.45 given in toll fees.
-    <br>
-    A really helpful website for estimating the cost can be found <a href="https://vriskoapostasi.gr/en/search" class="elegant-link" style="color:var(--accent)">here</a>
-  </p>
-   <p>
-    Adventurous travelers may prefer a road trip: taking the ferry from Crete to the mainland and then driving north to Kozani (~6–7 hours) allows you to soak in the Greek countryside along the way. Each travel option offers its own charm, ensuring your journey to Kozani is as memorable as the destination itself.
-  </p> 
-  `,
+    placeholder:"Select your travel options to see estimated costs and guidance",
     rsvpTitle: "Kindly Respond",
     rsvp_intro:`
     We would be honored to celebrate this special day with you.<br>
@@ -697,51 +667,7 @@ const translations = {
     bus:"🚌 Με λεωφορείο",
     consumption:"Μέση Κατανάλωση αυτοκινήτου (L/100km)",
     price:"Τρέχουσα μέση τιμή καυσίμου ανά Λίτρο (€)",
-    vacations:`
-    <h2>Προς Κοζάνη</h2>
-  <p>
-    Η μετάβαση στην Κοζάνη είναι ιδιαίτερα εύκολη, καθώς προσφέρονται αρκετές άνετες και πρακτικές επιλογές.
-     Αεροπορικώς, μπορείτε να ταξιδέψετε από το πλησιέστερο αεροδρόμιό σας, όπως το Ηράκλειο ή τα Χανιά, 
-     προς τη Θεσσαλονίκη (SKG). Από εκεί, έχετε τη δυνατότητα να ενοικιάσετε αυτοκίνητο, να καλέσετε ταξί ή Uber, 
-     ή να χρησιμοποιήσετε τις λεωφορειακές γραμμές <b>01X</b> ή <b>01N</b> με προορισμό τον Κεντρικό Σταθμό 
-     Υπεραστικών Λεωφορείων «Μακεδονία».
-     Τα εισιτήρια των αστικών λεωφορείων διατίθενται στα εκδοτήρια του Οργανισμού Αστικών Συγκοινωνιών Θεσσαλονίκης (ΟΑΣΘ) 
-     ή μπορούν να εκδοθούν απευθείας εντός του λεωφορείου μέσω του αυτόματου μηχανήματος. 
-     Το κόστος ανέρχεται σε 2€ ανά άτομο και η πληρωμή πραγματοποιείται με χρεωστική ή πιστωτική κάρτα, 
-     χωρίς να απαιτείται συναλλαγή με τον οδηγό.
-     <br>
-     Από τον Κεντρικό Σταθμό «Μακεδονία» μπορείτε να συνεχίσετε το ταξίδι σας προς την Κοζάνη με υπεραστικό λεωφορείο.
-      Τα δρομολόγια εκτελούνται ανά ώρα έως τις 22:00, με μέση διάρκεια διαδρομής περίπου δύο ώρες. 
-      Η άφιξη πραγματοποιείται στον Κεντρικό Σταθμό Κοζάνης, από όπου η πρόσβαση στο ξενοδοχείο 
-      ή το κατάλυμά σας είναι ιδιαίτερα εύκολη.
-      Παρακαλούμε να ενημερώσετε το πρακτορείο σε περίπτωση που είστε άνεργος/η, άτομο με αναπηρία ή μέλος πολύτεκνης οικογένειας, 
-      ώστε να επωφεληθείτε από τυχούσες εκπτώσεις. Συνιστούμε επίσης την έκδοση εισιτηρίου με επιστροφή, 
-      για επιπλέον οικονομικό όφελος (η ώρα αναχώρησης μπορεί πάντοτε να τροποποιηθεί).
-      Για περισσότερες πληροφορίες, μπορείτε να επισκεφθείτε την 
-      <a href="https://ktelmacedonia.gr/en/home/list/" class="elegant-link" style="color:var(--accent)">ηλεκτρονική πλατφόρμα του πρακτορείου μεταφορών</a>.
-      <br>
-      Εάν προτιμάτε να μετακινηθείτε οδικώς μέσω Θεσσαλονίκης, λάβετε υπόψη ότι θα συναντήσετε σταθμούς διοδίων στα Μάλγαρα 
-      (€1,15) και στον Πολύμυλο (€2,35), ποσά τα οποία καλό είναι να συμπεριλάβετε στον προϋπολογισμό σας. Για ενημέρωση 
-      σχετικά με την κυκλοφοριακή κατάσταση στη Θεσσαλονίκη, μπορείτε να συμβουλευτείτε την 
-      <a href="https://flyover.imet.gr/" class="elegant-link" style="color:var(--accent)">αντίστοιχη ιστοσελίδα</a>.
-      <br>
-      Εναλλακτικά, προτείνεται η διαδρομή μέσω Αθηνών, ιδανική για όσους ταξιδεύουν με ιδιωτικό όχημα. Ακολουθώντας τον 
-      αυτοκινητόδρομο προς Θεσσαλονίκη, θα συναντήσετε σταθμούς διοδίων στις Αφίδνες (€3,90), τη Θήβα (€4,55), 
-      τα Τραγάνα (€4,55), την Αγία Τριάδα (€2,10), το Λιανοκλάδι (€2,05), τους Σοφάδες (€3,70), τα Τρίκαλα (€3,25), 
-      την Καλαμπάκα (€0,95) και τη Σιάτιστα (€2,40). Η διαδρομή εκτείνεται σε περίπου 444 χιλιόμετρα, διαρκεί περίπου πέντε 
-      ώρες και εκτιμάται ότι κοστίζει περί τα €86,75 για όχημα με κατανάλωση 7,5 λίτρα/100 χλμ., συμπεριλαμβανομένης της χρέωσης 
-      περίπου €27,45 σε διόδια.
-      <br>
-      Μία ιδιαίτερα χρήσιμη ιστοσελίδα για τον υπολογισμό του συνολικού κόστους διαδρομής είναι διαθέσιμη <a href="https://vriskoapostasi.gr/en/search" class="elegant-link" style="color:var(--accent)">εδώ</a>
-  </p>.
-    <p>
-      Για τους πιο περιπετειώδεις, μια οδική εκδρομή αποτελεί μια γοητευτική επιλογή: ταξιδεύοντας ακτοπλοϊκώς από την Κρήτη 
-      προς την ηπειρωτική Ελλάδα και συνεχίζοντας οδικώς προς την Κοζάνη (περίπου 6–7 ώρες), 
-      θα έχετε την ευκαιρία να απολαύσετε τη μαγεία της ελληνικής υπαίθρου.
-      Κάθε τρόπος μετακίνησης έχει τη δική του χάρη, διασφαλίζοντας ότι το ταξίδι σας προς την 
-      Κοζάνη θα είναι εξίσου όμορφο και αξέχαστο με τον ίδιο τον προορισμό.
-  </p> 
-  `,
+    placeholder:"Επιλέξτε το ταξίδι σας για να δειτε μία εκτίμηση κόστους αλλά και να σας συμβουλέψουμε.",
     rsvpTitle: `<span style="font-family: 'GFS Didot', serif;">Παρακαλούμε ενημερώστε μας</span>`,
     rsvp_intro:`
     Θα ήταν τιμή μας να γιορτάσουμε την ξεχωριστή αυτή ημέρα μαζί σας!<br> 
