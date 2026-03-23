@@ -225,6 +225,150 @@
   </div>
 </section>
 
+<!-- ================= HOTEL ACCOMMODATION ================= -->
+<h2 id="accommodationTitle"></h2>
+<section class="hotel-flip-section">
+ 
+  <div class="hotel-flip-card" id="hotelFlipCard" onclick="flipHotelCard(event)">
+    <div class="hotel-flip-inner" id="hotelFlipInner">
+ 
+      <!-- ═══════════════ FRONT FACE ═══════════════ -->
+      <div class="hotel-face hotel-front">
+ 
+        <!-- Left column: identity + description + amenities -->
+        <div class="hf-left">
+ 
+          <div class="hf-category-label" id="hf_category_label">ACCOMMODATION</div>
+ 
+          <div class="hf-logo-wrap">
+            <div class="hf-logo-ring">
+              <img src="../media/anesis_logo.png" alt="Anesis HotelLogo">
+            </div>
+          </div>
+ 
+          <h3 class="hf-name" id = "hf_name">ANESIS</h3>
+          <!-- <p class="hf-name-gr">ΑΝΕΣΙΣ</p> -->
+ 
+          <div class="hf-stars">
+            <span>★</span><span>★</span>
+          </div>
+ 
+          <div class="hf-divider"></div>
+ 
+          <p class="hf-description" id="hotelIntro"></p>
+ 
+          <div class="hf-amenities">
+            <div class="hf-amenity"><span class="hf-amenity-icon">🐶</span><span id="hfAmenity1"></span></div>
+            <div class="hf-amenity"><span class="hf-amenity-icon">🐾</span><span id="hfAmenity2"></span></div>
+            <div class="hf-amenity"><span class="hf-amenity-icon">📍</span><span id="hfAmenity3"></span></div>
+            <div class="hf-amenity"><span class="hf-amenity-icon">🧾</span><span id="hfAmenity4"></span></div>
+          </div>
+ 
+          <div class="hf-flip-cta">
+            <span id="hfCtaText"></span>
+            <span class="hf-cta-arrow">→</span>
+          </div>
+ 
+        </div>
+ 
+        <!-- Right column: map -->
+        <div class="hf-right">
+          <div class="hf-map-wrap">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3042.9662419167216!2d21.790089100000003!3d40.2987085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1359d26dea4575af%3A0x667fc2673327b1e0!2zzp7Otc69zr_OtM6_z4fOtc6vzr8gzpHOnc6VzqPOoo6ZzqM!5e0!3m2!1sel!2sgr!4v1774181599754!5m2!1sel!2sgr"
+              width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+            <div class="hf-map-address" id="hf_map_address"></div>
+          </div>
+        </div>
+ 
+      </div><!-- /hotel-front -->
+ 
+      <!-- ═══════════════ BACK FACE ═══════════════ -->
+      <div class="hotel-face hotel-back">
+ 
+        <!-- Decorative top band -->
+        <div class="hb-topband">
+          <div class="hb-topband-left">
+            <span class="hb-back-label" id="hb_back_label">RESERVATION DETAILS</span>
+            <h3 class="hb-title">ANESIS · <em>ΑΝΕΣΙΣ</em></h3>
+          </div>
+          <button class="hb-close-btn" onclick="flipHotelCard(event)" title="Flip back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          </button>
+        </div>
+ 
+        <div class="hb-body">
+ 
+          <!-- Discount block — full width -->
+          <div class="hb-block hb-discount">
+            <div class="hb-block-header">
+              <span class="hb-block-icon">🎁</span>
+              <h4 id="discountTitle"></h4>
+            </div>
+            <div class="hb-discount-rows" id="discountTable"></div>
+            <p class="hb-discount-note" id="discountNote"></p>
+          </div>
+ 
+          <!-- Code + Contact side by side -->
+          <div class="hb-row-two">
+ 
+            <div class="hb-block hb-code">
+              <div class="hb-block-header">
+                <span class="hb-block-icon">🔑</span>
+                <h4 id="codeTitle"></h4>
+              </div>
+              <div class="hb-code-pill">
+                <span id="codeValue"></span>
+                <button class="hb-copy-btn" onclick="copyCode(event)" id="copyCodeBtn" title="Copy">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </div>
+              <p class="hb-code-note" id="codeInstructions"></p>
+            </div>
+ 
+            <div class="hb-block hb-contact">
+              <div class="hb-block-header">
+                <span class="hb-block-icon">📞</span>
+                <h4 id="contactTitle"></h4>
+              </div>
+              <ul class="hb-contact-list">
+                <li>
+                  <span class="hb-contact-lbl">Tel</span>
+                  <a href="tel:+302461022504" onclick="event.stopPropagation()"><b>+30 24610 22504-5</b></a>
+                </li>
+                <li>
+                  <span class="hb-contact-lbl">Email</span>
+                  <a href="mailto:res@anesis-hotel.gr" onclick="event.stopPropagation()"><b>res@anesis-hotel.gr</b></a>
+                </li>
+                <li>
+                  <span class="hb-contact-lbl">Web</span>
+                  <a href="https://anesis-hotel.gr/" target="_blank" rel="noopener" onclick="event.stopPropagation()"><b>anesis-hotel.gr ↗</b></a>
+                </li>
+              </ul>
+            </div>
+ 
+          </div><!-- /hb-row-two -->
+ 
+          <!-- Perks row -->
+          <div class="hb-block hb-perks">
+            <div class="hb-block-header">
+              <span class="hb-block-icon">✨</span>
+              <h4 id="perksTitle"></h4>
+            </div>
+            <ul class="hb-perks-list" id="perksList"></ul>
+          </div>
+ 
+        </div><!-- /hb-body -->
+ 
+      </div><!-- /hotel-back -->
+ 
+    </div><!-- /hotel-flip-inner -->
+  </div><!-- /hotel-flip-card -->
+ 
+</section>
+
 <div id="petals-container"></div>
 <footer class="footer">
   <div class="footer-content">
@@ -329,6 +473,33 @@ const translations = {
     </p>
     `,
     digital_album: "Check our current digital album (LIVE🔴)!",
+    accommodationTitle: "Where to Stay",
+    hotelIntro: `Planning your stay in Kozani? We've arranged a special deal for our guests at <strong>Hotel Anesis</strong>: a comfortable, centrally-located hotel just steps from Lassanis Square.`,
+    hotelToggleBtnText: "View Reservation Details & Exclusive Discount",
+    hfAmenity1:"Pet Friendly",
+    hfAmenity2:"0.9 km from 🤵🏻‍♀️ 10.4km from 👰🏻‍♀️",
+    hfAmenity3:"Lassanis Square 14",
+    hfAmenity4:"Invoice Available",
+    hf_category_label:"ACCOMMODATION RECOMMENDATION",
+    hf_name: "ANESIS",
+    hf_map_address: `
+              <span>📌</span>
+              <span>Lassanis Square 14, Kozani</span>
+      `,
+    hb_back_label:"RESERVATION DETAILS",
+    discountTitle: "Exclusive Wedding Discount",
+    discountTable: `
+      <div class="discount-row"><span class="room-type">🛏️ Single Room</span><span class="room-price">50€</span></div>
+      <div class="discount-row"><span class="room-type">🛏️🛏️ Twin Room</span><span class="room-price">57€</span></div>
+      <div class="discount-row"><span class="room-type">🛏️🛏️🛏️ Triple Room</span><span class="room-price">65€</span></div>
+    `,
+    discountNote: `⚠️ To lock in your discount, payment must be made at the time of booking. We suggest you to ask Booking Manager, Ms. Dora, for your convenience (it's not necessary though). Invoices are available upon request. Please, note that this may affect the final price.`,
+    codeTitle: "Discount Code",
+    codeValue: "for Evangelidaki's Wedding",
+    codeInstructions: `Mention this code when making your reservation by phone or email. The discount applies only when the code is provided and payment is made at time of booking.`,
+    contactTitle: "Book Your Room",
+    perksTitle: "Why You'll Love It",
+    perksList: `<li>📍 Central location — Lassanis Square 14, Kozani</li><li>🐾 Pet-friendly — bring your furry companions!</li><li>🧾 Invoices available upon request</li><li>💳 Pay at booking to guarantee your discount</li>`,
     desktop_message:`
     <h2>Share Your Memories</h2>
     <p class="photos-album-msg">
@@ -442,6 +613,33 @@ const translations = {
     </p>
     `,
     digital_album: "Δείτε το τρέχον ψηφιακό μας λεύκωμα (LIVE🔴)!",
+    accommodationTitle: "Πού να Μείνετε",
+    hotelIntro: `Σχεδιάζετε τη διαμονή σας στην Κοζάνη; Κανονίσαμε μια ξεχωριστή προσφορά για τους καλεσμένους μας στο <strong>Ξενοδοχείο Άνεσις</strong>: ένα άνετο, κεντρικά τοποθετημένο ξενοδοχείο λίγα βήματα από την Πλατεία Λασσάνη.`,
+    hotelToggleBtnText: "Δείτε Λεπτομέρειες Κράτησης & Αποκλειστική Έκπτωση",
+    hfAmenity1:"Φιλικό προς κατοικίδια!",
+    hfAmenity2:"0,9 χλμ από 🤵🏻‍♀️ 10,4 χλμ από 👰🏻‍♀️",
+    hfAmenity3:"Πλατεία Λασσάνη 14",
+    hfAmenity4:"Διαθέσιμα Τιμολόγια",
+    hf_category_label:"ΠΡΟΤΕΙΝΟΜΕΝΗ ΔΙΑΜΟΝΗ",
+    hf_name: "ΑΝΕΣΙΣ",
+    hf_map_address: `
+              <span>📌</span>
+              <span>Κεντρική Πλατεία Λασσάνη 14, Κοζάνη</span>
+      `,
+    hb_back_label:"RESERVATION DETAILS",
+    discountTitle: "Αποκλειστική Έκπτωση Γάμου",
+    discountTable: `
+      <div class="discount-row"><span class="room-type">🛏️ Μονόκλινο</span><span class="room-price">50€</span></div>
+      <div class="discount-row"><span class="room-type">🛏️🛏️ Δίκλινο</span><span class="room-price">57€</span></div>
+      <div class="discount-row"><span class="room-type">🛏️🛏️🛏️ Τρίκλινο</span><span class="room-price">65€</span></div>
+    `,
+    discountNote: `⚠️ Για να εξασφαλίσετε την έκπτωση, η πληρωμή πρέπει να γίνει κατά την κράτηση. Σας προτείνουμε για την άνεσή σας να επικοινωνήσετε με την υπεύθυνη κρατήσεων, κυρία Δώρα, η οποία θα σας εξυπηρετήσει άμεσα (είναι προτείνομενο, αλλά όχι απαραίτητο). Τα τιμολόγια είναι διαθέσιμα κατόπιν αιτήματος. Παρακαλώ, σημειώστε ότι αυτό ενδέχεται να επηρεάσει την τελική τιμή.`,
+    codeTitle: "Κωδικός Έκπτωσης",
+    codeValue: "Για τον γάμο του Ευαγγελιδάκη",
+    codeInstructions: `Αναφέρετε αυτόν τον κωδικό κατά την κράτησή σας τηλεφωνικά ή μέσω email. Η έκπτωση ισχύει μόνο εφόσον δοθεί ο κωδικός και η πληρωμή γίνει κατά την κράτηση.`,
+    contactTitle: "Κάντε Κράτηση",
+    perksTitle: "Γιατί θα το Αγαπήσετε",
+    perksList: `<li>📍 Κεντρική τοποθεσία — Πλατεία Λασσάνη 14, Κοζάνη</li><li>🐾 Pet-friendly — φέρτε και τα κατοικίδιά σας!</li><li>🧾 Τιμολόγια διαθέσιμα κατόπιν αιτήματος</li><li>💳 Πληρωμή κατά την κράτηση για εγγύηση της έκπτωσης</li>`,
     desktop_message:`
     <h2>Μοιραστείτε τις στιγμές σας! </h2>
     <p class="photos-album-msg">
@@ -488,6 +686,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("language") || "gr";
   applyLanguage(savedLang);
 });
+
+function flipHotelCard(event) {
+  // Don't flip if clicking links or the copy button
+  if (event.target.closest('a') || event.target.closest('.copy-code-btn')) return;
+  const inner = document.getElementById("hotelFlipInner");
+  inner.classList.toggle("flipped");
+}
+ 
+function copyCode(event) {
+  event.stopPropagation();
+  const code = document.getElementById("codeValue").textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.getElementById("copyCodeBtn");
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>`;
+    btn.style.color = '#2e7d32';
+    setTimeout(() => {
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+      btn.style.color = '';
+    }, 2000);
+  });
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //  COST CALCULATION

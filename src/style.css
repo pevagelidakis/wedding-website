@@ -1216,7 +1216,7 @@ form {
 }
  
 .hf-category-label {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 0.65rem;
   letter-spacing: 4px;
   color: rgba(198,165,106,0.55);
@@ -1296,7 +1296,7 @@ form {
 }
  
 .hf-description {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 0.8rem;
   color: rgba(240,230,204,0.6);
   line-height: 1.65;
@@ -1331,7 +1331,7 @@ form {
 }
  
 .hf-amenity span:last-child {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 0.72rem;
   color: rgba(240,230,204,0.65);
   line-height: 1.2;
@@ -1343,7 +1343,7 @@ form {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 0.73rem;
   color: var(--accent);
   letter-spacing: 0.5px;
@@ -1391,7 +1391,7 @@ form {
   background: rgba(10,9,20,0.88);
   backdrop-filter: blur(6px);
   padding: 10px 16px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 0.75rem;
   color: rgba(240,230,204,0.7);
   display: flex;
@@ -1406,7 +1406,13 @@ form {
 ════════════════════════ */
 .hotel-back {
   transform: rotateY(180deg);
-  background: linear-gradient(150deg, #fdf9f3 0%, #f7f0e4 50%, #f2ead8 100%);
+  /* background: linear-gradient(150deg, #fdf9f3 0%, #f7f0e4 50%, #f2ead8 100%); */
+  background: 
+    linear-gradient(rgba(255,250,245,0.4), rgba(255,250,245,0.4)),
+    url("media/anesis.jpg")
+    center/cover no-repeat;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
   display: flex;
   flex-direction: column;
 }
@@ -1429,7 +1435,7 @@ form {
 }
  
 .hb-back-label {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 0.6rem;
   letter-spacing: 4px;
   color: rgba(198,165,106,0.55);
@@ -1484,7 +1490,7 @@ form {
  
 /* Individual blocks */
 .hb-block {
-  background: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.45);
   border: 1px solid rgba(198,165,106,0.2);
   border-radius: 14px;
   padding: 16px 18px;
@@ -1538,7 +1544,7 @@ form {
 }
  
 .room-type {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 0.75rem;
   color: #555;
 }
@@ -1546,15 +1552,16 @@ form {
 .room-price {
   font-family: 'Playfair Display', serif;
   font-size: 1.05rem;
-  color: #1e6b2e;
+  color: linear-gradient(100deg, #16132a 0%, #1e1a35 100%);
   font-weight: 700;
 }
  
 .hb-discount-note {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  color: #888;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.8rem;
+  color: #2F3E5C;
   font-style: italic;
+  font-weight: bolder;
   line-height: 1.5;
   margin: 0;
 }
@@ -1603,9 +1610,10 @@ form {
 }
  
 .hb-code-note {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.72rem;
-  color: #999;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.8rem;
+  font-weight: bolder;
+  color: #2F3E5C;
   font-style: italic;
   line-height: 1.45;
   margin: 0;
@@ -1628,18 +1636,18 @@ form {
 }
  
 .hb-contact-lbl {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: rgba(198,165,106,0.7);
+  color:goldenrod;/* color: rgba(198,165,106,1); */
   min-width: 34px;
   flex-shrink: 0;
 }
  
 .hb-contact-list a {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 0.8rem;
   color: #1a1030;
   text-decoration: none;
@@ -1663,7 +1671,7 @@ form {
 }
  
 .hb-perks-list li {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 0.76rem;
   color: #444;
   background: linear-gradient(135deg, #f8f4ed, #f0e8d8);
