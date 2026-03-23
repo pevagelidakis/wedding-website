@@ -226,7 +226,7 @@
 </section>
 
 <!-- ================= HOTEL ACCOMMODATION ================= -->
-<!-- <h2 id="accommodationTitle"></h2>
+<h2 id="accommodationTitle"></h2>
 <section class="hotel-flip-section">
  
   <div class="hotel-flip-card" id="hotelFlipCard" onclick="flipHotelCard(event)">
@@ -236,7 +236,7 @@
           <div class="hf-category-label" id="hf_category_label">ACCOMMODATION</div>
           <div class="hf-logo-wrap">
             <div class="hf-logo-ring">
-              <img src="../media/anesis_logo.png" alt="Anesis HotelLogo">
+              <img src="media/anesis_logo.png" alt="Anesis HotelLogo">
             </div>
           </div>
           <h3 class="hf-name" id = "hf_name">ANESIS</h3> 
@@ -339,7 +339,7 @@
     </div>
   </div>
  
-</section> -->
+</section>
 
 <div id="petals-container"></div>
 <footer class="footer">
@@ -659,13 +659,68 @@ document.addEventListener("DOMContentLoaded", () => {
   applyLanguage(savedLang);
 });
 
-function flipHotelCard(event) {
-  // Don't flip if clicking links or the copy button
-  if (event.target.closest('a') || event.target.closest('.copy-code-btn')) return;
-  const inner = document.getElementById("hotelFlipInner");
-  inner.classList.toggle("flipped");
+/* Measures the active face and sets the card's
+   pixel height to exactly match it — no void, no overflow */
+function syncCardHeight(inner, face) {
+  const card = document.getElementById('hotelFlipCard');
+  /* Temporarily make face visible + unrotated for measurement */
+  const prevVisibility = face.style.visibility;
+  const prevTransform  = face.style.transform;
+  face.style.visibility = 'hidden';
+  face.style.transform  = 'none';
+  const h = face.scrollHeight;
+  face.style.visibility = prevVisibility;
+  face.style.transform  = prevTransform;
+  card.style.height     = h + 'px';
+  inner.style.height    = h + 'px';
 }
- 
+
+
+function flipHotelCard(event) {
+  if (event.target.closest('a') ||
+      event.target.closest('.hb-copy-btn')) return;
+
+  const inner    = document.getElementById('hotelFlipInner');
+  const isMobile = window.innerWidth <= 680;
+
+  inner.classList.toggle('flipped');
+
+  if (isMobile) {
+    const isFlipped  = inner.classList.contains('flipped');
+    const targetFace = inner.querySelector(
+      isFlipped ? '.hotel-back' : '.hotel-front'
+    );
+    /* Wait one frame so the flip transition has started,
+       then set height to the incoming face */
+    requestAnimationFrame(() => syncCardHeight(inner, targetFace));
+  }
+}
+
+/* On load: set initial height to front face on mobile */
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.innerWidth > 680) return;
+  const inner = document.getElementById('hotelFlipInner');
+  const front = inner.querySelector('.hotel-front');
+  syncCardHeight(inner, front);
+});
+
+/* Also re-sync on resize (orientation change etc.) */
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 680) {
+    const card  = document.getElementById('hotelFlipCard');
+    const inner = document.getElementById('hotelFlipInner');
+    card.style.height  = '';
+    inner.style.height = '';
+    return;
+  }
+  const inner    = document.getElementById('hotelFlipInner');
+  const isFlipped = inner.classList.contains('flipped');
+  const face = inner.querySelector(
+    isFlipped ? '.hotel-back' : '.hotel-front'
+  );
+  syncCardHeight(inner, face);
+});
+
 function copyCode(event) {
   event.stopPropagation();
   const code = document.getElementById("codeValue").textContent;

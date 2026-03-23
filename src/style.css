@@ -1232,17 +1232,6 @@ form {
   z-index: 1;
 }
  
-/* .hf-logo-ring {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(198,165,106,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, rgba(198,165,106,0.08), transparent);
-  box-shadow: 0 0 20px rgba(198,165,106,0.1);
-} */
  
 .hf-logo-letter {
   font-family: 'GFS Didot', serif;
@@ -1406,13 +1395,13 @@ form {
 ════════════════════════ */
 .hotel-back {
   transform: rotateY(180deg);
-  /* background: linear-gradient(150deg, #fdf9f3 0%, #f7f0e4 50%, #f2ead8 100%); */
-  background: 
+  background: linear-gradient(150deg, #fdf9f3 0%, #f7f0e4 50%, #f2ead8 100%);
+  /* background: 
     linear-gradient(rgba(255,250,245,0.4), rgba(255,250,245,0.4)),
     url("media/anesis.jpg")
     center/cover no-repeat;
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25); */
   display: flex;
   flex-direction: column;
 }
@@ -1681,46 +1670,104 @@ form {
   line-height: 1.3;
 }
  
-/* ── Responsive ── */
+/* ══════════════════════════════════════════
+   REPLACE your entire @media (max-width:680px)
+   block with this
+══════════════════════════════════════════ */
 @media (max-width: 680px) {
+
   .hotel-flip-card {
-    height: auto;
-    min-height: 560px;
+    height: auto;   /* JS will set this explicitly */
+    perspective: 1200px;
   }
+
   .hotel-flip-inner {
-    min-height: 560px;
+    display: block;   /* NOT grid — back to normal */
+    min-height: unset;
+    height: 100%;
   }
+
+  /* Both faces: absolutely stacked, zero layout contribution */
   .hotel-face {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
+
+  /* Front face */
   .hotel-front {
     flex-direction: column;
     height: auto;
   }
+
   .hf-left {
     width: 100%;
-    padding: 28px 22px;
+    padding: 24px 20px 20px;
+    box-sizing: border-box;
   }
+
   .hf-right {
-    height: 220px;
+    width: 100%;
+    height: 200px !important;
     flex: none;
-  }
-  .hf-map-wrap {
+    overflow: hidden;
     position: relative;
+  }
+
+  .hf-map-wrap {
+    position: static;
+    width: 100%;
     height: 100%;
-  }
-  .hotel-flip-inner.flipped {
-    transform: rotateY(180deg);
-  }
-  .hb-row-two {
-    grid-template-columns: 1fr;
-  }
-  .hb-discount-rows {
+    display: flex;
     flex-direction: column;
   }
+
+  .hf-map-wrap iframe {
+    width: 100%;
+    height: 160px !important;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  /* Back face */
+  .hb-row-two { grid-template-columns: 1fr; }
+
+  .hb-discount-rows { flex-direction: column; }
+
   .discount-row {
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     min-width: unset;
   }
+
+  /* 1. Clamp the back face to 80% of viewport height */
+.hotel-back {
+  height: auto;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;   /* clip anything that escapes .hb-body */
+}
+
+/* 2. Let .hb-body scroll within the clamped face */
+.hb-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;  /* smooth on iOS */
+  padding: 14px 14px 24px;
+  /* subtle fade at the bottom to signal more content */
+  mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+}
+
+/* 3. Top band must not scroll — keep it pinned */
+.hb-topband {
+  flex-shrink: 0;
+  padding: 12px 14px;
+}
 }
