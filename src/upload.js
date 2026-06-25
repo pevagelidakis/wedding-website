@@ -96,18 +96,35 @@ recordBtn.addEventListener("pointerdown", startHold);
 recordBtn.addEventListener("pointerup",   endHold);
 recordBtn.addEventListener("pointerleave", endHold);
 
+// function startHold(e) {
+//   e.preventDefault();
+//   holdTimer = setTimeout(() => startRecording(), 300);
+// }
+
+// function endHold(e) {
+//   e.preventDefault();
+//   clearTimeout(holdTimer);
+//   if (isRecording) stopRecording();
+//   else             takePhoto();
+// }
+
+let gestureHandled = false;   // one tap fires pointerup AND pointerleave — only act once
+
 function startHold(e) {
   e.preventDefault();
+  gestureHandled = false;
+  recordBtn.setPointerCapture?.(e.pointerId);
   holdTimer = setTimeout(() => startRecording(), 300);
 }
 
 function endHold(e) {
   e.preventDefault();
+  if (gestureHandled) return;
+  gestureHandled = true;
   clearTimeout(holdTimer);
   if (isRecording) stopRecording();
   else             takePhoto();
 }
-
 /* ─── PHOTO ──────────────────────────────────────────────── */
 function takePhoto() {
   canvasEl.width  = videoEl.videoWidth;
